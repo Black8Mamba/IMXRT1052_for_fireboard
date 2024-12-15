@@ -39,7 +39,7 @@ int main(void) {
 //    char *p = 0x80000000;
 //    *p = 't';
 //    PRINTF("Hello World:%c\r\n", *p);
-    PRINTF("Hello World IMX1052!\n");
+    PRINTF("Hello World IMX1052!\r\n");
 
     /* Force the counter to be placed into memory. */
     volatile static int i = 0 ;

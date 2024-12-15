@@ -84,12 +84,14 @@ extern uint32_t __VECTOR_TABLE[];
 #if defined(XIP_BOOT_HEADER_DCD_ENABLE) && (1 == XIP_BOOT_HEADER_DCD_ENABLE)
 #define DCD_ADDRESS dcd_data
 #else
-#define DCD_ADDRESS 0
+#define DCD_ADDRESS dcd_data
 #endif
 
 #define BOOT_DATA_ADDRESS &g_boot_data
 #define CSF_ADDRESS       0
 #define IVT_RSVD          (uint32_t)(0x00000000)
+
+extern const uint8_t dcd_data[];
 
 /*************************************
  *  Boot Data
