@@ -1,0 +1,5 @@
+C:\Users\yongjie\Documents\MCUXpressoIDE_11.9.1_2170\workspace\MIMXRT1052_Project\drivers/fsl_clock.h:1403:24:CLOCK_GetMux	16	static
+C:\Users\yongjie\Documents\MCUXpressoIDE_11.9.1_2170\workspace\MIMXRT1052_Project\drivers/fsl_clock.h:1454:24:CLOCK_GetDiv	16	static
+C:\Users\yongjie\Documents\MCUXpressoIDE_11.9.1_2170\workspace\MIMXRT1052_Project\drivers/fsl_clock.h:1515:24:CLOCK_GetOscFreq	4	static
+../board/board.c:24:10:BOARD_DebugConsoleSrcFreq	24	static
+../board/board.c:43:6:BOARD_InitDebugConsole	16	static
