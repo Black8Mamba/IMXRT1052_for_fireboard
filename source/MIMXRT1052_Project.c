@@ -16,6 +16,8 @@
 #include "clock_config.h"
 #include "MIMXRT1052.h"
 #include "fsl_debug_console.h"
+
+#include "bsp_led.h"
 /* TODO: insert other include files here. */
 
 /* TODO: insert other definitions and declarations here. */
@@ -33,6 +35,11 @@ int main(void) {
 #ifndef BOARD_INIT_DEBUG_CONSOLE_PERIPHERAL
     /* Init FSL debug console. */
     BOARD_InitDebugConsole();
+
+    CORE_BOARD_LED(1);
+    RGB_RED_LED(0);
+    RGB_BLUE_LED(1);
+    RGB_GREEN_LED(1);
 #endif
 
 
