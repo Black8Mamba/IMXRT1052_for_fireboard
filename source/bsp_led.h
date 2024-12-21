@@ -12,6 +12,9 @@
 #include "fsl_iomuxc.h"
 #include "fsl_gpio.h"
 
+#define ON 1
+#define OFF 0
+
 #define CORE_BOARD_LED_GPIO             GPIO1
 #define CORE_BOARD_LED_GPIO_PIN         (9U)
 #define CORE_BOARD_LED_IOMUXC           IOMUXC_GPIO_AD_B0_09_GPIO1_IO09
@@ -48,6 +51,69 @@
           else    \
           GPIO_PinWrite(RGB_BLUE_LED_GPIO, RGB_BLUE_LED_GPIO_PIN, 1U);
 
+//red
+#define RGB_LED_COLOR_RED \
+do { \
+	CORE_BOARD_LED(ON); \
+	RGB_GREEN_LED(OFF); \
+	RGB_BLUE_LED(OFF); \
+}while(0);
+
+//green
+#define RGB_LED_COLOR_GREEN \
+do { \
+	CORE_BOARD_LED(OFF); \
+	RGB_GREEN_LED(ON); \
+	RGB_BLUE_LED(OFF); \
+}while(0);
+
+//blue
+#define RGB_LED_COLOR_BLUE \
+do { \
+	CORE_BOARD_LED(OFF); \
+	RGB_GREEN_LED(OFF); \
+	RGB_BLUE_LED(ON); \
+}while(0);
+
+//yellow
+#define RGB_LED_COLOR_YELLOW \
+do { \
+	CORE_BOARD_LED(ON); \
+	RGB_GREEN_LED(ON); \
+	RGB_BLUE_LED(OFF); \
+}while(0);
+
+//PURPLE
+#define RGB_LED_COLOR_PURPLE \
+do { \
+	CORE_BOARD_LED(ON); \
+	RGB_GREEN_LED(OFF); \
+	RGB_BLUE_LED(ON); \
+}while(0);
+
+//CYAN
+#define RGB_LED_COLOR_CYAN \
+do { \
+	CORE_BOARD_LED(OFF); \
+	RGB_GREEN_LED(ON); \
+	RGB_BLUE_LED(ON); \
+}while(0);
+
+//white
+#define RGB_LED_COLOR_WHITE \
+do { \
+	CORE_BOARD_LED(ON); \
+	RGB_GREEN_LED(ON); \
+	RGB_BLUE_LED(ON); \
+}while(0);
+
+//all off
+#define RGB_LED_COLOR_BLACK \
+do { \
+	CORE_BOARD_LED(OFF); \
+	RGB_GREEN_LED(OFF); \
+	RGB_BLUE_LED(OFF); \
+}while(0);
 
 
 

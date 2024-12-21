@@ -267,7 +267,7 @@
                      <pin_features>
                         <pin_feature name="software_input_on" value="Disable"/>
                         <pin_feature name="hysteresis_enable" value="Disable"/>
-                        <pin_feature name="pull_up_down_config" value="Pull_Down_100K_Ohm"/>
+                        <pin_feature name="pull_up_down_config" value="Pull_Up_22K_Ohm"/>
                         <pin_feature name="pull_keeper_select" value="Keeper"/>
                         <pin_feature name="pull_keeper_enable" value="Enable"/>
                         <pin_feature name="open_drain" value="Disable"/>
@@ -276,7 +276,11 @@
                         <pin_feature name="slew_rate" value="Slow"/>
                      </pin_features>
                   </pin>
-                  <pin peripheral="LPUART1" signal="RX" pin_num="L14" pin_signal="GPIO_AD_B0_13"/>
+                  <pin peripheral="LPUART1" signal="RX" pin_num="L14" pin_signal="GPIO_AD_B0_13">
+                     <pin_features>
+                        <pin_feature name="pull_up_down_config" value="Pull_Up_22K_Ohm"/>
+                     </pin_features>
+                  </pin>
                </pins>
             </function>
             <function name="BOARD_InitLeds">
@@ -337,6 +341,62 @@
                         <pin_feature name="direction" value="OUTPUT"/>
                         <pin_feature name="gpio_init_state" value="true"/>
                         <pin_feature name="slew_rate" value="Slow"/>
+                     </pin_features>
+                  </pin>
+               </pins>
+            </function>
+            <function name="BOARD_InitKeys">
+               <description>Configures pin routing and optionally pin electrical features.</description>
+               <options>
+                  <callFromInitBoot>true</callFromInitBoot>
+                  <coreID>core0</coreID>
+                  <enableClock>true</enableClock>
+               </options>
+               <dependencies>
+                  <dependency resourceType="Peripheral" resourceId="GPIO1" description="Peripheral GPIO1 signals are routed in the Pins Tool, but the peripheral is not initialized in the Peripherals Tool." problem_level="1" source="Pins:BOARD_InitKeys">
+                     <feature name="initialized" evaluation="equal">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="Peripheral" resourceId="GPIO5" description="Peripheral GPIO5 signals are routed in the Pins Tool, but the peripheral is not initialized in the Peripherals Tool." problem_level="1" source="Pins:BOARD_InitKeys">
+                     <feature name="initialized" evaluation="equal">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.common" description="Pins initialization requires the COMMON Driver in the project." problem_level="2" source="Pins:BOARD_InitKeys">
+                     <feature name="enabled" evaluation="equal" configuration="core0">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.iomuxc" description="Pins initialization requires the IOMUXC Driver in the project." problem_level="2" source="Pins:BOARD_InitKeys">
+                     <feature name="enabled" evaluation="equal" configuration="core0">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.igpio" description="Pins initialization requires the IGPIO Driver in the project." problem_level="2" source="Pins:BOARD_InitKeys">
+                     <feature name="enabled" evaluation="equal" configuration="core0">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+               </dependencies>
+               <pins>
+                  <pin peripheral="GPIO1" signal="gpio_io, 05" pin_num="G14" pin_signal="GPIO_AD_B0_05">
+                     <pin_features>
+                        <pin_feature name="direction" value="INPUT"/>
+                        <pin_feature name="gpio_interrupt" value="kGPIO_IntLowLevel"/>
+                        <pin_feature name="hysteresis_enable" value="Enable"/>
+                        <pin_feature name="pull_up_down_config" value="Pull_Up_22K_Ohm"/>
+                        <pin_feature name="pull_keeper_select" value="Keeper"/>
+                        <pin_feature name="speed" value="MHZ_100"/>
+                        <pin_feature name="drive_strength" value="Disabled"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="GPIO5" signal="gpio_io, 00" pin_num="L6" pin_signal="WAKEUP">
+                     <pin_features>
+                        <pin_feature name="direction" value="INPUT"/>
+                        <pin_feature name="pull_up_down_config" value="Pull_Up_22K_Ohm"/>
+                        <pin_feature name="pull_keeper_select" value="Keeper"/>
+                        <pin_feature name="drive_strength" value="Disabled"/>
                      </pin_features>
                   </pin>
                </pins>
@@ -627,9 +687,27 @@
          <dcdx_configurations/>
       </dcdx>
       <periphs name="Peripherals" version="14.0" enabled="true" update_project_code="true">
+         <dependencies>
+            <dependency resourceType="SWComponent" resourceId="utility.debug_console" description="工具链/IDE工程中未找到Utility debug_console。工程不会被编译！" problem_level="2" source="Peripherals">
+               <feature name="enabled" evaluation="equal">
+                  <data type="Boolean">true</data>
+               </feature>
+            </dependency>
+            <dependency resourceType="SWComponent" resourceId="utility.debug_console" description="工具链/IDE工程不支持Utility debug_console版本。所需值: ${required_value}, 实际值: ${actual_value}. 工程可能没有被正确编译。" problem_level="1" source="Peripherals">
+               <feature name="version" evaluation="equivalent">
+                  <data type="Version">1.0.0</data>
+               </feature>
+            </dependency>
+            <dependency resourceType="Tool" resourceId="Clocks" description="外围设备工具需要 Clocks 工具，但它已被禁用。" problem_level="2" source="Peripherals">
+               <feature name="enabled" evaluation="equal">
+                  <data>true</data>
+               </feature>
+            </dependency>
+         </dependencies>
          <generated_project_files>
             <file path="board/peripherals.c" update_enabled="true"/>
             <file path="board/peripherals.h" update_enabled="true"/>
+            <file path="utilities/fsl_debug_console_conf.h" update_enabled="true"/>
          </generated_project_files>
          <peripherals_profile>
             <processor_version>15.0.1</processor_version>
@@ -638,12 +716,69 @@
             <functional_group name="BOARD_InitPeripherals" uuid="a7525270-2da6-4556-8d91-4ab9d0edc0e2" called_from_default_init="true" id_prefix="" core="core0">
                <description></description>
                <options/>
-               <dependencies/>
+               <dependencies>
+                  <dependency resourceType="SWComponent" resourceId="component.serial_manager_uart" description="The serial_port_uart driver is missing in the project  (required for the Debug console initialization)." problem_level="1" source="Peripherals:BOARD_InitPeripherals">
+                     <feature name="enabled" evaluation="equal">
+                        <data type="Boolean">true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="SWComponent" resourceId="component.lpuart_adapter" description="The lpuart_adapter driver is missing in the project  (required for the serial port initialization)." problem_level="1" source="Peripherals:BOARD_InitPeripherals">
+                     <feature name="enabled" evaluation="equal">
+                        <data type="Boolean">true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="LPUART1.uart_rx" description="Signal RX is not routed." problem_level="1" source="Peripherals:BOARD_InitPeripherals">
+                     <feature name="routed" evaluation="equal">
+                        <data type="Boolean">true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="LPUART1.uart_tx" description="Signal TX is not routed." problem_level="1" source="Peripherals:BOARD_InitPeripherals">
+                     <feature name="routed" evaluation="equal">
+                        <data type="Boolean">true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="ClockOutput" resourceId="UART_CLK_ROOT" description="UART_CLK_ROOT is inactive." problem_level="2" source="Peripherals:BOARD_InitPeripherals">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data type="Frequency" unit="Hz">0</data>
+                     </feature>
+                  </dependency>
+               </dependencies>
                <instances>
                   <instance name="NVIC" uuid="0f298494-385d-4e89-a945-53d739b1f141" type="nvic" type_id="nvic_57b5eef3774cc60acaede6f5b8bddc67" mode="general" peripheral="NVIC" enabled="true" comment="" custom_name_enabled="false" editing_lock="false">
                      <config_set name="nvic">
                         <array name="interrupt_table"/>
                         <array name="interrupts"/>
+                     </config_set>
+                  </instance>
+                  <instance name="DebugConsole" uuid="d8fd066f-0313-49ad-ba4c-5373f77ee1ed" type="debug_console" type_id="debug_console_51864e4f3ac859dae7b603e07bc4ae33" mode="general" enabled="true" comment="" custom_name_enabled="false" editing_lock="false">
+                     <config_set name="fsl_debug_console">
+                        <struct name="config">
+                           <setting name="SDK_DEBUGCONSOLE" value="DEBUGCONSOLE_REDIRECT_TO_SDK"/>
+                           <setting name="SDK_DEBUGCONSOLE_UART" value="semihost"/>
+                           <setting name="DEBUG_CONSOLE_RX_ENABLE" value="true"/>
+                           <setting name="DEBUG_CONSOLE_PRINTF_MAX_LOG_LEN" value="256"/>
+                           <setting name="DEBUG_CONSOLE_SCANF_MAX_LOG_LEN" value="20"/>
+                           <setting name="DEBUG_CONSOLE_ENABLE_ECHO" value="false"/>
+                           <setting name="PRINTF_FLOAT_ENABLE" value="false"/>
+                           <setting name="SCANF_FLOAT_ENABLE" value="false"/>
+                           <setting name="PRINTF_ADVANCED_ENABLE" value="false"/>
+                           <setting name="SCANF_ADVANCED_ENABLE" value="false"/>
+                           <setting name="DEBUG_CONSOLE_TRANSFER_NON_BLOCKING" value="false"/>
+                           <setting name="DEBUG_CONSOLE_TRANSMIT_BUFFER_LEN" value="512"/>
+                           <setting name="DEBUG_CONSOLE_RECEIVE_BUFFER_LEN" value="1024"/>
+                           <setting name="DEBUG_CONSOLE_TX_RELIABLE_ENABLE" value="true"/>
+                           <setting name="DEBUG_CONSOLE_DISABLE_RTOS_SYNCHRONIZATION" value="false"/>
+                        </struct>
+                        <struct name="peripheral_config">
+                           <setting name="serial_port_type" value="kSerialPort_Uart"/>
+                           <struct name="uart_config" quick_selection="QuickSelection1">
+                              <setting name="peripheralUART" value="LPUART1"/>
+                              <setting name="clockSource" value="genericUartClockSource"/>
+                              <setting name="clockSourceFreq" value="ClocksTool_DefaultInit"/>
+                              <setting name="baudRate_Bps" value="115200"/>
+                           </struct>
+                        </struct>
+                        <struct name="debug_console_codegenerator"/>
                      </config_set>
                   </instance>
                </instances>

@@ -223,6 +223,7 @@ void BOARD_InitBootPins(void) {
     BOARD_InitPins();
     BOARD_InitDEBUG_UARTPins();
     BOARD_InitLeds();
+    BOARD_InitKeys();
 }
 
 /*
@@ -247,9 +248,9 @@ void BOARD_InitPins(void) {
 BOARD_InitDEBUG_UARTPins:
 - options: {callFromInitBoot: 'true', coreID: core0, enableClock: 'true'}
 - pin_list:
-  - {pin_num: K14, peripheral: LPUART1, signal: TX, pin_signal: GPIO_AD_B0_12, software_input_on: Disable, hysteresis_enable: Disable, pull_up_down_config: Pull_Down_100K_Ohm,
+  - {pin_num: K14, peripheral: LPUART1, signal: TX, pin_signal: GPIO_AD_B0_12, software_input_on: Disable, hysteresis_enable: Disable, pull_up_down_config: Pull_Up_22K_Ohm,
     pull_keeper_select: Keeper, pull_keeper_enable: Enable, open_drain: Disable, speed: MHZ_100, drive_strength: R0_6, slew_rate: Slow}
-  - {pin_num: L14, peripheral: LPUART1, signal: RX, pin_signal: GPIO_AD_B0_13}
+  - {pin_num: L14, peripheral: LPUART1, signal: RX, pin_signal: GPIO_AD_B0_13, pull_up_down_config: Pull_Up_22K_Ohm}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 
@@ -273,9 +274,14 @@ void BOARD_InitDEBUG_UARTPins(void) {
   IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B0_13_LPUART1_RX, 0U); 
 #endif
 #if FSL_IOMUXC_DRIVER_VERSION >= MAKE_VERSION(2, 0, 3)
-  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B0_12_LPUART1_TXD, 0x10B0U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B0_12_LPUART1_TXD, 0xD0B0U); 
 #else
-  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B0_12_LPUART1_TX, 0x10B0U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B0_12_LPUART1_TX, 0xD0B0U); 
+#endif
+#if FSL_IOMUXC_DRIVER_VERSION >= MAKE_VERSION(2, 0, 3)
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B0_13_LPUART1_RXD, 0xD0B0U); 
+#else
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B0_13_LPUART1_RX, 0xD0B0U); 
 #endif
 }
 
@@ -345,6 +351,54 @@ void BOARD_InitLeds(void) {
   IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B0_10_GPIO1_IO10, 0x90B0U); 
   IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_08_GPIO1_IO24, 0x10B0U); 
   IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_09_GPIO1_IO25, 0x10B0U); 
+}
+
+/*
+ * TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
+BOARD_InitKeys:
+- options: {callFromInitBoot: 'true', coreID: core0, enableClock: 'true'}
+- pin_list:
+  - {pin_num: G14, peripheral: GPIO1, signal: 'gpio_io, 05', pin_signal: GPIO_AD_B0_05, direction: INPUT, gpio_interrupt: kGPIO_IntLowLevel, hysteresis_enable: Enable,
+    pull_up_down_config: Pull_Up_22K_Ohm, pull_keeper_select: Keeper, speed: MHZ_100, drive_strength: Disabled}
+  - {pin_num: L6, peripheral: GPIO5, signal: 'gpio_io, 00', pin_signal: WAKEUP, direction: INPUT, pull_up_down_config: Pull_Up_22K_Ohm, pull_keeper_select: Keeper,
+    drive_strength: Disabled}
+ * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
+ */
+
+/* FUNCTION ************************************************************************************************************
+ *
+ * Function Name : BOARD_InitKeys
+ * Description   : Configures pin routing and optionally pin electrical features.
+ *
+ * END ****************************************************************************************************************/
+void BOARD_InitKeys(void) {
+  CLOCK_EnableClock(kCLOCK_Iomuxc);           
+  CLOCK_EnableClock(kCLOCK_IomuxcSnvs);       
+
+  /* GPIO configuration of CAN_STBY on GPIO_AD_B0_05 (pin G14) */
+  gpio_pin_config_t CAN_STBY_config = {
+      .direction = kGPIO_DigitalInput,
+      .outputLogic = 0U,
+      .interruptMode = kGPIO_IntLowLevel
+  };
+  /* Initialize GPIO functionality on GPIO_AD_B0_05 (pin G14) */
+  GPIO_PinInit(GPIO1, 5U, &CAN_STBY_config);
+  /* Enable GPIO pin interrupt on GPIO_AD_B0_05 (pin G14) */
+  GPIO_PortEnableInterrupts(GPIO1, 1U << 5U);
+
+  /* GPIO configuration of SD_PWREN on WAKEUP (pin L6) */
+  gpio_pin_config_t SD_PWREN_config = {
+      .direction = kGPIO_DigitalInput,
+      .outputLogic = 0U,
+      .interruptMode = kGPIO_NoIntmode
+  };
+  /* Initialize GPIO functionality on WAKEUP (pin L6) */
+  GPIO_PinInit(GPIO5, 0U, &SD_PWREN_config);
+
+  IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B0_05_GPIO1_IO05, 0U); 
+  IOMUXC_SetPinMux(IOMUXC_SNVS_WAKEUP_GPIO5_IO00, 0U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B0_05_GPIO1_IO05, 0x01D080U); 
+  IOMUXC_SetPinConfig(IOMUXC_SNVS_WAKEUP_GPIO5_IO00, 0x01D080U); 
 }
 /***********************************************************************************************************************
  * EOF

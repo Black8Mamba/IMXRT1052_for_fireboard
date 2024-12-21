@@ -1,0 +1,39 @@
+/*
+ * bsp_key.h
+ *
+ *  Created on: 2024年12月15日
+ *      Author: yongjie
+ */
+
+#ifndef BSP_KEY_H_
+#define BSP_KEY_H_
+
+//WAUP
+#define CORE_BOARD_WAUP_KEY_GPIO        GPIO5
+#define CORE_BOARD_WAUP_KEY_GPIO_PIN    (0U)
+#define CORE_BOARD_WAUP_KEY_IOMUXC       IOMUXC_SNVS_WAKEUP_GPIO5_IO00
+#define CORE_BOARD_WAUP_KEY_NAME         "CORE_BORE_WAUP_KEY"
+
+//MODE
+#define CORE_BOARD_MODE_KEY_GPIO        GPIO1
+#define CORE_BOARD_MODE_KEY_GPIO_PIN    (5U)
+#define CORE_BOARD_MODE_KEY_IOMUXC      IOMUXC_GPIO_AD_B0_05_GPIO1_IO05
+#define CORE_BOARD_MODE_KEY_NAME        "CORE_BORE_MODE_KEY"
+
+#define KEY_ON      0
+#define KEY_OFF     1
+
+#define KEY_LONG_PRESS_COUNT  3000000
+#define KEY_FILTERING_COUNT   500
+
+
+typedef enum {
+  KEY_NOT_PRESS,
+  KEY_PRESSING,
+  KEY_LONG_PRESSING,
+  KEY_PRESS_RELEASE,
+  KEY_LONG_PRESS_RELEASE,
+}Key_State;
+
+
+#endif /* BSP_KEY_H_ */

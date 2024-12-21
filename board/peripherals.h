@@ -10,10 +10,27 @@
  * Included files
  **********************************************************************************************************************/
 #include "fsl_common.h"
+#include "fsl_debug_console.h"
+#include "fsl_clock.h"
 
 #if defined(__cplusplus)
 extern "C" {
 #endif /* __cplusplus */
+
+/***********************************************************************************************************************
+ * Definitions
+ **********************************************************************************************************************/
+/* Definitions for BOARD_InitPeripherals functional group */
+/* Debug console is initialized in the peripheral tool */
+#define BOARD_INIT_DEBUG_CONSOLE_PERIPHERAL 
+/* Definition of serial peripheral instance */
+#define DEBUGCONSOLE_INSTANCE 1U
+/* Definition of serial peripheral type */
+#define DEBUGCONSOLE_TYPE kSerialPort_Uart
+/* Definition of the Baud rate */
+#define DEBUGCONSOLE_BAUDRATE 115200UL
+/* Definition of the clock source frequency */
+#define DEBUGCONSOLE_CLK_FREQ 80000000UL
 
 /***********************************************************************************************************************
  * Initialization functions
