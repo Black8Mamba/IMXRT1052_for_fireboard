@@ -22,8 +22,12 @@
 #include "fsl_shell.h"
 
 #include "fsl_component_button.h"
+#include "bsp_systick.h"
+#include "letter-shell/src/shell.h"
 /* TODO: insert other include files here. */
 char c = 'N';
+
+extern Shell shell;
 
 static BUTTON_HANDLE_DEFINE(s_buttonHandle);
 
@@ -47,7 +51,7 @@ button_status_t button_cb(void *buttonHandle,
 /*
  * @brief   Application entry point.
  */
-static SHELL_HANDLE_DEFINE(s_shellHandle);
+void userShellInit(void);
 int main(void) {
 
     /* Init board hardware. */
@@ -70,6 +74,7 @@ int main(void) {
     PRINTF("SYSPLLPFD2:      %d Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd2Clk));
     PRINTF("SYSPLLPFD3:      %d Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd3Clk));
 
+    SysTick_Init();
 //    RGB_LED_COLOR_PURPLE
     RGB_LED_COLOR_YELLOW
 
@@ -90,12 +95,21 @@ int main(void) {
 	 {
 		 PRINTF("BUTTON_InstallCallback failed!\r\n");
 	 }
-
+	 userShellInit();
 
     while(1)
     {
-    	c = DbgConsole_Getchar();
-    	PRINTF("char:%c\r\n", c);
+    	shellTask(&shell);
+//    	c = DbgConsole_Getchar();
+//    	PRINTF("char:%c\r\n", c);
+//    	SysTick_Delay_Ms(500);
+//    	RGB_LED_COLOR_YELLOW
+//		CORE_BOARD_LED(1);
+//		SysTick_Delay_Ms(500);
+//    	RGB_LED_COLOR_GREEN
+//		CORE_BOARD_LED(0);
+//    	uint32_t tick = get_sys_tick();
+//    	PRINTF("systick:%d\r\n", tick);
     }
 
 

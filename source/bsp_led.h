@@ -54,7 +54,7 @@
 //red
 #define RGB_LED_COLOR_RED \
 do { \
-	CORE_BOARD_LED(ON); \
+	RGB_RED_LED(ON); \
 	RGB_GREEN_LED(OFF); \
 	RGB_BLUE_LED(OFF); \
 }while(0);
@@ -62,7 +62,7 @@ do { \
 //green
 #define RGB_LED_COLOR_GREEN \
 do { \
-	CORE_BOARD_LED(OFF); \
+	RGB_RED_LED(OFF); \
 	RGB_GREEN_LED(ON); \
 	RGB_BLUE_LED(OFF); \
 }while(0);
@@ -70,7 +70,7 @@ do { \
 //blue
 #define RGB_LED_COLOR_BLUE \
 do { \
-	CORE_BOARD_LED(OFF); \
+	RGB_RED_LED(OFF); \
 	RGB_GREEN_LED(OFF); \
 	RGB_BLUE_LED(ON); \
 }while(0);
@@ -78,7 +78,7 @@ do { \
 //yellow
 #define RGB_LED_COLOR_YELLOW \
 do { \
-	CORE_BOARD_LED(ON); \
+	RGB_RED_LED(ON); \
 	RGB_GREEN_LED(ON); \
 	RGB_BLUE_LED(OFF); \
 }while(0);
@@ -86,7 +86,7 @@ do { \
 //PURPLE
 #define RGB_LED_COLOR_PURPLE \
 do { \
-	CORE_BOARD_LED(ON); \
+	RGB_RED_LED(ON); \
 	RGB_GREEN_LED(OFF); \
 	RGB_BLUE_LED(ON); \
 }while(0);
@@ -94,7 +94,7 @@ do { \
 //CYAN
 #define RGB_LED_COLOR_CYAN \
 do { \
-	CORE_BOARD_LED(OFF); \
+	RGB_RED_LED(OFF); \
 	RGB_GREEN_LED(ON); \
 	RGB_BLUE_LED(ON); \
 }while(0);
@@ -102,7 +102,7 @@ do { \
 //white
 #define RGB_LED_COLOR_WHITE \
 do { \
-	CORE_BOARD_LED(ON); \
+	RGB_RED_LED(ON); \
 	RGB_GREEN_LED(ON); \
 	RGB_BLUE_LED(ON); \
 }while(0);
@@ -110,7 +110,7 @@ do { \
 //all off
 #define RGB_LED_COLOR_BLACK \
 do { \
-	CORE_BOARD_LED(OFF); \
+	RGB_RED_LED(OFF); \
 	RGB_GREEN_LED(OFF); \
 	RGB_BLUE_LED(OFF); \
 }while(0);
