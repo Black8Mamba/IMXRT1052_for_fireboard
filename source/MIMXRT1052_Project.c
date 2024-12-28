@@ -24,6 +24,7 @@
 #include "fsl_component_button.h"
 #include "bsp_systick.h"
 #include "letter-shell/src/shell.h"
+#include "coremark/coremark.h"
 /* TODO: insert other include files here. */
 char c = 'N';
 
@@ -73,6 +74,7 @@ int main(void) {
     PRINTF("SYSPLLPFD1:      %d Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd1Clk));
     PRINTF("SYSPLLPFD2:      %d Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd2Clk));
     PRINTF("SYSPLLPFD3:      %d Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd3Clk));
+    PRINTF("RT1025 SystemCoreClock=%dMhz\n", SystemCoreClock/1000000);
 
     SysTick_Init();
 //    RGB_LED_COLOR_PURPLE
@@ -96,7 +98,12 @@ int main(void) {
 		 PRINTF("BUTTON_InstallCallback failed!\r\n");
 	 }
 	 userShellInit();
-
+//	 SCB_CleanDCache();
+//	 SCB_DisableDCache();
+	 SCB_EnableICache();
+	 SCB_EnableDCache();
+//	 PRINTF("float:%f, core_main:%p\n", 0.002, &coremark_main);
+//	 coremark_main();
     while(1)
     {
     	shellTask(&shell);

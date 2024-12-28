@@ -10,6 +10,7 @@
  */
 
 #include "shell.h"
+#include "fsl_debug_console.h"
 
 Shell shell;
 char shellBuffer[512];
@@ -93,7 +94,8 @@ void userShellInit(void)
 
 int func(int i, char ch, char *str)
 {
-//    printf("input int: %d, char: %c, string: %s\r\n", i, ch, str);
+	PRINTF("input int: %d, char: %c, string: %s\r\n", i, ch, str);
+	return 0;
 }
 SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), func, func, test);
 

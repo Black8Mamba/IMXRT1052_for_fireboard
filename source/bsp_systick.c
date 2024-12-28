@@ -77,6 +77,8 @@ void SysTick_Handler(void)
 	sys_tick++;
 }
 
+#include <cr_section_macros.h>
+//__RAMFUNC(RAM)
 uint64_t get_sys_tick(void)
 {
 	return sys_tick;
