@@ -120,7 +120,13 @@ int main(void) {
 	     *!        false.
 	     */
 	init_cycle_counter(false);
-	coremark_main();
+//	coremark_main();
+
+	start_cycle_counter(); {
+	    PRINTF("Hello world\r\n");
+	}
+	int32_t cycles = stop_cycle_counter();
+	PRINTF("cycles:%d\n", cycles);
     while(1)
     {
 //    	shellTask(&shell);
@@ -136,24 +142,24 @@ int main(void) {
         	PRINTF("systick:%lld\r\n", get_system_ms());
         }
 
-//        __cpu_usage__(5, {
-//            float fUsage = __usage__; /*< "__usage__" stores the result */
-//            PRINTF("task 1 cpu usage %f\n", fUsage);
-//        }) {
-//        	delay_ms(500);
-//        }
-
-        /* measure cycles and store it in a dedicated variable without printf */
-        int32_t iCycleResult = 0;
-        __cycleof__("delay_us(1000ul)",
-            /* insert code to __cycleof__ body, "{}" can be omitted  */
-            {
-                iCycleResult = __cycle_count__;   /*< "__cycle_count__" stores the result */
-            }) {
-            delay_us(1000ul);
+        __cpu_usage__(5, {
+            float fUsage = __usage__; /*< "__usage__" stores the result */
+            PRINTF("task 1 cpu usage %f\n", fUsage);
+        }) {
+        	delay_ms(1000);
         }
 
-        PRINTF("\r\n delay_us(1000ul) takes %d cycles\r\n", (int)iCycleResult);
+        /* measure cycles and store it in a dedicated variable without printf */
+//        int32_t iCycleResult = 0;
+//        __cycleof__("delay_us(1000ul)",
+//            /* insert code to __cycleof__ body, "{}" can be omitted  */
+//            {
+//                iCycleResult = __cycle_count__;   /*< "__cycle_count__" stores the result */
+//            }) {
+//            delay_us(1000ul);
+//        }
+//
+//        PRINTF("\r\n delay_us(1000ul) takes %d cycles\r\n", (int)iCycleResult);
     }
     return 0 ;
 }
