@@ -36,7 +36,7 @@ button_status_t button_cb(void *buttonHandle,
                                              button_callback_message_t *message,
                                              void *callbackParam)
 {
-	static tri = 0;
+	static int tri = 0;
 	if (tri == 0)
 	{
 		RGB_LED_COLOR_GREEN
@@ -47,6 +47,8 @@ button_status_t button_cb(void *buttonHandle,
 		tri = 0;
 	}
 	PRINTF("message event:%d, last char:%c\r\n", message->event, c);
+
+	return kStatus_BUTTON_Success;
 }
 
 /*
@@ -106,7 +108,11 @@ int main(void) {
 //	 coremark_main();
     while(1)
     {
-    	shellTask(&shell);
+//    	shellTask(&shell);
+    	RGB_LED_COLOR_YELLOW
+		SysTick_Delay_Ms(500);
+    	RGB_LED_COLOR_BLUE
+		SysTick_Delay_Ms(500);
 //    	c = DbgConsole_Getchar();
 //    	PRINTF("char:%c\r\n", c);
 //    	SysTick_Delay_Ms(500);
@@ -117,24 +123,6 @@ int main(void) {
 //		CORE_BOARD_LED(0);
 //    	uint32_t tick = get_sys_tick();
 //    	PRINTF("systick:%d\r\n", tick);
-    }
-
-
-
-
-//    char *p = 0x80000000;
-//    *p = 't';
-//    PRINTF("Hello World:%c\r\n", *p);
-    PRINTF("Hello World IMX1052!\r\n");
-
-    /* Force the counter to be placed into memory. */
-    volatile static int i = 0 ;
-    /* Enter an infinite loop, just incrementing a counter. */
-    while(1) {
-        i++ ;
-        /* 'Dummy' NOP to allow source level single stepping of
-            tight while() loop */
-        __asm volatile ("nop");
     }
     return 0 ;
 }

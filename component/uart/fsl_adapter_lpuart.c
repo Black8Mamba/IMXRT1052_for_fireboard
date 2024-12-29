@@ -6,6 +6,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include "letter-shell/src/shell.h"
 #include "fsl_lpuart.h"
 
 #include "fsl_adapter_uart.h"
@@ -414,6 +415,7 @@ static void HAL_UartCallback(LPUART_Type *base, lpuart_handle_t *handle, status_
 
 #else /* HAL_UART_TRANSFER_MODE */
 
+extern Shell shell;
 static void HAL_UartInterruptHandle(uint8_t instance)
 {
 #if (defined(HAL_UART_DMA_ENABLE) && (HAL_UART_DMA_ENABLE > 0U))
@@ -552,7 +554,11 @@ static void HAL_UartInterruptHandle(uint8_t instance)
             {
                 count--;
 #endif
-                uartHandle->rx.buffer[uartHandle->rx.bufferSofar++] = LPUART_ReadByte(s_LpuartAdapterBase[instance]);
+//                uartHandle->rx.buffer[uartHandle->rx.bufferSofar++] = LPUART_ReadByte(s_LpuartAdapterBase[instance]);
+                char ch = LPUART_ReadByte(s_LpuartAdapterBase[instance]);
+                shellHandler(&shell, ch);
+                uartHandle->rx.buffer[uartHandle->rx.bufferSofar++] = ch;
+
                 if (uartHandle->rx.bufferSofar >= uartHandle->rx.bufferLength)
                 {
                     LPUART_DisableInterrupts(

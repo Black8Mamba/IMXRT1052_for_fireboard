@@ -24,7 +24,7 @@ extern "C" {
 #endif
 
 #if (defined(DEBUG_CONSOLE_TRANSFER_NON_BLOCKING))
-    #error DEBUG_CONSOLE_TRANSFER_NON_BLOCKING should not be defined. Remove DEBUG_CONSOLE_TRANSFER_NON_BLOCKING from the project setting or defines.
+    //#error DEBUG_CONSOLE_TRANSFER_NON_BLOCKING should not be defined. Remove DEBUG_CONSOLE_TRANSFER_NON_BLOCKING from the project setting or defines.
 #endif
 
 #if ((defined(SERIAL_PORT_TYPE_UART) && (SERIAL_PORT_TYPE_UART != 1)))
@@ -63,7 +63,7 @@ extern "C" {
  *
  */
 #ifndef DEBUG_CONSOLE_TRANSMIT_BUFFER_LEN
-#define DEBUG_CONSOLE_TRANSMIT_BUFFER_LEN (0U)
+#define DEBUG_CONSOLE_TRANSMIT_BUFFER_LEN (4096U)
 #endif /* DEBUG_CONSOLE_TRANSMIT_BUFFER_LEN */
 
 /*! @brief define the receive buffer length which is used to store the user input, buffer is enabled automatically when
@@ -74,7 +74,7 @@ extern "C" {
  *
  */
 #ifndef DEBUG_CONSOLE_RECEIVE_BUFFER_LEN
-#define DEBUG_CONSOLE_RECEIVE_BUFFER_LEN (0U)
+#define DEBUG_CONSOLE_RECEIVE_BUFFER_LEN (4096U)
 #endif /* DEBUG_CONSOLE_RECEIVE_BUFFER_LEN */
 
 /*!@ brief Whether enable the reliable TX function
@@ -102,7 +102,7 @@ extern "C" {
  * the buffer is too big and current task stack size not big enough.
  */
 #ifndef DEBUG_CONSOLE_PRINTF_MAX_LOG_LEN
-#define DEBUG_CONSOLE_PRINTF_MAX_LOG_LEN (256U)
+#define DEBUG_CONSOLE_PRINTF_MAX_LOG_LEN (512U)
 #endif /* DEBUG_CONSOLE_PRINTF_MAX_LOG_LEN */
 
 /*!@ brief define the buffer support buffer scanf log length, that is when you call scanf("log", &x);, the log
