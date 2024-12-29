@@ -25,8 +25,8 @@
 #include "bsp_systick.h"
 #include "letter-shell/src/shell.h"
 #include "coremark/coremark.h"
+#include "perf_counter/perf_counter.h"
 /* TODO: insert other include files here. */
-char c = 'N';
 
 extern Shell shell;
 
@@ -46,7 +46,7 @@ button_status_t button_cb(void *buttonHandle,
 		RGB_LED_COLOR_BLUE
 		tri = 0;
 	}
-	PRINTF("message event:%d, last char:%c\r\n", message->event, c);
+	PRINTF("message event:%d\n", message->event);
 
 	return kStatus_BUTTON_Success;
 }
@@ -67,6 +67,7 @@ int main(void) {
     BOARD_InitDebugConsole();
 #endif
 
+    SystemCoreClockUpdate();
     PRINTF("*****>>welcome i.MX RT1052 develop board <<*****\r\n");
     PRINTF("CPU:             %d Hz\r\n", CLOCK_GetFreq(kCLOCK_CpuClk));
     PRINTF("AHB:             %d Hz\r\n", CLOCK_GetFreq(kCLOCK_AhbClk));
@@ -78,7 +79,7 @@ int main(void) {
     PRINTF("SYSPLLPFD3:      %d Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd3Clk));
     PRINTF("RT1025 SystemCoreClock=%dMhz\n", SystemCoreClock/1000000);
 
-    SysTick_Init();
+//    SysTick_Init();
 //    RGB_LED_COLOR_PURPLE
     RGB_LED_COLOR_YELLOW
 
@@ -104,25 +105,55 @@ int main(void) {
 //	 SCB_DisableDCache();
 	 SCB_EnableICache();
 	 SCB_EnableDCache();
-//	 PRINTF("float:%f, core_main:%p\n", 0.002, &coremark_main);
-//	 coremark_main();
+
+	    /*! \brief Update SystemCoreClock with the latest CPU frequency
+	     *!        If the function doesn't exist or doesn't work correctly,
+	     *!        Please update SystemCoreClock directly with the correct
+	     *!        system frequency in Hz.
+	     *!
+	     *!        extern volatile uint32_t SystemCoreClock;
+	     */
+//	    SystemCoreClockUpdate();
+
+	    /*! \brief initialize perf_counter() and pass true if SysTick is
+	     *!        occupied by user applications or RTOS, otherwise pass
+	     *!        false.
+	     */
+	init_cycle_counter(false);
+	coremark_main();
     while(1)
     {
 //    	shellTask(&shell);
     	RGB_LED_COLOR_YELLOW
-		SysTick_Delay_Ms(500);
+		CORE_BOARD_LED(1);
+    	delay_ms(500);
     	RGB_LED_COLOR_BLUE
-		SysTick_Delay_Ms(500);
-//    	c = DbgConsole_Getchar();
-//    	PRINTF("char:%c\r\n", c);
-//    	SysTick_Delay_Ms(500);
-//    	RGB_LED_COLOR_YELLOW
-//		CORE_BOARD_LED(1);
-//		SysTick_Delay_Ms(500);
-//    	RGB_LED_COLOR_GREEN
-//		CORE_BOARD_LED(0);
-//    	uint32_t tick = get_sys_tick();
-//    	PRINTF("systick:%d\r\n", tick);
+		CORE_BOARD_LED(0);
+//    	delay_ms(500);
+    	delay_us(500*1000);
+        if (perfc_is_time_out_ms(1000)) {
+            /* print hello world every 1000 ms */
+        	PRINTF("systick:%lld\r\n", get_system_ms());
+        }
+
+//        __cpu_usage__(5, {
+//            float fUsage = __usage__; /*< "__usage__" stores the result */
+//            PRINTF("task 1 cpu usage %f\n", fUsage);
+//        }) {
+//        	delay_ms(500);
+//        }
+
+        /* measure cycles and store it in a dedicated variable without printf */
+        int32_t iCycleResult = 0;
+        __cycleof__("delay_us(1000ul)",
+            /* insert code to __cycleof__ body, "{}" can be omitted  */
+            {
+                iCycleResult = __cycle_count__;   /*< "__cycle_count__" stores the result */
+            }) {
+            delay_us(1000ul);
+        }
+
+        PRINTF("\r\n delay_us(1000ul) takes %d cycles\r\n", (int)iCycleResult);
     }
     return 0 ;
 }

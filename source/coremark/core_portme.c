@@ -19,7 +19,7 @@ Original Author: Shay Gal-on
 #include <stdio.h>
 #include <stdlib.h>
 #include "coremark.h"
-#include "bsp_systick.h"
+#include "perf_counter/perf_counter.h"
 
 #if VALIDATION_RUN
 volatile ee_s32 seed1_volatile = 0x3415;
@@ -55,7 +55,7 @@ volatile ee_s32 seed5_volatile = 0;
 #define NSECS_PER_SEC              1000
 #define CORETIMETYPE               clock_t
 //#define GETMYTIME(_t)              (*_t = clock())
-#define GETMYTIME(_t)              (*_t = get_sys_tick())
+#define GETMYTIME(_t)              (*_t = get_system_ms())
 #define MYTIMEDIFF(fin, ini)       ((fin) - (ini))
 #define TIMER_RES_DIVIDER          1
 #define SAMPLE_TIME_IMPLEMENTATION 1

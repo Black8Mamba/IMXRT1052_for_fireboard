@@ -25,6 +25,7 @@
 
 #include "bsp_systick.h"
 #include <stdint.h>
+#include "perf_counter/perf_counter.h"
 
 static uint64_t sys_tick = 0;
 
@@ -75,6 +76,7 @@ void SysTick_Init(void)
 void SysTick_Handler(void)
 {
 	sys_tick++;
+	perfc_port_insert_to_system_timer_insert_ovf_handler();
 }
 
 #include <cr_section_macros.h>
