@@ -26,6 +26,7 @@
 #include "letter-shell/src/shell.h"
 #include "coremark/coremark.h"
 #include "perf_counter/perf_counter.h"
+#include "elog.h"
 /* TODO: insert other include files here. */
 
 extern Shell shell;
@@ -78,6 +79,18 @@ int main(void) {
     PRINTF("SYSPLLPFD2:      %d Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd2Clk));
     PRINTF("SYSPLLPFD3:      %d Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd3Clk));
     PRINTF("RT1025 SystemCoreClock=%dMhz\n", SystemCoreClock/1000000);
+
+    /* initialize EasyLogger */
+    elog_init();
+    /* set EasyLogger log format */
+    elog_set_fmt(ELOG_LVL_ASSERT, ELOG_FMT_ALL);
+    elog_set_fmt(ELOG_LVL_ERROR, ELOG_FMT_LVL | ELOG_FMT_TAG | ELOG_FMT_TIME);
+    elog_set_fmt(ELOG_LVL_WARN, ELOG_FMT_LVL | ELOG_FMT_TAG | ELOG_FMT_TIME);
+    elog_set_fmt(ELOG_LVL_INFO, ELOG_FMT_LVL | ELOG_FMT_TAG | ELOG_FMT_TIME);
+    elog_set_fmt(ELOG_LVL_DEBUG, ELOG_FMT_ALL & ~ELOG_FMT_FUNC);
+    elog_set_fmt(ELOG_LVL_VERBOSE, ELOG_FMT_ALL & ~ELOG_FMT_FUNC);
+    /* start EasyLogger */
+    elog_start();
 
 //    SysTick_Init();
 //    RGB_LED_COLOR_PURPLE
@@ -139,12 +152,12 @@ int main(void) {
     	delay_us(500*1000);
         if (perfc_is_time_out_ms(1000)) {
             /* print hello world every 1000 ms */
-        	PRINTF("systick:%lld\r\n", get_system_ms());
+        	log_i("systick:%lld", get_system_ms());
         }
 
         __cpu_usage__(5, {
             float fUsage = __usage__; /*< "__usage__" stores the result */
-            PRINTF("task 1 cpu usage %f\n", fUsage);
+            log_i("task 1 cpu usage %f", fUsage);
         }) {
         	delay_ms(1000);
         }
