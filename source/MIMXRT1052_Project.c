@@ -27,6 +27,7 @@
 #include "coremark/coremark.h"
 #include "perf_counter/perf_counter.h"
 #include "elog.h"
+#include "cm_backtrace.h"
 /* TODO: insert other include files here. */
 
 extern Shell shell;
@@ -55,7 +56,12 @@ button_status_t button_cb(void *buttonHandle,
 /*
  * @brief   Application entry point.
  */
-extern int _vStackBase;
+extern void fault_test_by_unalign(void);
+extern void fault_test_by_div0(void);
+extern const int CMB_CSTACK_BLOCK_START;
+extern const int CMB_CSTACK_BLOCK_END;
+extern const int CMB_CODE_SECTION_START;
+extern const int CMB_CODE_SECTION_END;
 void userShellInit(void);
 int main(void) {
 
@@ -69,8 +75,9 @@ int main(void) {
     BOARD_InitDebugConsole();
 #endif
 
+    cm_backtrace_init("CmBacktrace for i.MX RT1052 EVK Pro Cortex-M7", "1.0", "1.0");
     SystemCoreClockUpdate();
-    PRINTF("*****>>welcome i.MX RT1052 develop board :%x<<*****\r\n", _vStackBase);
+    PRINTF("*****>>welcome i.MX RT1052 develop board<<*****\n");
     PRINTF("CPU:             %d Hz\r\n", CLOCK_GetFreq(kCLOCK_CpuClk));
     PRINTF("AHB:             %d Hz\r\n", CLOCK_GetFreq(kCLOCK_AhbClk));
     PRINTF("SEMC:            %d Hz\r\n", CLOCK_GetFreq(kCLOCK_SemcClk));
@@ -134,34 +141,42 @@ int main(void) {
 	     *!        false.
 	     */
 	init_cycle_counter(false);
-	coremark_main();
+//	coremark_main();
 
 	start_cycle_counter(); {
 	    PRINTF("Hello world\r\n");
 	}
 	int32_t cycles = stop_cycle_counter();
 	PRINTF("cycles:%d\n", cycles);
+
+	uint32_t main_stack_start_addr = (uint32_t)(&CMB_CSTACK_BLOCK_START);
+	uint32_t main_stack_size = (uint32_t)(&CMB_CSTACK_BLOCK_END) - main_stack_start_addr;
+	uint32_t code_start_addr = (uint32_t)(&CMB_CODE_SECTION_START);
+	uint32_t code_size = (uint32_t)(&CMB_CODE_SECTION_END) - code_start_addr;
+	PRINTF("main_stack_start_addr:%x, main_stack_size:%x, code_start_addr:%x, code_size:%x\n", main_stack_start_addr, main_stack_size, code_start_addr, code_size);
+	CORE_BOARD_LED(0);
+
     while(1)
     {
 //    	shellTask(&shell);
     	RGB_LED_COLOR_YELLOW
-		CORE_BOARD_LED(1);
     	delay_ms(500);
     	RGB_LED_COLOR_BLUE
-		CORE_BOARD_LED(0);
-//    	delay_ms(500);
-    	delay_us(500*1000);
-        if (perfc_is_time_out_ms(1000)) {
-            /* print hello world every 1000 ms */
-        	log_i("systick:%lld", get_system_ms());
-        }
-
-        __cpu_usage__(5, {
-            float fUsage = __usage__; /*< "__usage__" stores the result */
-            log_i("task 1 cpu usage %f", fUsage);
-        }) {
-        	delay_ms(1000);
-        }
+    	delay_ms(500);
+//    	fault_test_by_div0();
+//    	fault_test_by_unalign();
+//    	delay_us(500*1000);
+//        if (perfc_is_time_out_ms(1000)) {
+//            /* print hello world every 1000 ms */
+//        	log_i("systick:%lld", get_system_ms());
+//        }
+//
+//        __cpu_usage__(5, {
+//            float fUsage = __usage__; /*< "__usage__" stores the result */
+//            log_i("task 1 cpu usage %f", fUsage);
+//        }) {
+//        	delay_ms(1000);
+//        }
 
         /* measure cycles and store it in a dedicated variable without printf */
 //        int32_t iCycleResult = 0;

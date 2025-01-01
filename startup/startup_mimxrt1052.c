@@ -705,7 +705,7 @@ void ResetISR(void) {
 
 #if defined (__REDLIB__)
     // Call the Redlib library, which in turn calls main()
-    __main();
+    main();
 #else
     main();
 #endif

@@ -330,9 +330,11 @@ void BOARD_ConfigMPU(void)
     MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 1, 0, 0, 0, 0, ARM_MPU_REGION_SIZE_2MB);
 
     /*region 9 stack overstack check*/
-//    MPU->RBAR = ARM_MPU_RBAR(9, 0x2001FC00U);
-//    MPU->RASR = ARM_MPU_RASR (0, ARM_MPU_AP_NONE, 0, 0, 1, 1, 0,\
-//    ARM_MPU_REGION_SIZE_32B);
+    /*
+    MPU->RBAR = ARM_MPU_RBAR(9, 0x2001FC00U);
+    MPU->RASR = ARM_MPU_RASR (0, ARM_MPU_AP_NONE, 0, 0, 1, 1, 0,\
+    ARM_MPU_REGION_SIZE_32B);
+    */
 
     /* Enable MPU */
     ARM_MPU_Enable(MPU_CTRL_PRIVDEFENA_Msk);
