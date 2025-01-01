@@ -55,11 +55,12 @@ button_status_t button_cb(void *buttonHandle,
 /*
  * @brief   Application entry point.
  */
+extern int _vStackBase;
 void userShellInit(void);
 int main(void) {
 
     /* Init board hardware. */
-//    BOARD_ConfigMPU();
+    BOARD_ConfigMPU();
     BOARD_InitBootPins();
     BOARD_InitBootClocks();
     BOARD_InitBootPeripherals();
@@ -69,7 +70,7 @@ int main(void) {
 #endif
 
     SystemCoreClockUpdate();
-    PRINTF("*****>>welcome i.MX RT1052 develop board <<*****\r\n");
+    PRINTF("*****>>welcome i.MX RT1052 develop board :%x<<*****\r\n", _vStackBase);
     PRINTF("CPU:             %d Hz\r\n", CLOCK_GetFreq(kCLOCK_CpuClk));
     PRINTF("AHB:             %d Hz\r\n", CLOCK_GetFreq(kCLOCK_AhbClk));
     PRINTF("SEMC:            %d Hz\r\n", CLOCK_GetFreq(kCLOCK_SemcClk));
@@ -116,8 +117,8 @@ int main(void) {
 	 userShellInit();
 //	 SCB_CleanDCache();
 //	 SCB_DisableDCache();
-	 SCB_EnableICache();
-	 SCB_EnableDCache();
+//	 SCB_EnableICache();
+//	 SCB_EnableDCache();
 
 	    /*! \brief Update SystemCoreClock with the latest CPU frequency
 	     *!        If the function doesn't exist or doesn't work correctly,
@@ -133,7 +134,7 @@ int main(void) {
 	     *!        false.
 	     */
 	init_cycle_counter(false);
-//	coremark_main();
+	coremark_main();
 
 	start_cycle_counter(); {
 	    PRINTF("Hello world\r\n");
