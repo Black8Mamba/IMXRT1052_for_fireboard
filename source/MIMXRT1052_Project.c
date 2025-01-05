@@ -28,6 +28,7 @@
 #include "perf_counter/perf_counter.h"
 #include "elog.h"
 #include "cm_backtrace.h"
+#include "bsp_i2c_eeprom.h"
 /* TODO: insert other include files here. */
 
 extern Shell shell;
@@ -85,6 +86,7 @@ int main(void) {
     PRINTF("SYSPLLPFD0:      %d Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd0Clk));
     PRINTF("SYSPLLPFD1:      %d Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd1Clk));
     PRINTF("SYSPLLPFD2:      %d Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd2Clk));
+    PRINTF("SYSPLLPFD3:      %d Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd3Clk));
     PRINTF("SYSPLLPFD3:      %d Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd3Clk));
     PRINTF("RT1025 SystemCoreClock=%dMhz\n", SystemCoreClock/1000000);
 
@@ -156,6 +158,8 @@ int main(void) {
 	PRINTF("main_stack_start_addr:%x, main_stack_size:%x, code_start_addr:%x, code_size:%x\n", main_stack_start_addr, main_stack_size, code_start_addr, code_size);
 	CORE_BOARD_LED(0);
 
+
+//	EEPROM_Test();
     while(1)
     {
 //    	shellTask(&shell);

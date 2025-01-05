@@ -10,8 +10,9 @@
  * Included files
  **********************************************************************************************************************/
 #include "fsl_common.h"
-#include "fsl_debug_console.h"
 #include "fsl_clock.h"
+#include "fsl_lpi2c.h"
+#include "fsl_debug_console.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -21,6 +22,13 @@ extern "C" {
  * Definitions
  **********************************************************************************************************************/
 /* Definitions for BOARD_InitPeripherals functional group */
+/* BOARD_InitPeripherals defines for LPI2C1 */
+/* Definition of peripheral ID */
+#define LPI2C1_PERIPHERAL LPI2C1
+/* Definition of clock source */
+#define LPI2C1_CLOCK_FREQ 60000000UL
+/* Definition of slave address */
+#define LPI2C1_MASTER_SLAVE_ADDRESS 80
 /* Debug console is initialized in the peripheral tool */
 #define BOARD_INIT_DEBUG_CONSOLE_PERIPHERAL 
 /* Definition of serial peripheral instance */
@@ -31,6 +39,11 @@ extern "C" {
 #define DEBUGCONSOLE_BAUDRATE 115200UL
 /* Definition of the clock source frequency */
 #define DEBUGCONSOLE_CLK_FREQ 80000000UL
+
+/***********************************************************************************************************************
+ * Global variables
+ **********************************************************************************************************************/
+extern const lpi2c_master_config_t LPI2C1_masterConfig;
 
 /***********************************************************************************************************************
  * Initialization functions
