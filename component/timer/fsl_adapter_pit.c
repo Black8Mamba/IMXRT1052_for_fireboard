@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 NXP
+ * Copyright 2018-2019, 2023 NXP
  * All rights reserved.
  *
  *
@@ -9,7 +9,7 @@
 #include "fsl_common.h"
 #include "fsl_device_registers.h"
 #include "fsl_adapter_timer.h"
-#include "fsl_gpt.h"
+#include "fsl_pit.h"
 
 typedef struct _hal_timer_handle_struct_t
 {
@@ -24,9 +24,9 @@ typedef struct _hal_timer_handle_struct_t
  * Variables
  ******************************************************************************/
 
-static GPT_Type *const s_GptBase[] = GPT_BASE_PTRS;
+static PIT_Type *const s_PitBase[] = PIT_BASE_PTRS;
 
-static hal_timer_handle_t s_timerHandle[sizeof(s_GptBase) / sizeof(GPT_Type *)];
+static hal_timer_handle_t s_timerHandle[sizeof(s_PitBase) / sizeof(PIT_Type *)];
 /************************************************************************************
 *************************************************************************************
 * Private prototypes
@@ -42,32 +42,52 @@ static void HAL_TimerInterruptHandle(uint8_t instance)
 {
     hal_timer_handle_struct_t *halTimerState = (hal_timer_handle_struct_t *)s_timerHandle[instance];
 
-    GPT_ClearStatusFlags(s_GptBase[halTimerState->instance], kGPT_OutputCompare1Flag);
+    PIT_ClearStatusFlags(s_PitBase[halTimerState->instance], kPIT_Chnl_0, PIT_TFLG_TIF_MASK);
     if (halTimerState->callback != NULL)
     {
         halTimerState->callback(halTimerState->callbackParam);
     }
 }
 
-void GPT0_IRQHandler(void);
-void GPT0_IRQHandler(void)
+#if (defined(FSL_FEATURE_SOC_PIT_COUNT) && (FSL_FEATURE_SOC_PIT_COUNT > 0U))
+void PIT_IRQHandler(void);
+void PIT_IRQHandler(void)
 {
     HAL_TimerInterruptHandle(0);
     SDK_ISR_EXIT_BARRIER;
 }
+void PIT0_IRQHandler(void);
+void PIT0_IRQHandler(void)
+{
+    HAL_TimerInterruptHandle(0);
+    SDK_ISR_EXIT_BARRIER;
+}
+#endif /* FSL_FEATURE_SOC_PIT_COUNT */
 
-void GPT1_IRQHandler(void);
-void GPT1_IRQHandler(void)
+#if (defined(FSL_FEATURE_SOC_PIT_COUNT) && (FSL_FEATURE_SOC_PIT_COUNT > 1U))
+void PIT1_IRQHandler(void);
+void PIT1_IRQHandler(void)
 {
     HAL_TimerInterruptHandle(1);
     SDK_ISR_EXIT_BARRIER;
 }
-void GPT2_IRQHandler(void);
-void GPT2_IRQHandler(void)
+#endif /* FSL_FEATURE_SOC_PIT_COUNT */
+
+#if (defined(FSL_FEATURE_SOC_PIT_COUNT) && (FSL_FEATURE_SOC_PIT_COUNT > 2U))
+void PIT2_IRQHandler(void)
 {
     HAL_TimerInterruptHandle(2);
     SDK_ISR_EXIT_BARRIER;
 }
+#endif /* FSL_FEATURE_SOC_PIT_COUNT */
+
+#if (defined(FSL_FEATURE_SOC_PIT_COUNT) && (FSL_FEATURE_SOC_PIT_COUNT > 3U))
+void PIT3_IRQHandler(void)
+{
+    HAL_TimerInterruptHandle(3);
+    SDK_ISR_EXIT_BARRIER;
+}
+#endif /* FSL_FEATURE_SOC_PIT_COUNT */
 /************************************************************************************
 *************************************************************************************
 * Public functions
@@ -75,32 +95,35 @@ void GPT2_IRQHandler(void)
 ************************************************************************************/
 hal_timer_status_t HAL_TimerInit(hal_timer_handle_t halTimerHandle, hal_timer_config_t *halTimerConfig)
 {
-    IRQn_Type instanceIrq[] = GPT_IRQS;
+    IRQn_Type instanceIrq[][FSL_FEATURE_PIT_TIMER_COUNT] = PIT_IRQS;
     IRQn_Type irqId;
     hal_timer_handle_struct_t *halTimerState = halTimerHandle;
-    /* Structure of initialize GPT */
-    gpt_config_t gptConfig;
+    /* Structure of initialize PIT */
+    pit_config_t pitConfig;
 
     assert(sizeof(hal_timer_handle_struct_t) == HAL_TIMER_HANDLE_SIZE);
     assert(halTimerConfig);
     assert(halTimerHandle);
-    assert(halTimerConfig->instance < (sizeof(s_GptBase) / sizeof(GPT_Type *)));
+    assert(halTimerConfig->instance < (sizeof(s_PitBase) / sizeof(PIT_Type *)));
 
-    halTimerState->timeout       = halTimerConfig->timeout;
-    halTimerState->instance      = halTimerConfig->instance;
+    halTimerState->timeout  = halTimerConfig->timeout;
+    halTimerState->instance = halTimerConfig->instance;
+    irqId                   = instanceIrq[halTimerState->instance][0];
+    /*
+     * pitConfig.enableRunInDebug = false;
+     */
+    PIT_GetDefaultConfig(&pitConfig);
+    assert(s_PitBase[halTimerState->instance]);
+    /* Init pit module */
+    PIT_Init(s_PitBase[halTimerState->instance], &pitConfig);
     halTimerState->timerClock_Hz = halTimerConfig->srcClock_Hz;
-    irqId                        = instanceIrq[halTimerState->instance];
-    GPT_GetDefaultConfig(&gptConfig);
-
-    /* Initialize GPT module */
-    GPT_Init(s_GptBase[halTimerState->instance], &gptConfig);
-    /* Set both GPT modules to 1 second duration */
-    GPT_SetOutputCompareValue(s_GptBase[halTimerState->instance], kGPT_OutputCompare_Channel1,
-                              (uint32_t)USEC_TO_COUNT(halTimerState->timeout, halTimerState->timerClock_Hz));
-    /* Enable GPT Output Compare1 interrupt */
-    GPT_EnableInterrupts(s_GptBase[halTimerState->instance], (uint32_t)kGPT_OutputCompare1InterruptEnable);
-
+    /* Set timer period for channel 0 */
+    PIT_SetTimerPeriod(s_PitBase[halTimerState->instance], kPIT_Chnl_0,
+                       (uint32_t)USEC_TO_COUNT(halTimerState->timeout, halTimerState->timerClock_Hz));
+    /* Enable timer interrupts for channel 0 */
+    PIT_EnableInterrupts(s_PitBase[halTimerState->instance], kPIT_Chnl_0, (uint32_t)kPIT_TimerInterruptEnable);
     s_timerHandle[halTimerState->instance] = halTimerHandle;
+
     NVIC_SetPriority((IRQn_Type)irqId, HAL_TIMER_ISR_PRIORITY);
     (void)EnableIRQ(irqId);
     return kStatus_HAL_TimerSuccess;
@@ -112,15 +135,14 @@ void HAL_TimerDeinit(hal_timer_handle_t halTimerHandle)
     assert(halTimerHandle);
     hal_timer_handle_struct_t *halTimerState = halTimerHandle;
     s_timerHandle[halTimerState->instance]   = NULL;
-    GPT_Deinit(s_GptBase[halTimerState->instance]);
+    PIT_Deinit(s_PitBase[halTimerState->instance]);
 }
-
 /*************************************************************************************/
 void HAL_TimerEnable(hal_timer_handle_t halTimerHandle)
 {
     assert(halTimerHandle);
     hal_timer_handle_struct_t *halTimerState = halTimerHandle;
-    GPT_StartTimer(s_GptBase[halTimerState->instance]);
+    PIT_StartTimer(s_PitBase[halTimerState->instance], kPIT_Chnl_0);
 }
 
 /*************************************************************************************/
@@ -128,7 +150,7 @@ void HAL_TimerDisable(hal_timer_handle_t halTimerHandle)
 {
     assert(halTimerHandle);
     hal_timer_handle_struct_t *halTimerState = halTimerHandle;
-    GPT_StopTimer(s_GptBase[halTimerState->instance]);
+    PIT_StopTimer(s_PitBase[halTimerState->instance], kPIT_Chnl_0);
 }
 
 /*************************************************************************************/
@@ -142,27 +164,22 @@ void HAL_TimerInstallCallback(hal_timer_handle_t halTimerHandle, hal_timer_callb
 
 uint32_t HAL_TimerGetMaxTimeout(hal_timer_handle_t halTimerHandle)
 {
-    uint32_t reserveCount;
+    uint64_t reserveCount;
+    uint64_t retValue;
+    uint32_t reserveMs = 4U;
     assert(halTimerHandle);
     hal_timer_handle_struct_t *halTimerState = halTimerHandle;
-    reserveCount                             = (uint32_t)MSEC_TO_COUNT((4), (halTimerState->timerClock_Hz));
-    if ((reserveCount < MSEC_TO_COUNT((1), (halTimerState->timerClock_Hz))) ||
-        (reserveCount > (GPT_CNT_COUNT_MASK - 0xfU)))
-    {
-        /* make sure 1ms timeout doesn't overflow */
-        assert(USEC_TO_COUNT(1000, (halTimerState->timerClock_Hz)) < GPT_CNT_COUNT_MASK);
-        return 1000;
-    }
+    reserveCount                             = (uint32_t)MSEC_TO_COUNT((reserveMs), (halTimerState->timerClock_Hz));
 
-    return (uint32_t)COUNT_TO_USEC(((uint64_t)GPT_CNT_COUNT_MASK - (uint64_t)reserveCount),
-                                   halTimerState->timerClock_Hz);
+    retValue = COUNT_TO_USEC(((uint64_t)0xFFFFFFFF - (uint64_t)reserveCount), (uint64_t)halTimerState->timerClock_Hz);
+    return (uint32_t)((retValue > 0xFFFFFFFFU) ? (0xFFFFFFFFU - reserveMs * 1000U) : (uint32_t)retValue);
 }
 /* return micro us */
 uint32_t HAL_TimerGetCurrentTimerCount(hal_timer_handle_t halTimerHandle)
 {
     assert(halTimerHandle);
     hal_timer_handle_struct_t *halTimerState = halTimerHandle;
-    return (uint32_t)COUNT_TO_USEC((uint64_t)GPT_GetCurrentTimerCount(s_GptBase[halTimerState->instance]),
+    return (uint32_t)COUNT_TO_USEC((uint64_t)PIT_GetCurrentTimerCount(s_PitBase[halTimerState->instance], kPIT_Chnl_0),
                                    halTimerState->timerClock_Hz);
 }
 
@@ -173,12 +190,11 @@ hal_timer_status_t HAL_TimerUpdateTimeout(hal_timer_handle_t halTimerHandle, uin
     hal_timer_handle_struct_t *halTimerState = halTimerHandle;
     halTimerState->timeout                   = timeout;
     tickCount = (uint32_t)USEC_TO_COUNT(halTimerState->timeout, halTimerState->timerClock_Hz);
-
-    if ((tickCount < 1U) || (tickCount > (GPT_CNT_COUNT_MASK - 0xfU)))
+    if ((tickCount < 1U) || (tickCount > 0xfffffff0U))
     {
         return kStatus_HAL_TimerOutOfRanger;
     }
-    GPT_SetOutputCompareValue(s_GptBase[halTimerState->instance], kGPT_OutputCompare_Channel1, tickCount);
+    PIT_SetTimerPeriod(s_PitBase[halTimerState->instance], kPIT_Chnl_0, tickCount);
     return kStatus_HAL_TimerSuccess;
 }
 
