@@ -11,7 +11,7 @@
 #include "fsl_pit.h"
 
 // 定时器时钟频率宏定义
-#define PIT_SOURCE_CLOCK CLOCK_GetFreq(kCLOCK_OscClk)
+#define PIT_SOURCE_CLOCK CLOCK_GetFreq(kCLOCK_PerClk)
 
 //中断宏定义
 #define PIT_IRQ_ID PIT_IRQn

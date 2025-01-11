@@ -12,6 +12,7 @@ package_id: MIMXRT1052CVL5B
 mcu_data: ksdk2_0
 processor_version: 15.0.1
 board: IMXRT1050-EVKB
+external_user_signals: {}
 pin_labels:
 - {pin_num: E3, pin_signal: GPIO_EMC_00, label: SEMC_D0, identifier: SEMC_D0}
 - {pin_num: F3, pin_signal: GPIO_EMC_01, label: SEMC_D1, identifier: SEMC_D1}
@@ -225,6 +226,7 @@ void BOARD_InitBootPins(void) {
     BOARD_InitLeds();
     BOARD_InitKeys();
     BOARD_InitI2c1();
+    BOARD_InputCap();
 }
 
 /*
@@ -425,6 +427,35 @@ void BOARD_InitI2c1(void) {
   IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_01_LPI2C1_SDA, 1U);
   IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_00_LPI2C1_SCL, 0xD8B0U); 
   IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_01_LPI2C1_SDA, 0xD8B0U); 
+}
+
+/*
+ * TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
+BOARD_InputCap:
+- options: {callFromInitBoot: 'true', coreID: core0, enableClock: 'true'}
+- pin_list:
+  - {pin_num: A7, peripheral: GPT2, signal: 'gpt_capture, 2', pin_signal: GPIO_EMC_40, pull_up_down_config: Pull_Up_100K_Ohm}
+ * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
+ */
+
+/* FUNCTION ************************************************************************************************************
+ *
+ * Function Name : BOARD_InputCap
+ * Description   : Configures pin routing and optionally pin electrical features.
+ *
+ * END ****************************************************************************************************************/
+void BOARD_InputCap(void) {
+  CLOCK_EnableClock(kCLOCK_Iomuxc);           
+
+  IOMUXC_SetPinMux(IOMUXC_GPIO_EMC_40_GPT2_CAPTURE2, 0U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_EMC_40_GPT2_CAPTURE2, 0x90B0U);
+
+  gpio_pin_config_t gpt_config;
+
+  gpt_config.direction = kGPIO_DigitalInput;
+  gpt_config.interruptMode = kGPIO_NoIntmode;
+
+  GPIO_PinInit(GPIO3, 26U, &gpt_config);
 }
 /***********************************************************************************************************************
  * EOF

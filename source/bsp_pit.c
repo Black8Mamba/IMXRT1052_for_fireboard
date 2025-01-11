@@ -35,7 +35,7 @@ void led_timer_cb(void* param)
 
 void PIT_TIMER_Init(void)
 {
-	  CLOCK_SetMux(kCLOCK_PerclkMux, 1U);
+	  CLOCK_SetMux(kCLOCK_PerclkMux, 0U);
 	  CLOCK_SetDiv(kCLOCK_PerclkDiv, 0U);
 
 	// use pit_adapter
@@ -56,7 +56,7 @@ void PIT_TIMER_Init(void)
 	 // usb timer_manager
 	timer_config_t timer_config;
 	timer_config.instance = 0;
-	timer_config.srcClock_Hz = CLOCK_GetFreq(kCLOCK_OscClk);
+	timer_config.srcClock_Hz = CLOCK_GetFreq(kCLOCK_PerClk);
 
 	timer_status_t  status = TM_Init(&timer_config);
 	assert(kStatus_TimerSuccess == status);

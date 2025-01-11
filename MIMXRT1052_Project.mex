@@ -20,7 +20,7 @@
    <tools>
       <pins name="Pins" version="15.0" enabled="true" update_project_code="true">
          <generated_project_files>
-            <file path="board/pin_mux.c" update_enabled="false"/>
+            <file path="board/pin_mux.c" update_enabled="true"/>
             <file path="board/pin_mux.h" update_enabled="true"/>
          </generated_project_files>
          <pins_profile>
@@ -444,6 +444,38 @@
                   </pin>
                </pins>
             </function>
+            <function name="BOARD_InputCap">
+               <description>Configures pin routing and optionally pin electrical features.</description>
+               <options>
+                  <callFromInitBoot>true</callFromInitBoot>
+                  <coreID>core0</coreID>
+                  <enableClock>true</enableClock>
+               </options>
+               <dependencies>
+                  <dependency resourceType="Peripheral" resourceId="GPT2" description="Peripheral GPT2 signals are routed in the Pins Tool, but the peripheral is not initialized in the Peripherals Tool." problem_level="1" source="Pins:BOARD_InputCap">
+                     <feature name="initialized" evaluation="equal">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.common" description="Pins initialization requires the COMMON Driver in the project." problem_level="2" source="Pins:BOARD_InputCap">
+                     <feature name="enabled" evaluation="equal" configuration="core0">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.iomuxc" description="Pins initialization requires the IOMUXC Driver in the project." problem_level="2" source="Pins:BOARD_InputCap">
+                     <feature name="enabled" evaluation="equal" configuration="core0">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+               </dependencies>
+               <pins>
+                  <pin peripheral="GPT2" signal="gpt_capture, 2" pin_num="A7" pin_signal="GPIO_EMC_40">
+                     <pin_features>
+                        <pin_feature name="pull_up_down_config" value="Pull_Up_100K_Ohm"/>
+                     </pin_features>
+                  </pin>
+               </pins>
+            </function>
          </functions_list>
       </pins>
       <clocks name="Clocks" version="13.0" enabled="true" update_project_code="true">
@@ -729,7 +761,7 @@
          </dcdx_profile>
          <dcdx_configurations/>
       </dcdx>
-      <periphs name="Peripherals" version="14.0" enabled="true" update_project_code="true">
+      <periphs name="Peripherals" version="14.0" enabled="true" update_project_code="false">
          <dependencies>
             <dependency resourceType="SWComponent" resourceId="utility.debug_console" description="工具链/IDE工程中未找到Utility debug_console。工程不会被编译！" problem_level="2" source="Peripherals">
                <feature name="enabled" evaluation="equal">
@@ -760,7 +792,7 @@
          <generated_project_files>
             <file path="board/peripherals.c" update_enabled="true"/>
             <file path="board/peripherals.h" update_enabled="true"/>
-            <file path="utilities/fsl_debug_console_conf.h" update_enabled="false"/>
+            <file path="utilities/fsl_debug_console_conf.h" update_enabled="true"/>
          </generated_project_files>
          <peripherals_profile>
             <processor_version>15.0.1</processor_version>

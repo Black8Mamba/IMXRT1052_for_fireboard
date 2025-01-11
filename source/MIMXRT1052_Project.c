@@ -31,6 +31,7 @@
 #include "bsp_i2c_eeprom.h"
 #include "bsp_nvic.h"
 #include "bsp_pit.h"
+#include "bsp_gpt.h"
 /* TODO: insert other include files here. */
 
 extern Shell shell;
@@ -160,8 +161,9 @@ int main(void) {
 	PRINTF("main_stack_start_addr:%x, main_stack_size:%x, code_start_addr:%x, code_size:%x\n", main_stack_start_addr, main_stack_size, code_start_addr, code_size);
 	CORE_BOARD_LED(0);
 
-//	Set_NVIC_PriorityGroup(Group_4);
+	Set_NVIC_PriorityGroup(Group_4);
 	PIT_TIMER_Init();
+	GPT_Config();
 //	PIT_StartTimer(PIT, PIT_CHANNEL_X);
 //	EEPROM_Test();
     while(1)

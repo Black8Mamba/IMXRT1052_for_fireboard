@@ -166,6 +166,19 @@ void BOARD_InitKeys(void);
  */
 void BOARD_InitI2c1(void);
 
+/* GPIO_EMC_40 (coord A7), ENET_MDC */
+/* Routed pin properties */
+#define BOARD_INPUTCAP_ENET_MDC_PERIPHERAL                                  GPT2   /*!< Peripheral name */
+#define BOARD_INPUTCAP_ENET_MDC_SIGNAL                               gpt_capture   /*!< Signal name */
+#define BOARD_INPUTCAP_ENET_MDC_CHANNEL                                       2U   /*!< Signal channel */
+
+
+/*!
+ * @brief Configures pin routing and optionally pin electrical features.
+ *
+ */
+void BOARD_InputCap(void);
+
 #if defined(__cplusplus)
 }
 #endif
