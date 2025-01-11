@@ -32,11 +32,14 @@
 #include "bsp_nvic.h"
 #include "bsp_pit.h"
 #include "bsp_gpt.h"
+#include "bsp_qtmr.h"
 /* TODO: insert other include files here. */
 
 extern Shell shell;
 
 static BUTTON_HANDLE_DEFINE(s_buttonHandle);
+
+extern volatile uint32_t qtmrIsrFlag;
 
 button_status_t button_cb(void *buttonHandle,
                                              button_callback_message_t *message,
@@ -164,15 +167,18 @@ int main(void) {
 	Set_NVIC_PriorityGroup(Group_4);
 	PIT_TIMER_Init();
 	GPT_Config();
+	delay_ms(500);
+	TMR_Init();
 //	PIT_StartTimer(PIT, PIT_CHANNEL_X);
 //	EEPROM_Test();
     while(1)
     {
 //    	shellTask(&shell);
-    	RGB_LED_COLOR_YELLOW
-    	delay_ms(500);
-    	RGB_LED_COLOR_BLUE
-    	delay_ms(500);
+//    	RGB_LED_COLOR_YELLOW
+//    	delay_ms(500);
+//    	RGB_LED_COLOR_BLUE
+//    	delay_ms(500);
+
 //    	fault_test_by_div0();
 //    	fault_test_by_unalign();
 //    	delay_us(500*1000);

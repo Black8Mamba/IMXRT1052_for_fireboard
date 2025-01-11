@@ -30,7 +30,7 @@ void led_timer_cb(void* param)
 	{
 		RGB_LED_COLOR_GREEN
 	}
-	log_i("led_timer_cb:%lld!\n", get_system_ms());
+//	log_i("led_timer_cb:%lld!\n", get_system_ms());
 }
 
 void PIT_TIMER_Init(void)
