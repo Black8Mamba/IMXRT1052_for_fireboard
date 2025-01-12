@@ -35,8 +35,10 @@ void led_timer_cb(void* param)
 
 void PIT_TIMER_Init(void)
 {
-	  CLOCK_SetMux(kCLOCK_PerclkMux, 0U);
-	  CLOCK_SetDiv(kCLOCK_PerclkDiv, 0U);
+//	  CLOCK_SetMux(kCLOCK_PerclkMux, 0U);
+//	  CLOCK_SetDiv(kCLOCK_PerclkDiv, 0U);
+	// 初始化75M 0/1
+	  log_i("kCLOCK_PerClk:      %d Hz\r\n", CLOCK_GetFreq(kCLOCK_PerClk));
 
 	// use pit_adapter
 //	hal_timer_handle_t timer_handle = &led_timer[0];
@@ -86,19 +88,3 @@ void PIT_TIMER_Init(void)
 //  set_IRQn_Priority(PIT_IRQ_ID,Group4_PreemptPriority_6, Group4_SubPriority_0);
 //  EnableIRQ(PIT_IRQ_ID);
 }
-
-//void PIT_LED_HANDLER(void)
-//{
-//   k++;
-//  PIT_ClearStatusFlags(PIT, PIT_CHANNEL_X, kPIT_TimerFlag);
-//
-//  if(0 == (k%2))
-//  {
-//	  RGB_LED_COLOR_RED
-//  }
-//  else
-//  {
-//	  RGB_LED_COLOR_GREEN
-//  }
-//}
-

@@ -8,12 +8,13 @@
 #include "bsp_nvic.h"
 #include "bsp_qtmr.h"
 #include "bsp_led.h"
+#include "elog.h"
 
 volatile uint32_t qtmrIsrFlag = 0;
 
 void TMR_Init(void)
 {
-
+	log_i("kCLOCK_IpgDiv:      %d Hz\r\n", CLOCK_GetFreq(kCLOCK_IpgDiv));
   qtmr_config_t qtmrConfig;
 
   QTMR_GetDefaultConfig(&qtmrConfig);

@@ -10,7 +10,7 @@
 
 #include "fsl_pit.h"
 
-// 定时器时钟频率宏定义
+// 定时器时钟频率宏定义  perclk 75M,不分频
 #define PIT_SOURCE_CLOCK CLOCK_GetFreq(kCLOCK_PerClk)
 
 //中断宏定义
