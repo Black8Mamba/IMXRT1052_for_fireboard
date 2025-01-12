@@ -34,6 +34,7 @@
 #include "bsp_gpt.h"
 #include "bsp_qtmr.h"
 #include "bsp_adc.h"
+#include "bsp_snvs_hp_rtc.h"
 /* TODO: insert other include files here. */
 
 extern Shell shell;
@@ -173,6 +174,7 @@ int main(void) {
 	delay_ms(500);
 	TMR_Init();
 	ADC1_init();
+	SNVS_init();
 //	PIT_StartTimer(PIT, PIT_CHANNEL_X);
 //	EEPROM_Test();
 
@@ -193,6 +195,9 @@ int main(void) {
         	log_i("The current AD value:%f V\n", ADC_ConvertedValueLocal);
         	delay_ms(500);
     	}
+
+    	RTC_TimeAndDate_Show();
+    	delay_ms(500);
 
 //    	shellTask(&shell);
 //    	RGB_LED_COLOR_YELLOW
