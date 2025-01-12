@@ -227,6 +227,7 @@ void BOARD_InitBootPins(void) {
     BOARD_InitKeys();
     BOARD_InitI2c1();
     BOARD_InputCap();
+    BOARD_InitAdc();
 }
 
 /*
@@ -423,8 +424,8 @@ BOARD_InitI2c1:
 void BOARD_InitI2c1(void) {
   CLOCK_EnableClock(kCLOCK_Iomuxc);           
 
-  IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_00_LPI2C1_SCL, 1U);
-  IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_01_LPI2C1_SDA, 1U);
+  IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_00_LPI2C1_SCL, 0U); 
+  IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_01_LPI2C1_SDA, 0U); 
   IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_00_LPI2C1_SCL, 0xD8B0U); 
   IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_01_LPI2C1_SDA, 0xD8B0U); 
 }
@@ -448,14 +449,35 @@ void BOARD_InputCap(void) {
   CLOCK_EnableClock(kCLOCK_Iomuxc);           
 
   IOMUXC_SetPinMux(IOMUXC_GPIO_EMC_40_GPT2_CAPTURE2, 0U); 
-  IOMUXC_SetPinConfig(IOMUXC_GPIO_EMC_40_GPT2_CAPTURE2, 0x90B0U);
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_EMC_40_GPT2_CAPTURE2, 0x90B0U); 
+}
 
-  gpio_pin_config_t gpt_config;
+/*
+ * TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
+BOARD_InitAdc:
+- options: {callFromInitBoot: 'true', coreID: core0, enableClock: 'true'}
+- pin_list:
+  - {pin_num: J13, peripheral: ADC1, signal: 'IN, 0', pin_signal: GPIO_AD_B1_11, pull_keeper_enable: Disable}
+ * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
+ */
 
-  gpt_config.direction = kGPIO_DigitalInput;
-  gpt_config.interruptMode = kGPIO_NoIntmode;
+/* FUNCTION ************************************************************************************************************
+ *
+ * Function Name : BOARD_InitAdc
+ * Description   : Configures pin routing and optionally pin electrical features.
+ *
+ * END ****************************************************************************************************************/
+void BOARD_InitAdc(void) {
+  CLOCK_EnableClock(kCLOCK_Iomuxc);           
 
-  GPIO_PinInit(GPIO3, 26U, &gpt_config);
+  IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_11_GPIO1_IO27, 0U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_11_GPIO1_IO27, 0xB0U);
+
+  gpio_pin_config_t adc_config;
+
+  adc_config.direction = kGPIO_DigitalInput;
+  adc_config.interruptMode = kGPIO_NoIntmode;
+  GPIO_PinInit(GPIO1, 27U, &adc_config);
 }
 /***********************************************************************************************************************
  * EOF

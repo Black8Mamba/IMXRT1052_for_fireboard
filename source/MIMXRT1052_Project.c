@@ -33,6 +33,7 @@
 #include "bsp_pit.h"
 #include "bsp_gpt.h"
 #include "bsp_qtmr.h"
+#include "bsp_adc.h"
 /* TODO: insert other include files here. */
 
 extern Shell shell;
@@ -69,6 +70,8 @@ extern const int CMB_CSTACK_BLOCK_START;
 extern const int CMB_CSTACK_BLOCK_END;
 extern const int CMB_CODE_SECTION_START;
 extern const int CMB_CODE_SECTION_END;
+extern volatile bool ADC_ConversionDoneFlag;
+extern volatile uint32_t ADC_ConvertedValue;
 void userShellInit(void);
 int main(void) {
 
@@ -169,10 +172,28 @@ int main(void) {
 	GPT_Config();
 	delay_ms(500);
 	TMR_Init();
+	ADC1_init();
 //	PIT_StartTimer(PIT, PIT_CHANNEL_X);
 //	EEPROM_Test();
+
+	adc_channel_config_t adcChannelConfigStruct;
+	float ADC_ConvertedValueLocal = 0;
+	adcChannelConfigStruct.channelNumber = 0;
+	adcChannelConfigStruct.enableInterruptOnConversionCompleted = true;
+	ADC_ConversionDoneFlag = false;
     while(1)
     {
+    	if (ADC_ConversionDoneFlag == true)
+    	{
+    		ADC_ConversionDoneFlag = false;
+        	ADC_SetChannelConfig(ADC1_PERIPHERAL, ADC1_CH0_CONTROL_GROUP, &adcChannelConfigStruct);
+
+        	log_i("The Conversion Value:%d\n", ADC_ConvertedValue);
+        	ADC_ConvertedValueLocal =((float)ADC_ConvertedValue)/4095.0f*3.3f;
+        	log_i("The current AD value:%f V\n", ADC_ConvertedValueLocal);
+        	delay_ms(500);
+    	}
+
 //    	shellTask(&shell);
 //    	RGB_LED_COLOR_YELLOW
 //    	delay_ms(500);

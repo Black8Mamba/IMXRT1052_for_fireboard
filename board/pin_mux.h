@@ -179,6 +179,19 @@ void BOARD_InitI2c1(void);
  */
 void BOARD_InputCap(void);
 
+/* GPIO_AD_B1_11 (coord J13), SAI1_RX_BCLK/CSI_D6/J35[7]/J23[2] */
+/* Routed pin properties */
+#define BOARD_INITADC_CSI_D6_PERIPHERAL                                     ADC1   /*!< Peripheral name */
+#define BOARD_INITADC_CSI_D6_SIGNAL                                           IN   /*!< Signal name */
+#define BOARD_INITADC_CSI_D6_CHANNEL                                          0U   /*!< Signal channel */
+
+
+/*!
+ * @brief Configures pin routing and optionally pin electrical features.
+ *
+ */
+void BOARD_InitAdc(void);
+
 #if defined(__cplusplus)
 }
 #endif

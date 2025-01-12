@@ -23,4 +23,6 @@
 
 #define TMR_TIMIER 50
 
+void TMR_Init(void);
+
 #endif /* BSP_QTMR_H_ */
