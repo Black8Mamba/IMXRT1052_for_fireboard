@@ -14,23 +14,55 @@
 #include "elog.h"
 #include "perf_counter/perf_counter.h"
 
-volatile unsigned int k = 0;
+volatile uint64_t k = 0;
 
 //TIMER_HANDLE_DEFINE(led_timer);
 TIMER_MANAGER_HANDLE_DEFINE(timerHandle);
 
+int period_1ms_flag = 0;
+int period_2ms_flag = 0;
+int period_5ms_flag = 0;
+int period_10ms_flag = 0;
+int period_50ms_flag = 0;
+int period_100ms_flag = 0;
+int period_500ms_flag = 0;
+int period_1000ms_flag = 0;
+
 void led_timer_cb(void* param)
 {
 	k++;
-	if(0 == (k%2))
+	if (k % 1 == 0)
 	{
-		RGB_LED_COLOR_RED
+		period_1ms_flag = 1;
 	}
-	else
+	if (k % 2 == 0)
 	{
-		RGB_LED_COLOR_GREEN
+		period_2ms_flag = 1;
 	}
-//	log_i("led_timer_cb:%lld!\n", get_system_ms());
+	if (k % 5 == 0)
+	{
+		period_5ms_flag = 1;
+	}
+	if (k % 10 == 0)
+	{
+		period_10ms_flag = 1;
+	}
+	if (k % 50 == 0)
+	{
+		period_50ms_flag = 1;
+	}
+	if (k % 100 == 0)
+	{
+		period_100ms_flag = 1;
+	}
+	if (k % 500 == 0)
+	{
+		period_500ms_flag = 1;
+	}
+	if (k % 1000 == 0)
+	{
+		period_1000ms_flag = 1;
+	}
 }
 
 void PIT_TIMER_Init(void)
@@ -69,7 +101,7 @@ void PIT_TIMER_Init(void)
 	status = TM_InstallCallback(timerHandle, led_timer_cb, NULL);
     assert(kStatus_TimerSuccess == status);
 
-    status = TM_Start(timerHandle, (uint8_t)kTimerModeIntervalTimer, 1000);
+    status = TM_Start(timerHandle, (uint8_t)kTimerModeIntervalTimer, 1);
     assert(kStatus_TimerSuccess == status);
 
 //  pit_config_t pitConfig;

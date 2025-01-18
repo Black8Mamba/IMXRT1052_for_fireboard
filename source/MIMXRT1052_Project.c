@@ -37,11 +37,23 @@
 #include "bsp_snvs_hp_rtc.h"
 /* TODO: insert other include files here. */
 
+extern int period_1ms_flag;
+extern int period_2ms_flag;
+extern int period_5ms_flag;
+extern int period_10ms_flag;
+extern int period_50ms_flag;
+extern int period_100ms_flag;
+extern int period_500ms_flag;
+extern int period_1000ms_flag;
+
 extern Shell shell;
 
 static BUTTON_HANDLE_DEFINE(s_buttonHandle);
 
 extern volatile uint32_t qtmrIsrFlag;
+
+adc_channel_config_t adcChannelConfigStruct;
+float ADC_ConvertedValueLocal = 0;
 
 button_status_t button_cb(void *buttonHandle,
                                              button_callback_message_t *message,
@@ -74,6 +86,70 @@ extern const int CMB_CODE_SECTION_END;
 extern volatile bool ADC_ConversionDoneFlag;
 extern volatile uint32_t ADC_ConvertedValue;
 void userShellInit(void);
+
+
+void sys_1ms_task(void)
+{
+
+}
+
+void sys_2ms_task(void)
+{
+
+}
+
+void sys_5ms_task(void)
+{
+//	shellTask(&shell);
+}
+
+void sys_10ms_task(void)
+{
+
+}
+
+void sys_50ms_task(void)
+{
+
+}
+
+void sys_100ms_task(void)
+{
+
+}
+
+void sys_500ms_task(void)
+{
+	static int flag = 1;
+
+	flag = !flag;
+	if (flag == 1)
+	{
+		RGB_LED_COLOR_YELLOW
+	} else
+	{
+		RGB_LED_COLOR_GREEN;
+	}
+
+}
+
+void sys_1000ms_task(void)
+{
+//	RTC_TimeAndDate_Show();
+//	ADC_ConversionDoneFlag = true;
+//	adcChannelConfigStruct.channelNumber = 0;
+//	adcChannelConfigStruct.enableInterruptOnConversionCompleted = true;
+//	if (ADC_ConversionDoneFlag == true)
+//	{
+//		ADC_ConversionDoneFlag = false;
+//    	ADC_SetChannelConfig(ADC1_PERIPHERAL, ADC1_CH0_CONTROL_GROUP, &adcChannelConfigStruct);
+//
+//    	log_i("The Conversion Value:%d\n", ADC_ConvertedValue);
+//    	ADC_ConvertedValueLocal =((float)ADC_ConvertedValue)/4095.0f*3.3f;
+//    	log_i("The current AD value:%f V\n", ADC_ConvertedValueLocal);
+//	}
+}
+
 int main(void) {
 
     /* Init board hardware. */
@@ -113,9 +189,6 @@ int main(void) {
     elog_start();
 
 //    SysTick_Init();
-//    RGB_LED_COLOR_PURPLE
-    RGB_LED_COLOR_YELLOW
-
 	 button_config_t buttonConfig;
 	 buttonConfig.gpio.port = 1;
 	 buttonConfig.gpio.pin = 5;
@@ -175,35 +248,61 @@ int main(void) {
 	TMR_Init();
 	ADC1_init();
 	SNVS_init();
-//	PIT_StartTimer(PIT, PIT_CHANNEL_X);
 //	EEPROM_Test();
+	while(1)
+	{
+		if (period_1ms_flag)
+		{
+			period_1ms_flag = 0;
+			sys_1ms_task();
+		}
 
-	adc_channel_config_t adcChannelConfigStruct;
-	float ADC_ConvertedValueLocal = 0;
-	adcChannelConfigStruct.channelNumber = 0;
-	adcChannelConfigStruct.enableInterruptOnConversionCompleted = true;
-	ADC_ConversionDoneFlag = false;
-    while(1)
-    {
-    	if (ADC_ConversionDoneFlag == true)
-    	{
-    		ADC_ConversionDoneFlag = false;
-        	ADC_SetChannelConfig(ADC1_PERIPHERAL, ADC1_CH0_CONTROL_GROUP, &adcChannelConfigStruct);
+		if (period_2ms_flag)
+		{
+			period_2ms_flag = 0;
+			sys_2ms_task();
+		}
 
-        	log_i("The Conversion Value:%d\n", ADC_ConvertedValue);
-        	ADC_ConvertedValueLocal =((float)ADC_ConvertedValue)/4095.0f*3.3f;
-        	log_i("The current AD value:%f V\n", ADC_ConvertedValueLocal);
-        	delay_ms(500);
-    	}
+		if (period_5ms_flag)
+		{
+			period_5ms_flag = 0;
+			sys_5ms_task();
+		}
 
-    	RTC_TimeAndDate_Show();
-    	delay_ms(500);
+		if (period_10ms_flag)
+		{
+			period_10ms_flag = 0;
+			sys_10ms_task();
+		}
 
-//    	shellTask(&shell);
-//    	RGB_LED_COLOR_YELLOW
-//    	delay_ms(500);
-//    	RGB_LED_COLOR_BLUE
-//    	delay_ms(500);
+		if (period_50ms_flag)
+		{
+			period_50ms_flag = 0;
+			sys_50ms_task();
+		}
+
+		if (period_100ms_flag)
+		{
+			period_100ms_flag = 0;
+			sys_100ms_task();
+		}
+
+		if (period_500ms_flag)
+		{
+			period_500ms_flag = 0;
+			sys_500ms_task();
+		}
+
+		if (period_1000ms_flag)
+		{
+			period_1000ms_flag = 0;
+			sys_1000ms_task();
+		}
+	}
+}
+
+//    while(1)
+//    {
 
 //    	fault_test_by_div0();
 //    	fault_test_by_unalign();
@@ -231,6 +330,5 @@ int main(void) {
 //        }
 //
 //        PRINTF("\r\n delay_us(1000ul) takes %d cycles\r\n", (int)iCycleResult);
-    }
-    return 0 ;
-}
+//    }
+//    return 0 ;
