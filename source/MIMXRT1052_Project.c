@@ -35,6 +35,7 @@
 #include "bsp_qtmr.h"
 #include "bsp_adc.h"
 #include "bsp_snvs_hp_rtc.h"
+#include "bsp_can.h"
 /* TODO: insert other include files here. */
 
 extern int period_1ms_flag;
@@ -148,6 +149,7 @@ void sys_1000ms_task(void)
 //    	ADC_ConvertedValueLocal =((float)ADC_ConvertedValue)/4095.0f*3.3f;
 //    	log_i("The current AD value:%f V\n", ADC_ConvertedValueLocal);
 //	}
+//	loop_test();
 }
 
 int main(void) {
@@ -249,6 +251,7 @@ int main(void) {
 	ADC1_init();
 	SNVS_init();
 //	EEPROM_Test();
+	CAN_Config();
 	while(1)
 	{
 		if (period_1ms_flag)

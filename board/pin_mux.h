@@ -192,6 +192,23 @@ void BOARD_InputCap(void);
  */
 void BOARD_InitAdc(void);
 
+/* GPIO_AD_B0_15 (coord L10), CAN2_RX/U12[4] */
+/* Routed pin properties */
+#define BOARD_INITCAN_CAN2_RX_PERIPHERAL                                    CAN2   /*!< Peripheral name */
+#define BOARD_INITCAN_CAN2_RX_SIGNAL                                          RX   /*!< Signal name */
+
+/* GPIO_AD_B0_14 (coord H14), CAN2_TX/U12[1] */
+/* Routed pin properties */
+#define BOARD_INITCAN_CAN2_TX_PERIPHERAL                                    CAN2   /*!< Peripheral name */
+#define BOARD_INITCAN_CAN2_TX_SIGNAL                                          TX   /*!< Signal name */
+
+
+/*!
+ * @brief Configures pin routing and optionally pin electrical features.
+ *
+ */
+void BOARD_InitCan(void);
+
 #if defined(__cplusplus)
 }
 #endif

@@ -228,6 +228,7 @@ void BOARD_InitBootPins(void) {
     BOARD_InitI2c1();
     BOARD_InputCap();
     BOARD_InitAdc();
+    BOARD_InitCan();
 }
 
 /*
@@ -471,13 +472,32 @@ void BOARD_InitAdc(void) {
   CLOCK_EnableClock(kCLOCK_Iomuxc);           
 
   IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_11_GPIO1_IO27, 0U); 
-  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_11_GPIO1_IO27, 0xB0U);
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_11_GPIO1_IO27, 0xB0U); 
+}
 
-  gpio_pin_config_t adc_config;
+/*
+ * TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
+BOARD_InitCan:
+- options: {callFromInitBoot: 'true', coreID: core0, enableClock: 'true'}
+- pin_list:
+  - {pin_num: L10, peripheral: CAN2, signal: RX, pin_signal: GPIO_AD_B0_15, pull_up_down_config: Pull_Up_22K_Ohm}
+  - {pin_num: H14, peripheral: CAN2, signal: TX, pin_signal: GPIO_AD_B0_14, pull_up_down_config: Pull_Up_22K_Ohm}
+ * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
+ */
 
-  adc_config.direction = kGPIO_DigitalInput;
-  adc_config.interruptMode = kGPIO_NoIntmode;
-  GPIO_PinInit(GPIO1, 27U, &adc_config);
+/* FUNCTION ************************************************************************************************************
+ *
+ * Function Name : BOARD_InitCan
+ * Description   : Configures pin routing and optionally pin electrical features.
+ *
+ * END ****************************************************************************************************************/
+void BOARD_InitCan(void) {
+  CLOCK_EnableClock(kCLOCK_Iomuxc);           
+
+  IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B0_14_FLEXCAN2_TX, 0U); 
+  IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B0_15_FLEXCAN2_RX, 0U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B0_14_FLEXCAN2_TX, 0xD0B0U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B0_15_FLEXCAN2_RX, 0xD0B0U); 
 }
 /***********************************************************************************************************************
  * EOF
