@@ -152,8 +152,19 @@ void sys_1000ms_task(void)
 //	loop_test();
 }
 
-int main(void) {
 
+extern uint32_t __VECTOR_TABLE[];
+
+void relocate_vector_table(void)
+{
+    __disable_irq();
+    memcpy((void *)0x20010000, (void *)__VECTOR_TABLE, 0x400);
+    SCB->VTOR = 0x20010000;
+    __enable_irq();
+}
+
+int main(void) {
+	relocate_vector_table();
     /* Init board hardware. */
     BOARD_ConfigMPU();
     BOARD_InitBootPins();

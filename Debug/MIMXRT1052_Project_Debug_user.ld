@@ -66,32 +66,14 @@ SECTIONS
         __bss_section_table_end = .;
         __section_table_end = . ;
         /* End of Global Section Table */
-		
+		*system_MIMXRT1052 (.text.*)
         *(.after_vectors*)
-		_my_stext = .;
-		*(.text.*) *(.glue_7) *(.glue_7t) *(.eh_frame)
-		KEEP (*(.init))
-    	KEEP (*(.fini))
-    	_my_etext = .;
     	. = ALIGN(4);
-       *(.rodata .rodata.* .constdata .constdata.*)
-       . = ALIGN(4);
     } > BOARD_FLASH
     /*
      * for exception handling/unwind - some Newlib functions (in common
      * with C++ and STDC++) use this.
      */
-    .ARM.extab : ALIGN(4)
-    {
-        *(.ARM.extab* .gnu.linkonce.armextab.*)
-    } > BOARD_FLASH
-
-    .ARM.exidx : ALIGN(4)
-    {
-        __exidx_start = .;
-        *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-        __exidx_end = .;
-    } > BOARD_FLASH
  
     _etext = .;
         
@@ -127,6 +109,20 @@ SECTIONS
         *(.data.$RAM3.*)
         *(.data.$SRAM_OC.*)
         . = ALIGN(4) ;
+		_my_stext = .;
+		*(EXCLUDE_FILE(*system_MIMXRT1052.o).text.*) *(.glue_7) *(.glue_7t) *(.eh_frame)
+		KEEP (*(.init))
+    	KEEP (*(.fini))
+    	_my_etext = .;
+    	. = ALIGN(4);
+		*(.rodata .rodata.* .constdata .constdata.*)
+        . = ALIGN(4);
+         *(.ARM.extab* .gnu.linkonce.armextab.*)
+         . = ALIGN(4);
+        __exidx_start = .;
+        *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+        __exidx_end = .;
+        . = ALIGN(4);         
         PROVIDE(__end_data_RAM3 = .) ;
         PROVIDE(__end_data_SRAM_OC = .) ;
      } > SRAM_OC AT>BOARD_FLASH
@@ -175,7 +171,7 @@ SECTIONS
        *(RamFunction)
        *(.data*)
        . = ALIGN(4) ;
-       _edata = . ;
+       _edata = . ;         
        PROVIDE(__end_data_RAM = .) ;
        PROVIDE(__end_data_SRAM_DTC = .) ;
     } > SRAM_DTC AT>BOARD_FLASH
@@ -204,6 +200,7 @@ SECTIONS
        *(.bss.$RAM3.*)
        *(.bss.$SRAM_OC.*)
        . = ALIGN (. != 0 ? 4 : 1) ; /* avoid empty segment */
+       . = ALIGN(4) ;     
        PROVIDE(__end_bss_RAM3 = .) ;
        PROVIDE(__end_bss_SRAM_OC = .) ;
     } > SRAM_OC AT> SRAM_OC
