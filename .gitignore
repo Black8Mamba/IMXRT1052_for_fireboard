@@ -1,1 +1,3 @@
 /Debug/
+!Debug/MIMXRT1052_Project_Debug_user.ld
+!Debug/MIMXRT1052_Project_Debug.ld
