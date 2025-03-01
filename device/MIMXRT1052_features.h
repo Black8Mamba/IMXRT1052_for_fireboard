@@ -703,7 +703,7 @@
 /* @brief Width of SDRAMCR0[PS] bitfields. */
 #define FSL_FEATURE_SEMC_SUPPORT_SDRAM_PS_BITWIDTH (1)
 /* @brief If SEMC has errata 050577. */
-#define FSL_FEATURE_SEMC_ERRATA_050577 (1)
+#define FSL_FEATURE_SEMC_ERRATA_050577 (0)
 /* @brief If sdram support column address 8 bit (register bit field SRAMCR0[CLO8]). */
 #define FSL_FEATURE_SEMC_SDRAM_SUPPORT_COLUMN_ADDRESS_8BIT (0)
 /* @brief If SEMC has register DBICR2 (register DBICR2). */

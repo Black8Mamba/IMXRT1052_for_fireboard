@@ -36,6 +36,7 @@
 #include "bsp_adc.h"
 #include "bsp_snvs_hp_rtc.h"
 #include "bsp_can.h"
+#include "bsp_sdram.h"
 /* TODO: insert other include files here. */
 
 extern int period_1ms_flag;
@@ -88,6 +89,10 @@ extern volatile bool ADC_ConversionDoneFlag;
 extern volatile uint32_t ADC_ConvertedValue;
 void userShellInit(void);
 
+extern bool SEMC_SDRAMReadWriteTest(void);
+extern void SEMC_SDRAMReadWriteSpeedTest(void);
+extern bool SDRAM_FullChipTest(void);
+
 
 void sys_1ms_task(void)
 {
@@ -119,7 +124,9 @@ void sys_100ms_task(void)
 
 }
 
-void sys_500ms_task(void)
+#include <cr_section_macros.h>
+
+__RAMFUNC(BOARD_SDRAM) void sys_500ms_task(void)
 {
 	static int flag = 1;
 
@@ -174,6 +181,7 @@ int main(void) {
     /* Init FSL debug console. */
     BOARD_InitDebugConsole();
 #endif
+	SDRAM_Init();
 
     cm_backtrace_init("CmBacktrace for i.MX RT1052 EVK Pro Cortex-M7", "1.0", "1.0");
     SystemCoreClockUpdate();
@@ -187,6 +195,7 @@ int main(void) {
     PRINTF("SYSPLLPFD2:      %d Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd2Clk));
     PRINTF("SYSPLLPFD3:      %d Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd3Clk));
     PRINTF("SYSPLLPFD3:      %d Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd3Clk));
+    PRINTF("SEMCCLK:         %d Hz\r\n", EXAMPLE_SEMC_CLK_FREQ);
     PRINTF("RT1025 SystemCoreClock=%dMhz\n", SystemCoreClock/1000000);
 
     /* initialize EasyLogger */
@@ -263,6 +272,16 @@ int main(void) {
 	SNVS_init();
 //	EEPROM_Test();
 	CAN_Config();
+
+//	if(SEMC_SDRAMReadWriteTest() && SDRAM_FullChipTest())
+//	if (SEMC_SDRAMReadWriteTest()&& SDRAM_FullChipTest())
+//	{
+//		PRINTF("test sdram pass!\n");
+//	} else
+//	{
+//		PRINTF("test sdram fail!\n");
+//	}
+
 	while(1)
 	{
 		if (period_1ms_flag)

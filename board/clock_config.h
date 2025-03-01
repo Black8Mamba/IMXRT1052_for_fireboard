@@ -73,15 +73,15 @@ void BOARD_InitBootClocks(void);
 #define BOARD_BOOTCLOCKRUN_SAI3_MCLK1                 63529411UL     /* Clock consumers of SAI3_MCLK1 output : SAI3 */
 #define BOARD_BOOTCLOCKRUN_SAI3_MCLK2                 0UL            /* Clock consumers of SAI3_MCLK2 output : SAI3 */
 #define BOARD_BOOTCLOCKRUN_SAI3_MCLK3                 30000000UL     /* Clock consumers of SAI3_MCLK3 output : SAI3 */
-#define BOARD_BOOTCLOCKRUN_SEMC_CLK_ROOT              75000000UL     /* Clock consumers of SEMC_CLK_ROOT output : SEMC */
+#define BOARD_BOOTCLOCKRUN_SEMC_CLK_ROOT              158400000UL    /* Clock consumers of SEMC_CLK_ROOT output : SEMC */
 #define BOARD_BOOTCLOCKRUN_SPDIF0_CLK_ROOT            30000000UL     /* Clock consumers of SPDIF0_CLK_ROOT output : SPDIF */
 #define BOARD_BOOTCLOCKRUN_SPDIF0_EXTCLK_OUT          0UL            /* Clock consumers of SPDIF0_EXTCLK_OUT output : SPDIF */
 #define BOARD_BOOTCLOCKRUN_TRACE_CLK_ROOT             132000000UL    /* Clock consumers of TRACE_CLK_ROOT output : ARM */
 #define BOARD_BOOTCLOCKRUN_UART_CLK_ROOT              80000000UL     /* Clock consumers of UART_CLK_ROOT output : LPUART1, LPUART2, LPUART3, LPUART4, LPUART5, LPUART6, LPUART7, LPUART8 */
 #define BOARD_BOOTCLOCKRUN_USBPHY1_CLK                0UL            /* Clock consumers of USBPHY1_CLK output : TEMPMON, USB1 */
 #define BOARD_BOOTCLOCKRUN_USBPHY2_CLK                0UL            /* Clock consumers of USBPHY2_CLK output : USB2 */
-#define BOARD_BOOTCLOCKRUN_USDHC1_CLK_ROOT            198000000UL    /* Clock consumers of USDHC1_CLK_ROOT output : USDHC1 */
-#define BOARD_BOOTCLOCKRUN_USDHC2_CLK_ROOT            198000000UL    /* Clock consumers of USDHC2_CLK_ROOT output : USDHC2 */
+#define BOARD_BOOTCLOCKRUN_USDHC1_CLK_ROOT            158400000UL    /* Clock consumers of USDHC1_CLK_ROOT output : USDHC1 */
+#define BOARD_BOOTCLOCKRUN_USDHC2_CLK_ROOT            158400000UL    /* Clock consumers of USDHC2_CLK_ROOT output : USDHC2 */
 
 /*! @brief Arm PLL set for BOARD_BootClockRUN configuration.
  */
@@ -159,15 +159,15 @@ void BOARD_BootClockRUN(void);
 #define BOARD_BOOTCLOCKRUN_528M_SAI3_MCLK1            63529411UL     /* Clock consumers of SAI3_MCLK1 output : SAI3 */
 #define BOARD_BOOTCLOCKRUN_528M_SAI3_MCLK2            0UL            /* Clock consumers of SAI3_MCLK2 output : SAI3 */
 #define BOARD_BOOTCLOCKRUN_528M_SAI3_MCLK3            30000000UL     /* Clock consumers of SAI3_MCLK3 output : SAI3 */
-#define BOARD_BOOTCLOCKRUN_528M_SEMC_CLK_ROOT         66000000UL     /* Clock consumers of SEMC_CLK_ROOT output : SEMC */
+#define BOARD_BOOTCLOCKRUN_528M_SEMC_CLK_ROOT         158400000UL    /* Clock consumers of SEMC_CLK_ROOT output : SEMC */
 #define BOARD_BOOTCLOCKRUN_528M_SPDIF0_CLK_ROOT       30000000UL     /* Clock consumers of SPDIF0_CLK_ROOT output : SPDIF */
 #define BOARD_BOOTCLOCKRUN_528M_SPDIF0_EXTCLK_OUT     0UL            /* Clock consumers of SPDIF0_EXTCLK_OUT output : SPDIF */
 #define BOARD_BOOTCLOCKRUN_528M_TRACE_CLK_ROOT        132000000UL    /* Clock consumers of TRACE_CLK_ROOT output : ARM */
 #define BOARD_BOOTCLOCKRUN_528M_UART_CLK_ROOT         80000000UL     /* Clock consumers of UART_CLK_ROOT output : LPUART1, LPUART2, LPUART3, LPUART4, LPUART5, LPUART6, LPUART7, LPUART8 */
 #define BOARD_BOOTCLOCKRUN_528M_USBPHY1_CLK           0UL            /* Clock consumers of USBPHY1_CLK output : TEMPMON, USB1 */
 #define BOARD_BOOTCLOCKRUN_528M_USBPHY2_CLK           0UL            /* Clock consumers of USBPHY2_CLK output : USB2 */
-#define BOARD_BOOTCLOCKRUN_528M_USDHC1_CLK_ROOT       198000000UL    /* Clock consumers of USDHC1_CLK_ROOT output : USDHC1 */
-#define BOARD_BOOTCLOCKRUN_528M_USDHC2_CLK_ROOT       198000000UL    /* Clock consumers of USDHC2_CLK_ROOT output : USDHC2 */
+#define BOARD_BOOTCLOCKRUN_528M_USDHC1_CLK_ROOT       158400000UL    /* Clock consumers of USDHC1_CLK_ROOT output : USDHC1 */
+#define BOARD_BOOTCLOCKRUN_528M_USDHC2_CLK_ROOT       158400000UL    /* Clock consumers of USDHC2_CLK_ROOT output : USDHC2 */
 
 /*! @brief Arm PLL set for BOARD_BootClockRUN_528M configuration.
  */
