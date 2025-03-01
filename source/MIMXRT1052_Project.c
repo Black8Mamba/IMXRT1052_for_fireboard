@@ -37,6 +37,8 @@
 #include "bsp_snvs_hp_rtc.h"
 #include "bsp_can.h"
 #include "bsp_sdram.h"
+
+#include "easyflash.h"
 /* TODO: insert other include files here. */
 
 extern int period_1ms_flag;
@@ -197,6 +199,23 @@ int main(void) {
     PRINTF("SYSPLLPFD3:      %d Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd3Clk));
     PRINTF("SEMCCLK:         %d Hz\r\n", EXAMPLE_SEMC_CLK_FREQ);
     PRINTF("RT1025 SystemCoreClock=%dMhz\n", SystemCoreClock/1000000);
+
+    if (easyflash_init() != EF_NO_ERR)
+    {
+    	log_e("easyflash_init failed!\n");
+    }
+
+    PRINTF("username:%s\n", ef_get_env("username"));
+
+    EfErrCode err = ef_set_and_save_env("test env", "jiyj");
+    PRINTF("err:%d, EF_NO_ERR:%d\n", err, EF_NO_ERR);
+    if (err != EF_NO_ERR)
+    {
+    	PRINTF("set test env failed!\n");
+    } else
+    {
+    	PRINTF("get test env:%s\n", ef_get_env("test env"));
+    }
 
     /* initialize EasyLogger */
     elog_init();
