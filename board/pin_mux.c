@@ -586,6 +586,7 @@ BOARD_InitSdram:
     slew_rate: Fast}
   - {pin_num: E1, peripheral: SEMC, signal: 'CS, 0', pin_signal: GPIO_EMC_29, hysteresis_enable: Enable, pull_keeper_select: Keeper, speed: MHZ_200, drive_strength: R0_7,
     slew_rate: Fast}
+  - {pin_num: C7, peripheral: SEMC, signal: 'CSX, 0', pin_signal: GPIO_EMC_41, hysteresis_enable: Enable, speed: MHZ_200, drive_strength: R0_7, slew_rate: Fast}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 
@@ -703,6 +704,11 @@ void BOARD_InitSdram(void) {
   IOMUXC_SetPinMux(IOMUXC_GPIO_EMC_38_SEMC_DM01, 0U); 
   IOMUXC_SetPinMux(IOMUXC_GPIO_EMC_39_SEMC_DQS, 1U); 
 #if FSL_IOMUXC_DRIVER_VERSION >= MAKE_VERSION(2, 0, 3)
+  IOMUXC_SetPinMux(IOMUXC_GPIO_EMC_41_SEMC_CSX0, 0U); 
+#else
+  IOMUXC_SetPinMux(IOMUXC_GPIO_EMC_41_SEMC_CSX00, 0U); 
+#endif
+#if FSL_IOMUXC_DRIVER_VERSION >= MAKE_VERSION(2, 0, 3)
   IOMUXC_SetPinConfig(IOMUXC_GPIO_EMC_00_SEMC_DA00, 0x0110F9U); 
 #else
   IOMUXC_SetPinConfig(IOMUXC_GPIO_EMC_00_SEMC_DATA00, 0x0110F9U); 
@@ -806,6 +812,11 @@ void BOARD_InitSdram(void) {
 #endif
   IOMUXC_SetPinConfig(IOMUXC_GPIO_EMC_38_SEMC_DM01, 0x0110F9U); 
   IOMUXC_SetPinConfig(IOMUXC_GPIO_EMC_39_SEMC_DQS, 0x0110F9U); 
+#if FSL_IOMUXC_DRIVER_VERSION >= MAKE_VERSION(2, 0, 3)
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_EMC_41_SEMC_CSX0, 0x0110F9U); 
+#else
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_EMC_41_SEMC_CSX00, 0x0110F9U); 
+#endif
 }
 /***********************************************************************************************************************
  * EOF

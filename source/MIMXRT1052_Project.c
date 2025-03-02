@@ -37,6 +37,7 @@
 #include "bsp_snvs_hp_rtc.h"
 #include "bsp_can.h"
 #include "bsp_sdram.h"
+#include "bsp_nand.h"
 
 #include "easyflash.h"
 /* TODO: insert other include files here. */
@@ -94,6 +95,8 @@ void userShellInit(void);
 extern bool SEMC_SDRAMReadWriteTest(void);
 extern void SEMC_SDRAMReadWriteSpeedTest(void);
 extern bool SDRAM_FullChipTest(void);
+extern void nand_flash_test(void);
+void nand_flash_init(void);
 
 
 void sys_1ms_task(void)
@@ -128,19 +131,22 @@ void sys_100ms_task(void)
 
 #include <cr_section_macros.h>
 
-__RAMFUNC(BOARD_SDRAM) void sys_500ms_task(void)
+//__RAMFUNC(BOARD_SDRAM)
+void sys_500ms_task(void)
 {
 	static int flag = 1;
 
 	flag = !flag;
 	if (flag == 1)
 	{
+		EfErrCode err = ef_set_and_save_env("testenv", "test2");
 		RGB_LED_COLOR_YELLOW
 	} else
 	{
+		EfErrCode err = ef_set_and_save_env("testenv", "test1");
 		RGB_LED_COLOR_GREEN;
 	}
-
+	PRINTF("testenv is %s!\n", ef_get_env("testenv"));
 }
 
 void sys_1000ms_task(void)
@@ -173,7 +179,7 @@ void relocate_vector_table(void)
 }
 
 int main(void) {
-	relocate_vector_table();
+//	relocate_vector_table();
     /* Init board hardware. */
     BOARD_ConfigMPU();
     BOARD_InitBootPins();
@@ -183,7 +189,8 @@ int main(void) {
     /* Init FSL debug console. */
     BOARD_InitDebugConsole();
 #endif
-	SDRAM_Init();
+//	SDRAM_Init();
+    BOARD_InitNand();
 
     cm_backtrace_init("CmBacktrace for i.MX RT1052 EVK Pro Cortex-M7", "1.0", "1.0");
     SystemCoreClockUpdate();
@@ -199,22 +206,30 @@ int main(void) {
     PRINTF("SYSPLLPFD3:      %d Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd3Clk));
     PRINTF("SEMCCLK:         %d Hz\r\n", EXAMPLE_SEMC_CLK_FREQ);
     PRINTF("RT1025 SystemCoreClock=%dMhz\n", SystemCoreClock/1000000);
+    init_cycle_counter(false);
 
     if (easyflash_init() != EF_NO_ERR)
     {
-    	log_e("easyflash_init failed!\n");
+    	PRINTF("easyflash_init failed!\n");
     }
 
     PRINTF("username:%s\n", ef_get_env("username"));
 
-    EfErrCode err = ef_set_and_save_env("test env", "jiyj");
-    PRINTF("err:%d, EF_NO_ERR:%d\n", err, EF_NO_ERR);
-    if (err != EF_NO_ERR)
+
+    if (ef_get_env("testenv") == NULL)
     {
-    	PRINTF("set test env failed!\n");
+    	PRINTF("testenv is NULL!\n");
+    	EfErrCode err = ef_set_and_save_env("testenv", "test1");
+	    if (err != EF_NO_ERR)
+	    {
+	    	PRINTF("set test env failed!\n");
+	    } else
+	    {
+	    	PRINTF("get test env:%s\n", ef_get_env("testenv"));
+	    }
     } else
     {
-    	PRINTF("get test env:%s\n", ef_get_env("test env"));
+    	PRINTF("testenv is %s!\n", ef_get_env("testenv"));
     }
 
     /* initialize EasyLogger */
@@ -266,7 +281,6 @@ int main(void) {
 	     *!        occupied by user applications or RTOS, otherwise pass
 	     *!        false.
 	     */
-	init_cycle_counter(false);
 //	coremark_main();
 
 	start_cycle_counter(); {
@@ -300,6 +314,9 @@ int main(void) {
 //	{
 //		PRINTF("test sdram fail!\n");
 //	}
+
+//	nand_flash_test();
+//	nand_flash_init();
 
 	while(1)
 	{

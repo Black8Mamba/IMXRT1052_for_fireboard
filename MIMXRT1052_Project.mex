@@ -932,6 +932,14 @@
                         <pin_feature name="slew_rate" value="Fast"/>
                      </pin_features>
                   </pin>
+                  <pin peripheral="SEMC" signal="CSX, 0" pin_num="C7" pin_signal="GPIO_EMC_41">
+                     <pin_features>
+                        <pin_feature name="hysteresis_enable" value="Enable"/>
+                        <pin_feature name="speed" value="MHZ_200"/>
+                        <pin_feature name="drive_strength" value="R0_7"/>
+                        <pin_feature name="slew_rate" value="Fast"/>
+                     </pin_features>
+                  </pin>
                </pins>
             </function>
          </functions_list>

@@ -30,6 +30,9 @@
 #include <stdarg.h>
 #include <string.h>
 #include "fsl_debug_console.h"
+#include "bsp_nand.h"
+#include "fsl_nand_flash.h"
+#include "fsl_semc_nand_flash.h"
 
 /* default environment variables set for user */
 
@@ -38,11 +41,17 @@ static uint32_t boot_count = 0;
 static const ef_env default_env_set[] = {
 //      {   key  , value, value_len }，
         {"username", "jiyongjie", 0},   //类型为字符串的环境变量可以设定值的长度为 0 ，此时会在初始化时会自动检测其长度
-        {"password", "0824", 0},
-        {"boot_count", &boot_count, sizeof(boot_count)},  //整形
-//        {"boot_time", &boot_time, sizeof(boot_time)},  //数组类型，其他类型使用方式类似
+//        {"password", "0824", 0},
+//        {"boot_count", &boot_count, sizeof(boot_count)},  //整形
+////        {"boot_time", &boot_time, sizeof(boot_time)},  //数组类型，其他类型使用方式类似
 };
 
+#if (USE_NAND)
+nand_handle_t nandHandle;
+extern nand_config_t nandConfig;
+static uint8_t mem_writeBuffer[FLASH_PAGE_SIZE];
+static uint8_t mem_readBuffer[FLASH_PAGE_SIZE] = {0};
+#endif
 
 /**
  * Flash port for hardware initialize.
@@ -54,9 +63,21 @@ static const ef_env default_env_set[] = {
  */
 EfErrCode ef_port_init(ef_env const **default_env, size_t *default_env_size) {
     EfErrCode result = EF_NO_ERR;
+    status_t status;
 
     *default_env = default_env_set;
     *default_env_size = sizeof(default_env_set) / sizeof(default_env_set[0]);
+#if (USE_NAND)
+    status = Nand_Flash_Init(&nandConfig, &nandHandle);
+    if (status != kStatus_Success)
+    {
+        PRINTF("NAND Flash init failed\n");
+        PRINTF("error code: %d \n", status);
+        return EF_ENV_INIT_FAILED;
+    }
+
+    PRINTF("NAND FlashID:0x%x\n", NAND_ReadID());
+#endif
 
     return result;
 }
@@ -73,12 +94,41 @@ EfErrCode ef_port_init(ef_env const **default_env, size_t *default_env_size) {
  */
 EfErrCode ef_port_read(uint32_t addr, uint32_t *buf, size_t size) {
     EfErrCode result = EF_NO_ERR;
-
     /* You can add your code under here. */
-
+//    PRINTF("%s: addr:%x, size:%d\n", __func__, addr, size);
+#if (USE_SDRAM)
     memcpy((void*)buf, (void*)addr, size);
+#endif
 
-    return result;
+#if (USE_NAND)
+    size_t bytesInPage = nandHandle.bytesInPageDataArea;
+    size_t offset = addr % bytesInPage;
+    size_t remaining = size;
+    uint8_t *buffer = (uint8_t *)buf;
+
+    while (remaining > 0) {
+    	int loop_read = 0;
+        size_t readSize = bytesInPage - offset;
+        if (readSize > remaining) {
+            readSize = remaining;
+        }
+
+        status_t status = Nand_Flash_Read_Page(&nandHandle, addr / bytesInPage, mem_readBuffer, bytesInPage);
+        if (status != kStatus_Success) {
+            PRINTF("NAND Flash read failed\n");
+            return EF_READ_ERR;
+        }
+
+        memcpy(buffer, mem_readBuffer + offset, readSize);
+
+        addr += readSize;
+        buffer += readSize;
+        remaining -= readSize;
+        offset = 0;
+    }
+#endif
+
+    return EF_NO_ERR;
 }
 
 /**
@@ -93,11 +143,26 @@ EfErrCode ef_port_read(uint32_t addr, uint32_t *buf, size_t size) {
  */
 EfErrCode ef_port_erase(uint32_t addr, size_t size) {
     EfErrCode result = EF_NO_ERR;
-
     /* make sure the start address is a multiple of EF_ERASE_MIN_SIZE */
     EF_ASSERT(addr % EF_ERASE_MIN_SIZE == 0);
 
+#if (USE_SDRAM)
     memset((void*)addr, 0xFF, size);
+#endif
+
+#if (USE_NAND)
+    size_t bytesInBlock = nandHandle.bytesInPageDataArea * nandHandle.pagesInBlock;
+    size_t startBlock = addr / bytesInBlock;
+    size_t endBlock = (addr + size - 1) / bytesInBlock;
+
+    for (size_t block = startBlock; block <= endBlock; block++) {
+        status_t status = Nand_Flash_Erase_Block(&nandHandle, block);
+        if (status != kStatus_Success) {
+            PRINTF("NAND Flash erase failed\n");
+            return EF_ERASE_ERR;
+        }
+    }
+#endif
 
     /* You can add your code under here. */
 
@@ -116,9 +181,47 @@ EfErrCode ef_port_erase(uint32_t addr, size_t size) {
  */
 EfErrCode ef_port_write(uint32_t addr, const uint32_t *buf, size_t size) {
     EfErrCode result = EF_NO_ERR;
-    
     /* You can add your code under here. */
+#if (USE_SDARM)
     memcpy((void*)addr, (void*)buf, size);
+#endif
+
+#if (USE_NAND)
+    size_t bytesInPage = nandHandle.bytesInPageDataArea;
+    size_t offset = addr % bytesInPage;
+    size_t remaining = size;
+    const uint8_t *buffer = (const uint8_t *)buf;
+
+    while (remaining > 0) {
+    	int loop = 0;
+        size_t writeSize = bytesInPage - offset;
+        if (writeSize > remaining) {
+            writeSize = remaining;
+        }
+
+        if (offset != 0 || writeSize != bytesInPage) {
+            status_t status = Nand_Flash_Read_Page(&nandHandle, addr / bytesInPage, mem_writeBuffer, bytesInPage);
+            if (status != kStatus_Success) {
+                PRINTF("NAND Flash read failed\n");
+                return EF_READ_ERR;
+            }
+        }
+
+        memcpy(mem_writeBuffer + offset, buffer, writeSize);
+
+        status_t status = Nand_Flash_Page_Program(&nandHandle, addr / bytesInPage, mem_writeBuffer, bytesInPage);
+        if (status != kStatus_Success) {
+            PRINTF("NAND Flash write failed\n");
+            return EF_WRITE_ERR;
+        }
+
+        addr += writeSize;
+        buffer += writeSize;
+        remaining -= writeSize;
+        offset = 0;
+    }
+
+#endif
 
     return result;
 }
