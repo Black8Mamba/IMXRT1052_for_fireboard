@@ -11,7 +11,7 @@
 
 #include "shell.h"
 #include "fsl_debug_console.h"
-
+#include "easyflash.h"
 Shell shell;
 char shellBuffer[512];
 
@@ -94,7 +94,8 @@ void userShellInit(void)
 
 int func(int i, char ch, char *str)
 {
-	PRINTF("input int: %d, char: %c, string: %s\r\n", i, ch, str);
+	EfErrCode err = ef_set_and_save_env("testenv", "test11111");
+	err = ef_set_and_save_env("password", "08240824");
 	return 0;
 }
 SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), func, func, test);

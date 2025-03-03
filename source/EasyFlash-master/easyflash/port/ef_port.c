@@ -41,9 +41,9 @@ static uint32_t boot_count = 0;
 static const ef_env default_env_set[] = {
 //      {   key  , value, value_len }，
         {"username", "jiyongjie", 0},   //类型为字符串的环境变量可以设定值的长度为 0 ，此时会在初始化时会自动检测其长度
-//        {"password", "0824", 0},
-//        {"boot_count", &boot_count, sizeof(boot_count)},  //整形
-////        {"boot_time", &boot_time, sizeof(boot_time)},  //数组类型，其他类型使用方式类似
+        {"password", "0824", 0},
+        {"boot_count", &boot_count, sizeof(boot_count)},  //整形
+//        {"boot_time", &boot_time, sizeof(boot_time)},  //数组类型，其他类型使用方式类似
 };
 
 #if (USE_NAND)
@@ -51,6 +51,9 @@ nand_handle_t nandHandle;
 extern nand_config_t nandConfig;
 static uint8_t mem_writeBuffer[FLASH_PAGE_SIZE];
 static uint8_t mem_readBuffer[FLASH_PAGE_SIZE] = {0};
+static uint8_t read_cache[FLASH_PAGE_SIZE] = {0};
+static bool cache_index[1024*64] = {0};
+static int current_index = 0;
 #endif
 
 /**
@@ -74,6 +77,11 @@ EfErrCode ef_port_init(ef_env const **default_env, size_t *default_env_size) {
         PRINTF("NAND Flash init failed\n");
         PRINTF("error code: %d \n", status);
         return EF_ENV_INIT_FAILED;
+    }
+
+    for (int i = 0; i < 1024*64; ++i)
+    {
+    	cache_index[i] = false;
     }
 
     PRINTF("NAND FlashID:0x%x\n", NAND_ReadID());
@@ -113,13 +121,18 @@ EfErrCode ef_port_read(uint32_t addr, uint32_t *buf, size_t size) {
             readSize = remaining;
         }
 
-        status_t status = Nand_Flash_Read_Page(&nandHandle, addr / bytesInPage, mem_readBuffer, bytesInPage);
-        if (status != kStatus_Success) {
-            PRINTF("NAND Flash read failed\n");
-            return EF_READ_ERR;
+        if (cache_index[addr / bytesInPage] == false || current_index != (addr / bytesInPage))
+        {
+            status_t status = Nand_Flash_Read_Page(&nandHandle, addr / bytesInPage, mem_readBuffer, bytesInPage);
+            if (status != kStatus_Success) {
+                PRINTF("NAND Flash read failed\n");
+                return EF_READ_ERR;
+            }
+            memcpy(read_cache, mem_readBuffer, bytesInPage);
+            cache_index[addr / bytesInPage] = true;
+            current_index = addr / bytesInPage;
         }
-
-        memcpy(buffer, mem_readBuffer + offset, readSize);
+        memcpy(buffer, read_cache + offset, readSize);
 
         addr += readSize;
         buffer += readSize;
@@ -214,6 +227,7 @@ EfErrCode ef_port_write(uint32_t addr, const uint32_t *buf, size_t size) {
             PRINTF("NAND Flash write failed\n");
             return EF_WRITE_ERR;
         }
+        cache_index[addr / bytesInPage] = false;
 
         addr += writeSize;
         buffer += writeSize;

@@ -139,14 +139,15 @@ void sys_500ms_task(void)
 	flag = !flag;
 	if (flag == 1)
 	{
-		EfErrCode err = ef_set_and_save_env("testenv", "test2");
+//		EfErrCode err = ef_set_and_save_env("testenv", "test2");
 		RGB_LED_COLOR_YELLOW
 	} else
 	{
-		EfErrCode err = ef_set_and_save_env("testenv", "test1");
+//		EfErrCode err = ef_set_and_save_env("testenv", "test1");
 		RGB_LED_COLOR_GREEN;
 	}
 	PRINTF("testenv is %s!\n", ef_get_env("testenv"));
+	PRINTF("password is %s!\n", ef_get_env("password"));
 }
 
 void sys_1000ms_task(void)

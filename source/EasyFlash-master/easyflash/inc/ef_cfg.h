@@ -42,7 +42,7 @@
  * ENV version number defined by user.
  * Please change it when your firmware add a new ENV to default_env_set.
  */
-#define EF_ENV_VER_NUM    5        /* @note you must define it for a value, such as 0 */
+#define EF_ENV_VER_NUM    3        /* @note you must define it for a value, such as 0 */
  
 /* MCU Endian Configuration, default is Little Endian Order. */
 /* #define EF_BIG_ENDIAN  */         
@@ -60,7 +60,7 @@
 
 /* the flash write granularity, unit: bit
  * only support 1(nor flash)/ 8(stm32f4)/ 32(stm32f1) */
-#define EF_WRITE_GRAN   1          /* @note you must define it for a value */
+#define EF_WRITE_GRAN   8       /* @note you must define it for a value */
 
 
 /* The size of read_env and continue_ff_addr function used*/
@@ -91,10 +91,10 @@
 #define EF_START_ADDR     	(0x0)        /* @note you must define it for a value */
 
 /* ENV area size. It's at least one empty sector for GC. So it's definition must more then or equal 2 flash sector size. */
-#define ENV_AREA_SIZE     (5*EF_ERASE_MIN_SIZE)        /* @note you must define it for a value if you used ENV */
+#define ENV_AREA_SIZE     (3*EF_ERASE_MIN_SIZE)        /* @note you must define it for a value if you used ENV */
 
 /* saved log area size */
-#define LOG_AREA_SIZE    (10*EF_ERASE_MIN_SIZE)         /* @note you must define it for a value if you used log */
+#define LOG_AREA_SIZE    (2*EF_ERASE_MIN_SIZE)         /* @note you must define it for a value if you used log */
 
 /* print debug information of flash */
 #define PRINT_DEBUG
