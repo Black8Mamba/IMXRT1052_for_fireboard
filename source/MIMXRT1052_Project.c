@@ -38,6 +38,7 @@
 #include "bsp_can.h"
 #include "bsp_sdram.h"
 #include "bsp_nand.h"
+#include "bsp_sd.h"
 
 #include "easyflash.h"
 /* TODO: insert other include files here. */
@@ -146,8 +147,8 @@ void sys_500ms_task(void)
 //		EfErrCode err = ef_set_and_save_env("testenv", "test1");
 		RGB_LED_COLOR_GREEN;
 	}
-	PRINTF("testenv is %s!\n", ef_get_env("testenv"));
-	PRINTF("password is %s!\n", ef_get_env("password"));
+//	PRINTF("testenv is %s!\n", ef_get_env("testenv"));
+//	PRINTF("password is %s!\n", ef_get_env("password"));
 }
 
 void sys_1000ms_task(void)
@@ -302,10 +303,10 @@ int main(void) {
 	GPT_Config();
 	delay_ms(500);
 	TMR_Init();
-	ADC1_init();
+//	ADC1_init();
 	SNVS_init();
 //	EEPROM_Test();
-	CAN_Config();
+//	CAN_Config();
 
 //	if(SEMC_SDRAMReadWriteTest() && SDRAM_FullChipTest())
 //	if (SEMC_SDRAMReadWriteTest()&& SDRAM_FullChipTest())
@@ -318,6 +319,8 @@ int main(void) {
 
 //	nand_flash_test();
 //	nand_flash_init();
+	SDCard_Init();
+	SDCard_Test();
 
 	while(1)
 	{

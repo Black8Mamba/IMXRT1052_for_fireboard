@@ -21,7 +21,7 @@
       <pins name="Pins" version="15.0" enabled="true" update_project_code="true">
          <generated_project_files>
             <file path="board/pin_mux.c" update_enabled="true"/>
-            <file path="board/pin_mux.h" update_enabled="false"/>
+            <file path="board/pin_mux.h" update_enabled="true"/>
          </generated_project_files>
          <pins_profile>
             <processor_version>15.0.1</processor_version>
@@ -942,6 +942,97 @@
                   </pin>
                </pins>
             </function>
+            <function name="BOARD_USDHC">
+               <description>Configures pin routing and optionally pin electrical features.</description>
+               <options>
+                  <callFromInitBoot>true</callFromInitBoot>
+                  <coreID>core0</coreID>
+                  <enableClock>true</enableClock>
+               </options>
+               <dependencies>
+                  <dependency resourceType="Peripheral" resourceId="USDHC1" description="Peripheral USDHC1 signals are routed in the Pins Tool, but the peripheral is not initialized in the Peripherals Tool." problem_level="1" source="Pins:BOARD_USDHC">
+                     <feature name="initialized" evaluation="equal">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.common" description="Pins initialization requires the COMMON Driver in the project." problem_level="2" source="Pins:BOARD_USDHC">
+                     <feature name="enabled" evaluation="equal" configuration="core0">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.iomuxc" description="Pins initialization requires the IOMUXC Driver in the project." problem_level="2" source="Pins:BOARD_USDHC">
+                     <feature name="enabled" evaluation="equal" configuration="core0">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+               </dependencies>
+               <pins>
+                  <pin peripheral="USDHC1" signal="usdhc_clk" pin_num="J3" pin_signal="GPIO_SD_B0_01">
+                     <pin_features>
+                        <pin_feature name="hysteresis_enable" value="Enable"/>
+                        <pin_feature name="pull_up_down_config" value="Pull_Up_47K_Ohm"/>
+                        <pin_feature name="pull_keeper_enable" value="Disable"/>
+                        <pin_feature name="speed" value="MHZ_100"/>
+                        <pin_feature name="drive_strength" value="R0"/>
+                        <pin_feature name="slew_rate" value="Fast"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="USDHC1" signal="usdhc_cmd" pin_num="J4" pin_signal="GPIO_SD_B0_00">
+                     <pin_features>
+                        <pin_feature name="hysteresis_enable" value="Enable"/>
+                        <pin_feature name="pull_up_down_config" value="Pull_Up_47K_Ohm"/>
+                        <pin_feature name="pull_keeper_select" value="Pull"/>
+                        <pin_feature name="drive_strength" value="R0"/>
+                        <pin_feature name="slew_rate" value="Fast"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="USDHC1" signal="usdhc_data, 0" pin_num="J1" pin_signal="GPIO_SD_B0_02">
+                     <pin_features>
+                        <pin_feature name="hysteresis_enable" value="Enable"/>
+                        <pin_feature name="pull_up_down_config" value="Pull_Up_47K_Ohm"/>
+                        <pin_feature name="pull_keeper_select" value="Pull"/>
+                        <pin_feature name="drive_strength" value="R0"/>
+                        <pin_feature name="slew_rate" value="Fast"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="USDHC1" signal="usdhc_data, 1" pin_num="K1" pin_signal="GPIO_SD_B0_03">
+                     <pin_features>
+                        <pin_feature name="hysteresis_enable" value="Enable"/>
+                        <pin_feature name="pull_up_down_config" value="Pull_Up_47K_Ohm"/>
+                        <pin_feature name="pull_keeper_select" value="Pull"/>
+                        <pin_feature name="drive_strength" value="R0"/>
+                        <pin_feature name="slew_rate" value="Fast"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="USDHC1" signal="usdhc_data, 2" pin_num="H2" pin_signal="GPIO_SD_B0_04">
+                     <pin_features>
+                        <pin_feature name="hysteresis_enable" value="Enable"/>
+                        <pin_feature name="pull_up_down_config" value="Pull_Up_47K_Ohm"/>
+                        <pin_feature name="pull_keeper_select" value="Pull"/>
+                        <pin_feature name="drive_strength" value="R0"/>
+                        <pin_feature name="slew_rate" value="Fast"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="USDHC1" signal="usdhc_data, 3" pin_num="J2" pin_signal="GPIO_SD_B0_05">
+                     <pin_features>
+                        <pin_feature name="hysteresis_enable" value="Enable"/>
+                        <pin_feature name="pull_up_down_config" value="Pull_Up_47K_Ohm"/>
+                        <pin_feature name="pull_keeper_select" value="Pull"/>
+                        <pin_feature name="drive_strength" value="R0"/>
+                        <pin_feature name="slew_rate" value="Fast"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="USDHC1" signal="usdhc_vselect" pin_num="C14" pin_signal="GPIO_B1_14">
+                     <pin_features>
+                        <pin_feature name="hysteresis_enable" value="Enable"/>
+                        <pin_feature name="pull_up_down_config" value="Pull_Up_47K_Ohm"/>
+                        <pin_feature name="pull_keeper_select" value="Pull"/>
+                        <pin_feature name="drive_strength" value="R0_4"/>
+                        <pin_feature name="slew_rate" value="Fast"/>
+                     </pin_features>
+                  </pin>
+               </pins>
+            </function>
          </functions_list>
       </pins>
       <clocks name="Clocks" version="13.0" enabled="true" update_project_code="false">
@@ -1047,7 +1138,7 @@
                   <clock_output id="SPDIF0_CLK_ROOT.outFreq" value="30 MHz" locked="false" accuracy=""/>
                   <clock_output id="TRACE_CLK_ROOT.outFreq" value="132 MHz" locked="false" accuracy=""/>
                   <clock_output id="UART_CLK_ROOT.outFreq" value="80 MHz" locked="false" accuracy=""/>
-                  <clock_output id="USDHC1_CLK_ROOT.outFreq" value="158.4 MHz" locked="false" accuracy=""/>
+                  <clock_output id="USDHC1_CLK_ROOT.outFreq" value="198 MHz" locked="false" accuracy=""/>
                   <clock_output id="USDHC2_CLK_ROOT.outFreq" value="158.4 MHz" locked="false" accuracy=""/>
                </clock_outputs>
                <clock_settings>
@@ -1060,6 +1151,8 @@
                   <setting id="CCM.SEMC_CLK_SEL.sel" value="CCM.SEMC_ALT_CLK_SEL" locked="false"/>
                   <setting id="CCM.SEMC_PODF.scale" value="2" locked="true"/>
                   <setting id="CCM.TRACE_CLK_SEL.sel" value="CCM_ANALOG.PLL2_MAIN_CLK" locked="false"/>
+                  <setting id="CCM.USDHC1_CLK_SEL.sel" value="CCM_ANALOG.PLL2_PFD0_CLK" locked="false"/>
+                  <setting id="CCM.USDHC1_PODF.scale" value="2" locked="true"/>
                   <setting id="CCM_ANALOG.PLL1_BYPASS.sel" value="CCM_ANALOG.PLL1" locked="false"/>
                   <setting id="CCM_ANALOG.PLL1_PREDIV.scale" value="1" locked="true"/>
                   <setting id="CCM_ANALOG.PLL1_VDIV.scale" value="50" locked="true"/>
@@ -1067,6 +1160,7 @@
                   <setting id="CCM_ANALOG.PLL2.num" value="0" locked="true"/>
                   <setting id="CCM_ANALOG.PLL2_BYPASS.sel" value="CCM_ANALOG.PLL2_OUT_CLK" locked="false"/>
                   <setting id="CCM_ANALOG.PLL2_PFD0_BYPASS.sel" value="CCM_ANALOG.PLL2_PFD0" locked="false"/>
+                  <setting id="CCM_ANALOG.PLL2_PFD0_DIV.scale" value="24" locked="false"/>
                   <setting id="CCM_ANALOG.PLL2_PFD1_BYPASS.sel" value="CCM_ANALOG.PLL2_PFD1" locked="false"/>
                   <setting id="CCM_ANALOG.PLL2_PFD2_BYPASS.sel" value="CCM_ANALOG.PLL2_PFD2" locked="false"/>
                   <setting id="CCM_ANALOG.PLL2_PFD2_DIV.scale" value="30" locked="true"/>

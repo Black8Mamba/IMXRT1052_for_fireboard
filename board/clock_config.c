@@ -85,7 +85,7 @@ outputs:
 - {id: SPDIF0_CLK_ROOT.outFreq, value: 30 MHz}
 - {id: TRACE_CLK_ROOT.outFreq, value: 132 MHz}
 - {id: UART_CLK_ROOT.outFreq, value: 80 MHz}
-- {id: USDHC1_CLK_ROOT.outFreq, value: 158.4 MHz}
+- {id: USDHC1_CLK_ROOT.outFreq, value: 198 MHz}
 - {id: USDHC2_CLK_ROOT.outFreq, value: 158.4 MHz}
 settings:
 - {id: CCM.AHB_PODF.scale, value: '1', locked: true}
@@ -97,6 +97,8 @@ settings:
 - {id: CCM.SEMC_CLK_SEL.sel, value: CCM.SEMC_ALT_CLK_SEL}
 - {id: CCM.SEMC_PODF.scale, value: '2', locked: true}
 - {id: CCM.TRACE_CLK_SEL.sel, value: CCM_ANALOG.PLL2_MAIN_CLK}
+- {id: CCM.USDHC1_CLK_SEL.sel, value: CCM_ANALOG.PLL2_PFD0_CLK}
+- {id: CCM.USDHC1_PODF.scale, value: '2', locked: true}
 - {id: CCM_ANALOG.PLL1_BYPASS.sel, value: CCM_ANALOG.PLL1}
 - {id: CCM_ANALOG.PLL1_PREDIV.scale, value: '1', locked: true}
 - {id: CCM_ANALOG.PLL1_VDIV.scale, value: '50', locked: true}
@@ -104,6 +106,7 @@ settings:
 - {id: CCM_ANALOG.PLL2.num, value: '0', locked: true}
 - {id: CCM_ANALOG.PLL2_BYPASS.sel, value: CCM_ANALOG.PLL2_OUT_CLK}
 - {id: CCM_ANALOG.PLL2_PFD0_BYPASS.sel, value: CCM_ANALOG.PLL2_PFD0}
+- {id: CCM_ANALOG.PLL2_PFD0_DIV.scale, value: '24'}
 - {id: CCM_ANALOG.PLL2_PFD1_BYPASS.sel, value: CCM_ANALOG.PLL2_PFD1}
 - {id: CCM_ANALOG.PLL2_PFD2_BYPASS.sel, value: CCM_ANALOG.PLL2_PFD2}
 - {id: CCM_ANALOG.PLL2_PFD2_DIV.scale, value: '30', locked: true}
@@ -216,7 +219,7 @@ void BOARD_BootClockRUN(void)
     /* Set USDHC1_PODF. */
     CLOCK_SetDiv(kCLOCK_Usdhc1Div, 1);
     /* Set Usdhc1 clock source. */
-    CLOCK_SetMux(kCLOCK_Usdhc1Mux, 0);
+    CLOCK_SetMux(kCLOCK_Usdhc1Mux, 1);
     /* Disable USDHC2 clock gate. */
     CLOCK_DisableClock(kCLOCK_Usdhc2);
     /* Set USDHC2_PODF. */
@@ -368,7 +371,7 @@ void BOARD_BootClockRUN(void)
     /* Init System PLL. */
     CLOCK_InitSysPll(&sysPllConfig_BOARD_BootClockRUN);
     /* Init System pfd0. */
-    CLOCK_InitSysPfd(kCLOCK_Pfd0, 27);
+    CLOCK_InitSysPfd(kCLOCK_Pfd0, 24);
     /* Init System pfd1. */
     CLOCK_InitSysPfd(kCLOCK_Pfd1, 16);
     /* Init System pfd2. */

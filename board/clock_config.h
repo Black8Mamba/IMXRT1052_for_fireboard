@@ -80,7 +80,7 @@ void BOARD_InitBootClocks(void);
 #define BOARD_BOOTCLOCKRUN_UART_CLK_ROOT              80000000UL     /* Clock consumers of UART_CLK_ROOT output : LPUART1, LPUART2, LPUART3, LPUART4, LPUART5, LPUART6, LPUART7, LPUART8 */
 #define BOARD_BOOTCLOCKRUN_USBPHY1_CLK                0UL            /* Clock consumers of USBPHY1_CLK output : TEMPMON, USB1 */
 #define BOARD_BOOTCLOCKRUN_USBPHY2_CLK                0UL            /* Clock consumers of USBPHY2_CLK output : USB2 */
-#define BOARD_BOOTCLOCKRUN_USDHC1_CLK_ROOT            158400000UL    /* Clock consumers of USDHC1_CLK_ROOT output : USDHC1 */
+#define BOARD_BOOTCLOCKRUN_USDHC1_CLK_ROOT            198000000UL    /* Clock consumers of USDHC1_CLK_ROOT output : USDHC1 */
 #define BOARD_BOOTCLOCKRUN_USDHC2_CLK_ROOT            158400000UL    /* Clock consumers of USDHC2_CLK_ROOT output : USDHC2 */
 
 /*! @brief Arm PLL set for BOARD_BootClockRUN configuration.

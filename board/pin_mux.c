@@ -230,6 +230,7 @@ void BOARD_InitBootPins(void) {
     BOARD_InitAdc();
     BOARD_InitCan();
     BOARD_InitSdram();
+    BOARD_USDHC();
 }
 
 /*
@@ -817,6 +818,53 @@ void BOARD_InitSdram(void) {
 #else
   IOMUXC_SetPinConfig(IOMUXC_GPIO_EMC_41_SEMC_CSX00, 0x0110F9U); 
 #endif
+}
+
+/*
+ * TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
+BOARD_USDHC:
+- options: {callFromInitBoot: 'true', coreID: core0, enableClock: 'true'}
+- pin_list:
+  - {pin_num: J3, peripheral: USDHC1, signal: usdhc_clk, pin_signal: GPIO_SD_B0_01, hysteresis_enable: Enable, pull_up_down_config: Pull_Up_47K_Ohm, pull_keeper_enable: Disable,
+    speed: MHZ_100, drive_strength: R0, slew_rate: Fast}
+  - {pin_num: J4, peripheral: USDHC1, signal: usdhc_cmd, pin_signal: GPIO_SD_B0_00, hysteresis_enable: Enable, pull_up_down_config: Pull_Up_47K_Ohm, pull_keeper_select: Pull,
+    drive_strength: R0, slew_rate: Fast}
+  - {pin_num: J1, peripheral: USDHC1, signal: 'usdhc_data, 0', pin_signal: GPIO_SD_B0_02, hysteresis_enable: Enable, pull_up_down_config: Pull_Up_47K_Ohm, pull_keeper_select: Pull,
+    drive_strength: R0, slew_rate: Fast}
+  - {pin_num: K1, peripheral: USDHC1, signal: 'usdhc_data, 1', pin_signal: GPIO_SD_B0_03, hysteresis_enable: Enable, pull_up_down_config: Pull_Up_47K_Ohm, pull_keeper_select: Pull,
+    drive_strength: R0, slew_rate: Fast}
+  - {pin_num: H2, peripheral: USDHC1, signal: 'usdhc_data, 2', pin_signal: GPIO_SD_B0_04, hysteresis_enable: Enable, pull_up_down_config: Pull_Up_47K_Ohm, pull_keeper_select: Pull,
+    drive_strength: R0, slew_rate: Fast}
+  - {pin_num: J2, peripheral: USDHC1, signal: 'usdhc_data, 3', pin_signal: GPIO_SD_B0_05, hysteresis_enable: Enable, pull_up_down_config: Pull_Up_47K_Ohm, pull_keeper_select: Pull,
+    drive_strength: R0, slew_rate: Fast}
+  - {pin_num: C14, peripheral: USDHC1, signal: usdhc_vselect, pin_signal: GPIO_B1_14, hysteresis_enable: Enable, pull_up_down_config: Pull_Up_47K_Ohm, pull_keeper_select: Pull,
+    drive_strength: R0_4, slew_rate: Fast}
+ * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
+ */
+
+/* FUNCTION ************************************************************************************************************
+ *
+ * Function Name : BOARD_USDHC
+ * Description   : Configures pin routing and optionally pin electrical features.
+ *
+ * END ****************************************************************************************************************/
+void BOARD_USDHC(void) {
+  CLOCK_EnableClock(kCLOCK_Iomuxc);           
+
+  IOMUXC_SetPinMux(IOMUXC_GPIO_B1_14_USDHC1_VSELECT, 0U); 
+  IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B0_00_USDHC1_CMD, 0U); 
+  IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B0_01_USDHC1_CLK, 0U); 
+  IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B0_02_USDHC1_DATA0, 0U); 
+  IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B0_03_USDHC1_DATA1, 0U); 
+  IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B0_04_USDHC1_DATA2, 0U); 
+  IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B0_05_USDHC1_DATA3, 0U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_B1_14_USDHC1_VSELECT, 0x0170A1U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B0_00_USDHC1_CMD, 0x017089U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B0_01_USDHC1_CLK, 0x014089U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B0_02_USDHC1_DATA0, 0x017089U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B0_03_USDHC1_DATA1, 0x017089U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B0_04_USDHC1_DATA2, 0x017089U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B0_05_USDHC1_DATA3, 0x017089U); 
 }
 /***********************************************************************************************************************
  * EOF
