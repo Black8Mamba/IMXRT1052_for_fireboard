@@ -39,6 +39,7 @@
 #include "bsp_sdram.h"
 #include "bsp_nand.h"
 #include "bsp_sd.h"
+#include "bsp_sd_fatfs_test.h"
 
 #include "easyflash.h"
 /* TODO: insert other include files here. */
@@ -99,6 +100,12 @@ extern bool SDRAM_FullChipTest(void);
 extern void nand_flash_test(void);
 void nand_flash_init(void);
 
+#define BUFFER_SIZE (100U)
+#define SDMMCHOST_DMA_BUFFER_ADDR_ALIGN 4
+SDK_ALIGN(uint8_t g_bufferWrite[SDK_SIZEALIGN(BUFFER_SIZE, SDMMC_DATA_BUFFER_ALIGN_CACHE)],
+          MAX(SDMMC_DATA_BUFFER_ALIGN_CACHE, SDMMCHOST_DMA_BUFFER_ADDR_ALIGN));
+SDK_ALIGN(uint8_t g_bufferRead[SDK_SIZEALIGN(BUFFER_SIZE, SDMMC_DATA_BUFFER_ALIGN_CACHE)],
+          MAX(SDMMC_DATA_BUFFER_ALIGN_CACHE, SDMMCHOST_DMA_BUFFER_ADDR_ALIGN));
 
 void sys_1ms_task(void)
 {
@@ -319,9 +326,20 @@ int main(void) {
 
 //	nand_flash_test();
 //	nand_flash_init();
-	SDCard_Init();
-	SDCard_Test();
-
+//	SDCard_Init();
+//	SDCard_Test();
+//	FATFS g_fileSystem;
+//	f_mount_test(&g_fileSystem);
+//	f_mkdir_test("/dir_1");
+//	f_touch_test("/dir_1/gin.txt");
+//	FIL file_object;
+//	DIR dir_object;
+//	FILINFO file_info;
+//	f_readdir_test("/dir_1",&dir_object,&file_info);
+//	memset(g_bufferWrite, 'a', sizeof(g_bufferWrite));
+//	g_bufferWrite[BUFFER_SIZE - 2U] = '\r';
+//	g_bufferWrite[BUFFER_SIZE - 1U] = '\n';
+//	f_write_read_test("/dir_1/gin.txt", g_bufferWrite, g_bufferRead);
 	while(1)
 	{
 		if (period_1ms_flag)
