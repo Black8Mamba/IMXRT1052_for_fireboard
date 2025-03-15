@@ -30,7 +30,7 @@
 #define EF_CFG_H_
 
 #define USE_SDRAM	0
-#define USE_NAND	1
+#define USE_NAND	0
 
 /* using ENV function, default is NG (Next Generation) mode start from V4.0 */
 #define EF_USING_ENV

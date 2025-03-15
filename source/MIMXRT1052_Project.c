@@ -40,6 +40,7 @@
 #include "bsp_nand.h"
 #include "bsp_sd.h"
 #include "bsp_sd_fatfs_test.h"
+#include "bsp_norflash.h"
 
 #include "easyflash.h"
 /* TODO: insert other include files here. */
@@ -182,13 +183,13 @@ extern uint32_t __VECTOR_TABLE[];
 void relocate_vector_table(void)
 {
     __disable_irq();
-    memcpy((void *)0x20010000, (void *)__VECTOR_TABLE, 0x400);
-    SCB->VTOR = 0x20010000;
+    memcpy((void *)0x2001F000, (void *)__VECTOR_TABLE, 0x400);
+    SCB->VTOR = 0x2001F000;
     __enable_irq();
 }
 
 int main(void) {
-//	relocate_vector_table();
+	relocate_vector_table();
     /* Init board hardware. */
     BOARD_ConfigMPU();
     BOARD_InitBootPins();
@@ -340,6 +341,12 @@ int main(void) {
 //	g_bufferWrite[BUFFER_SIZE - 2U] = '\r';
 //	g_bufferWrite[BUFFER_SIZE - 1U] = '\n';
 //	f_write_read_test("/dir_1/gin.txt", g_bufferWrite, g_bufferRead);
+
+	FlexSPI_NorFlash_Init();
+	int NorFlash_IPCommand_Test(void);
+	NorFlash_IPCommand_Test();
+	int NorFlash_AHBCommand_Test(void);
+	NorFlash_AHBCommand_Test();
 	while(1)
 	{
 		if (period_1ms_flag)

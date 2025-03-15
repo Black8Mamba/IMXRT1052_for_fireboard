@@ -1067,7 +1067,6 @@ int DbgConsole_Vprintf(const char *fmt_s, va_list formatStringArg)
     {
         /* format print log first */
         logLength = StrFormatPrintf(fmt_s, formatStringArg, printBuf, DbgConsole_PrintCallback);
-        printBuf[logLength] = '\r';
         logLength++;
         /* print log */
         result = DbgConsole_SendDataReliable((uint8_t *)printBuf, (size_t)logLength);
