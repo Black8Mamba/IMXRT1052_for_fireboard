@@ -535,7 +535,7 @@ status_t FlexSPI_NorFlash_Buffer_Read(FLEXSPI_Type *base,
     return status;
 }
 
-void FlexSPI_NorFlash_Init(void)
+int FlexSPI_NorFlash_Init(void)
 {
 	uint32_t JedecDeviceID;
 	uint32_t WindBondDeviceID;
@@ -551,7 +551,7 @@ void FlexSPI_NorFlash_Init(void)
 	if (JedecDeviceID != FLASH_WINBOND_JEDECDEVICE_ID)
 	{
 		PRINTF("read FLASH_WINBOND_JEDECDEVICE_ID failed!\r\n");
-		return 0;
+		return -1;
 	}
 
 	if((JedecDeviceID &0xFF0000) == (FLASH_ISSI_JEDECDEVICE_ID &0xFF0000))
@@ -564,4 +564,5 @@ void FlexSPI_NorFlash_Init(void)
     PRINTF("FLASH UUID:");
     FLASH_DEBUG_ARRAY(uuid,16);
 
+    return 0;
 }

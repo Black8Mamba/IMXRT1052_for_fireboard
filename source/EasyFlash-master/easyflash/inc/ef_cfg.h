@@ -29,8 +29,11 @@
 #ifndef EF_CFG_H_
 #define EF_CFG_H_
 
+#include "norflash_partition.h"
+
 #define USE_SDRAM	0
 #define USE_NAND	0
+#define USE_NOR 	1
 
 /* using ENV function, default is NG (Next Generation) mode start from V4.0 */
 #define EF_USING_ENV
@@ -56,15 +59,32 @@
 /* #define EF_USING_LOG */
 
 /* The minimum size of flash erasure. May be a flash sector size. */
+#if (USE_NAND)
 #define EF_ERASE_MIN_SIZE   128*1024      /* @note you must define it for a value */
+#elif (USE_NOR)
+#define EF_ERASE_MIN_SIZE   4*1024      /* @note you must define it for a value */
+#elif (USE_SDRAM)
+#define EF_ERASE_MIN_SIZE   1*1024
+#else
+#define EF_ERASE_MIN_SIZE   1*1024
+#endif
 
 /* the flash write granularity, unit: bit
  * only support 1(nor flash)/ 8(stm32f4)/ 32(stm32f1) */
+#if (USE_NOR)
+#define EF_WRITE_GRAN   64       /* @note you must define it for a value */
+#else
 #define EF_WRITE_GRAN   8       /* @note you must define it for a value */
+#endif
+
 
 
 /* The size of read_env and continue_ff_addr function used*/
+#if (USE_NOR)
+#define EF_READ_BUF_SIZE             256
+#else
 #define EF_READ_BUF_SIZE             32     /* @default 32, Larger numbers can improve first-time speed of alloc_env but require more stack space*/
+#endif
 /*
  *
  * This all Backup Area Flash storage index. All used flash area configure is under here.
@@ -87,8 +107,15 @@
  */
 
 /* backup area start address */
-//#define EF_START_ADDR     (0x80000000+0x1000000)        /* @note you must define it for a value */
+#if (USE_SDRAM)
+#define EF_START_ADDR     (0x80000000+0x1000000)        /* @note you must define it for a value */
+#elif (USE_NAND)
 #define EF_START_ADDR     	(0x0)        /* @note you must define it for a value */
+#elif (USE_NOR)
+#define EF_START_ADDR     	(EASYFLASH_START_ADDR)        /* @note you must define it for a value */
+#else
+#define EF_START_ADDR     	(0x0)        /* @note you must define it for a value */
+#endif
 
 /* ENV area size. It's at least one empty sector for GC. So it's definition must more then or equal 2 flash sector size. */
 #define ENV_AREA_SIZE     (3*EF_ERASE_MIN_SIZE)        /* @note you must define it for a value if you used ENV */

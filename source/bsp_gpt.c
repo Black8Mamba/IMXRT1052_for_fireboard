@@ -26,7 +26,7 @@ const gpt_config_t GPT1_config = {
 
 void GPT_Config(void)
 {
-  gpt_config_t gptConfig;
+//  gpt_config_t gptConfig;
 
   log_i("kCLOCK_PerClk:      %d Hz\r\n", CLOCK_GetFreq(kCLOCK_PerClk));
 

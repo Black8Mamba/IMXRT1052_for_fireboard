@@ -77,7 +77,7 @@ button_status_t button_cb(void *buttonHandle,
 		RGB_LED_COLOR_BLUE
 		tri = 0;
 	}
-	PRINTF("message event:%d\n", message->event);
+	PRINTF("message event:%d\r\n", message->event);
 
 	return kStatus_BUTTON_Success;
 }
@@ -188,6 +188,23 @@ void relocate_vector_table(void)
     __enable_irq();
 }
 
+int hardware_init(void)
+{
+	//	SDRAM_Init();
+	BOARD_InitNand();
+	PIT_TIMER_Init();
+	GPT_Config();
+	delay_ms(500);
+	TMR_Init();
+//	ADC1_init();
+	SNVS_init();
+//	EEPROM_Test();
+//	CAN_Config();
+	//	nand_flash_init();
+	//	SDCard_Init();
+	FlexSPI_NorFlash_Init();
+}
+
 int main(void) {
 	relocate_vector_table();
     /* Init board hardware. */
@@ -199,12 +216,10 @@ int main(void) {
     /* Init FSL debug console. */
     BOARD_InitDebugConsole();
 #endif
-//	SDRAM_Init();
-    BOARD_InitNand();
 
     cm_backtrace_init("CmBacktrace for i.MX RT1052 EVK Pro Cortex-M7", "1.0", "1.0");
     SystemCoreClockUpdate();
-    PRINTF("*****>>welcome i.MX RT1052 develop board<<*****\n");
+    PRINTF("*****>>welcome i.MX RT1052 develop board<<*****\r\n");
     PRINTF("CPU:             %d Hz\r\n", CLOCK_GetFreq(kCLOCK_CpuClk));
     PRINTF("AHB:             %d Hz\r\n", CLOCK_GetFreq(kCLOCK_AhbClk));
     PRINTF("SEMC:            %d Hz\r\n", CLOCK_GetFreq(kCLOCK_SemcClk));
@@ -215,32 +230,32 @@ int main(void) {
     PRINTF("SYSPLLPFD3:      %d Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd3Clk));
     PRINTF("SYSPLLPFD3:      %d Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd3Clk));
     PRINTF("SEMCCLK:         %d Hz\r\n", EXAMPLE_SEMC_CLK_FREQ);
-    PRINTF("RT1025 SystemCoreClock=%dMhz\n", SystemCoreClock/1000000);
+    PRINTF("RT1025 SystemCoreClock=%dMhz\r\n", SystemCoreClock/1000000);
     init_cycle_counter(false);
+    hardware_init();
+//    if (easyflash_init() != EF_NO_ERR)
+//    {
+//    	PRINTF("easyflash_init failed!\n");
+//    }
 
-    if (easyflash_init() != EF_NO_ERR)
-    {
-    	PRINTF("easyflash_init failed!\n");
-    }
-
-    PRINTF("username:%s\n", ef_get_env("username"));
+//    PRINTF("username:%s\n", ef_get_env("username"));
 
 
-    if (ef_get_env("testenv") == NULL)
-    {
-    	PRINTF("testenv is NULL!\n");
-    	EfErrCode err = ef_set_and_save_env("testenv", "test1");
-	    if (err != EF_NO_ERR)
-	    {
-	    	PRINTF("set test env failed!\n");
-	    } else
-	    {
-	    	PRINTF("get test env:%s\n", ef_get_env("testenv"));
-	    }
-    } else
-    {
-    	PRINTF("testenv is %s!\n", ef_get_env("testenv"));
-    }
+//    if (ef_get_env("testenv") == NULL)
+//    {
+//    	PRINTF("testenv is NULL!\n");
+//    	EfErrCode err = ef_set_and_save_env("testenv", "test1");
+//	    if (err != EF_NO_ERR)
+//	    {
+//	    	PRINTF("set test env failed!\n");
+//	    } else
+//	    {
+//	    	PRINTF("get test env:%s\n", ef_get_env("testenv"));
+//	    }
+//    } else
+//    {
+//    	PRINTF("testenv is %s!\n", ef_get_env("testenv"));
+//    }
 
     /* initialize EasyLogger */
     elog_init();
@@ -297,24 +312,17 @@ int main(void) {
 	    PRINTF("Hello world\r\n");
 	}
 	int32_t cycles = stop_cycle_counter();
-	PRINTF("cycles:%d\n", cycles);
+	PRINTF("cycles:%d\r\n", cycles);
 
 	uint32_t main_stack_start_addr = (uint32_t)(&CMB_CSTACK_BLOCK_START);
 	uint32_t main_stack_size = (uint32_t)(&CMB_CSTACK_BLOCK_END) - main_stack_start_addr;
 	uint32_t code_start_addr = (uint32_t)(&CMB_CODE_SECTION_START);
 	uint32_t code_size = (uint32_t)(&CMB_CODE_SECTION_END) - code_start_addr;
-	PRINTF("main_stack_start_addr:%x, main_stack_size:%x, code_start_addr:%x, code_size:%x\n", main_stack_start_addr, main_stack_size, code_start_addr, code_size);
+	PRINTF("main_stack_start_addr:%x, main_stack_size:%x, code_start_addr:%x, code_size:%x\r\n", main_stack_start_addr, main_stack_size, code_start_addr, code_size);
 	CORE_BOARD_LED(0);
 
 	Set_NVIC_PriorityGroup(Group_4);
-	PIT_TIMER_Init();
-	GPT_Config();
-	delay_ms(500);
-	TMR_Init();
-//	ADC1_init();
-	SNVS_init();
-//	EEPROM_Test();
-//	CAN_Config();
+
 
 //	if(SEMC_SDRAMReadWriteTest() && SDRAM_FullChipTest())
 //	if (SEMC_SDRAMReadWriteTest()&& SDRAM_FullChipTest())
@@ -326,8 +334,6 @@ int main(void) {
 //	}
 
 //	nand_flash_test();
-//	nand_flash_init();
-//	SDCard_Init();
 //	SDCard_Test();
 //	FATFS g_fileSystem;
 //	f_mount_test(&g_fileSystem);
@@ -342,11 +348,12 @@ int main(void) {
 //	g_bufferWrite[BUFFER_SIZE - 1U] = '\n';
 //	f_write_read_test("/dir_1/gin.txt", g_bufferWrite, g_bufferRead);
 
-	FlexSPI_NorFlash_Init();
-	int NorFlash_IPCommand_Test(void);
-	NorFlash_IPCommand_Test();
-	int NorFlash_AHBCommand_Test(void);
-	NorFlash_AHBCommand_Test();
+//	int NorFlash_IPCommand_Test(void);
+//	NorFlash_IPCommand_Test();
+//	int NorFlash_AHBCommand_Test(void);
+//	NorFlash_AHBCommand_Test();
+	int init_little_fs(void);
+	init_little_fs();
 	while(1)
 	{
 		if (period_1ms_flag)

@@ -42,6 +42,10 @@
 #include "fsl_nand_disk.h"
 #endif
 
+#ifdef NOR_DISK_ENABLE
+#include "fsl_nor_disk.h"
+#endif
+
 /*-----------------------------------------------------------------------*/
 /* Get Drive Status                                                      */
 /*-----------------------------------------------------------------------*/
@@ -81,6 +85,11 @@ DSTATUS disk_status (
 #ifdef NAND_DISK_ENABLE
         case NANDDISK:
             stat = nand_disk_status(pdrv);
+            return stat;
+#endif
+#ifdef NOR_DISK_ENABLE
+        case NORDISK:
+            stat = nor_disk_status(pdrv);
             return stat;
 #endif
         default:
@@ -131,6 +140,11 @@ DSTATUS disk_initialize (
 #ifdef NAND_DISK_ENABLE
         case NANDDISK:
             stat = nand_disk_initialize(pdrv);
+            return stat;
+#endif
+#ifdef NOR_DISK_ENABLE
+        case NORDISK:
+        	stat = nor_disk_initialize(pdrv);
             return stat;
 #endif
         default:
@@ -184,6 +198,11 @@ DRESULT disk_read (
 #ifdef NAND_DISK_ENABLE
         case NANDDISK:
             res = nand_disk_read(pdrv, buff, sector, count);
+            return res;
+#endif
+#ifdef NOR_DISK_ENABLE
+        case NORDISK:
+        	res = nor_disk_read(pdrv, buff, sector, count);
             return res;
 #endif
         default:
@@ -241,6 +260,11 @@ DRESULT disk_write (
             res = nand_disk_write(pdrv, buff, sector, count);
             return res;
 #endif
+#ifdef NOR_DISK_ENABLE
+        case NORDISK:
+        	res = nor_disk_write(pdrv, buff, sector, count);
+            return res;
+#endif
         default:
             break;
     }
@@ -291,6 +315,11 @@ DRESULT disk_ioctl (
 #ifdef NAND_DISK_ENABLE
         case NANDDISK:
             res = nand_disk_ioctl(pdrv, cmd, buff);
+            return res;
+#endif
+#ifdef NOR_DISK_ENABLE
+        case NORDISK:
+        	res = nor_disk_ioctl(pdrv, cmd, buff);
             return res;
 #endif
         default:

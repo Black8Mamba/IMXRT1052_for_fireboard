@@ -12,6 +12,9 @@
 #include "fsl_debug_console.h"
 
 #define FLASH_SIZE          (32*1024) //32M
+#ifdef FLASH_PAGE_SIZE
+#undef FLASH_PAGE_SIZE
+#endif
 #define FLASH_PAGE_SIZE     256 //256bytes
 #define SECTOR_SIZE         (4*1024) //4k
 
@@ -93,7 +96,7 @@
                                            PRINTF("<<-FLASH-FUNC->> Func:%s@Line:%d\r\n",__func__,__LINE__);\
                                           }while(0)
 
-void FlexSPI_NorFlash_Init(void);
+int FlexSPI_NorFlash_Init(void);
 status_t FlexSPI_NorFlash_Get_JedecDevice_ID(FLEXSPI_Type *base, uint32_t *vendorID);
 status_t FlexSPI_NorFlash_Get_Device_ID(FLEXSPI_Type *base, uint8_t *vendorID);
 status_t FlexSPI_NorFlash_Write_Enable(FLEXSPI_Type *base);

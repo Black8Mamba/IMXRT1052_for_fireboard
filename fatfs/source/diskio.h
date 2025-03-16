@@ -16,6 +16,7 @@ extern "C" {
 #define MMCDISK         3       /* mmc disk to physical drive 3 */
 #define SDSPIDISK       4       /* sdspi disk to physical drive 4 */
 #define NANDDISK        5       /* nand disk to physical drive 5 */
+#define NORDISK			6
 
 /* Status of Disk Functions */
 typedef BYTE	DSTATUS;

@@ -183,6 +183,8 @@ int SDCard_Init(void)
      }
 
 	 PRINTF("\r\nSDCARD host and card init success.\r\n");
+
+	 return 0;
 }
 
 void SDCard_Test(void)

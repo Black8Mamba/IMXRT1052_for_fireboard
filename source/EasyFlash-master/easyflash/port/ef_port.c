@@ -33,6 +33,7 @@
 #include "bsp_nand.h"
 #include "fsl_nand_flash.h"
 #include "fsl_semc_nand_flash.h"
+#include "bsp_norflash.h"
 
 /* default environment variables set for user */
 
@@ -56,6 +57,11 @@ static bool cache_index[1024*64] = {0};
 static int current_index = 0;
 #endif
 
+#if (USE_NOR)
+#endif
+
+//static uint8_t read_buf[256] = {0};
+
 /**
  * Flash port for hardware initialize.
  *
@@ -66,12 +72,11 @@ static int current_index = 0;
  */
 EfErrCode ef_port_init(ef_env const **default_env, size_t *default_env_size) {
     EfErrCode result = EF_NO_ERR;
-    status_t status;
 
     *default_env = default_env_set;
     *default_env_size = sizeof(default_env_set) / sizeof(default_env_set[0]);
 #if (USE_NAND)
-    status = Nand_Flash_Init(&nandConfig, &nandHandle);
+    status_t status = Nand_Flash_Init(&nandConfig, &nandHandle);
     if (status != kStatus_Success)
     {
         PRINTF("NAND Flash init failed\n");
@@ -85,6 +90,11 @@ EfErrCode ef_port_init(ef_env const **default_env, size_t *default_env_size) {
     }
 
     PRINTF("NAND FlashID:0x%x\n", NAND_ReadID());
+#endif
+
+#if (USE_NOR)
+//    FlexSPI_NorFlash_Init(); //init in main
+
 #endif
 
     return result;
@@ -103,7 +113,7 @@ EfErrCode ef_port_init(ef_env const **default_env, size_t *default_env_size) {
 EfErrCode ef_port_read(uint32_t addr, uint32_t *buf, size_t size) {
     EfErrCode result = EF_NO_ERR;
     /* You can add your code under here. */
-//    PRINTF("%s: addr:%x, size:%d\n", __func__, addr, size);
+    PRINTF("%s: addr:%x, size:%d\r\n", __func__, addr, size);
 #if (USE_SDRAM)
     memcpy((void*)buf, (void*)addr, size);
 #endif
@@ -141,6 +151,53 @@ EfErrCode ef_port_read(uint32_t addr, uint32_t *buf, size_t size) {
     }
 #endif
 
+#if (USE_NOR)
+
+    uint8_t read_buf[256] = {0};
+    status_t status = FlexSPI_NorFlash_Buffer_Read(FLEXSPI, addr, read_buf, 256);
+
+    if (status != kStatus_Success)
+    {
+    	PRINTF("FlexSPI_NorFlash_Buffer_Read failed\r\n");
+    	return -1;
+    }
+    memcpy(buf, read_buf, size);
+
+//    if (size % 256 == 0)
+//    {
+//        status_t status = FlexSPI_NorFlash_Buffer_Read(FLEXSPI, addr, buf, size);
+//
+//        if (status != kStatus_Success)
+//        {
+//            PRINTF("FlexSPI_NorFlash_Buffer_Read failed\r\n");
+//            return -1;
+//        }
+//    } else
+//    {
+//    	uint8_t read_buf[256] = {0};
+//    	int count = size/256;
+//    	int remain = size%256;
+//    	for (int i = 0; i < count; ++i)
+//    	{
+//            status_t status = FlexSPI_NorFlash_Buffer_Read(FLEXSPI, addr+i*256, read_buf, sizeof(read_buf));
+//            if (status != kStatus_Success)
+//            {
+//                PRINTF("FlexSPI_NorFlash_Buffer_Read failed\r\n");
+//                return -1;
+//            }
+//            memcpy(buf+i*256, read_buf, sizeof(read_buf));
+//    	}
+//        status_t status = FlexSPI_NorFlash_Buffer_Read(FLEXSPI, addr+count*256, read_buf, sizeof(read_buf));
+//        if (status != kStatus_Success)
+//        {
+//            PRINTF("FlexSPI_NorFlash_Buffer_Read failed\r\n");
+//            return -1;
+//        }
+//    	memcpy(buf+count*256, read_buf, remain);
+//    }
+
+#endif
+
     return EF_NO_ERR;
 }
 
@@ -158,7 +215,7 @@ EfErrCode ef_port_erase(uint32_t addr, size_t size) {
     EfErrCode result = EF_NO_ERR;
     /* make sure the start address is a multiple of EF_ERASE_MIN_SIZE */
     EF_ASSERT(addr % EF_ERASE_MIN_SIZE == 0);
-
+    PRINTF("%s: addr:%x, size:%d\r\n", __func__, addr, size);
 #if (USE_SDRAM)
     memset((void*)addr, 0xFF, size);
 #endif
@@ -175,6 +232,22 @@ EfErrCode ef_port_erase(uint32_t addr, size_t size) {
             return EF_ERASE_ERR;
         }
     }
+#endif
+
+#if (USE_NOR)
+    status_t status;
+
+    int erase_count = size / 4096;
+    for (int i = 0; i < erase_count; ++i)
+    {
+        status = FlexSPI_NorFlash_Erase_Sector(FLEXSPI, addr+i*4096);
+        if (status != kStatus_Success)
+        {
+            PRINTF("FlexSPI_NorFlash_Erase_Sector failed!\r\n");
+            return -1;
+        }
+    }
+
 #endif
 
     /* You can add your code under here. */
@@ -195,6 +268,7 @@ EfErrCode ef_port_erase(uint32_t addr, size_t size) {
 EfErrCode ef_port_write(uint32_t addr, const uint32_t *buf, size_t size) {
     EfErrCode result = EF_NO_ERR;
     /* You can add your code under here. */
+    PRINTF("%s: addr:%x, size:%d\r\n", __func__, addr, size);
 #if (USE_SDARM)
     memcpy((void*)addr, (void*)buf, size);
 #endif
@@ -237,6 +311,20 @@ EfErrCode ef_port_write(uint32_t addr, const uint32_t *buf, size_t size) {
 
 #endif
 
+#if (USE_NOR)
+    uint8_t write_buf[256] = {0};
+    memcpy(write_buf, buf, size);
+    status_t status = FlexSPI_NorFlash_Buffer_Program(FLEXSPI,
+    											addr,
+                                             (void *)write_buf,
+											 256);
+
+    if (status != kStatus_Success)
+    {
+        PRINTF("FlexSPI_NorFlash_Buffer_Program failed!\r\n");
+        return -1;
+    }
+#endif
     return result;
 }
 
