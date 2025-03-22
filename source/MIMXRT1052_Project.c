@@ -70,11 +70,11 @@ button_status_t button_cb(void *buttonHandle,
 	static int tri = 0;
 	if (tri == 0)
 	{
-		RGB_LED_COLOR_GREEN
+//		RGB_LED_COLOR_GREEN
 		tri = 1;
 	} else
 	{
-		RGB_LED_COLOR_BLUE
+//		RGB_LED_COLOR_BLUE
 		tri = 0;
 	}
 	PRINTF("message event:%d\r\n", message->event);
@@ -149,7 +149,7 @@ void sys_500ms_task(void)
 	if (flag == 1)
 	{
 //		EfErrCode err = ef_set_and_save_env("testenv", "test2");
-		RGB_LED_COLOR_YELLOW
+		RGB_LED_COLOR_RED
 	} else
 	{
 //		EfErrCode err = ef_set_and_save_env("testenv", "test1");
@@ -319,7 +319,7 @@ int main(void) {
 	uint32_t code_start_addr = (uint32_t)(&CMB_CODE_SECTION_START);
 	uint32_t code_size = (uint32_t)(&CMB_CODE_SECTION_END) - code_start_addr;
 	PRINTF("main_stack_start_addr:%x, main_stack_size:%x, code_start_addr:%x, code_size:%x\r\n", main_stack_start_addr, main_stack_size, code_start_addr, code_size);
-	CORE_BOARD_LED(0);
+	CORE_BOARD_LED(1);
 
 	Set_NVIC_PriorityGroup(Group_4);
 
@@ -354,6 +354,9 @@ int main(void) {
 //	NorFlash_AHBCommand_Test();
 	int init_little_fs(void);
 	init_little_fs();
+
+	void phy_test(void);
+	phy_test();
 	while(1)
 	{
 		if (period_1ms_flag)

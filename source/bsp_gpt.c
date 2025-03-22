@@ -50,11 +50,11 @@ void EXAMPLE_GPT1_IRQHandler(void)
 
   if(i%2)
   {
-	  CORE_BOARD_LED(1);
+//	  CORE_BOARD_LED(1);
   }
   else
   {
-	  CORE_BOARD_LED(0);
+//	  CORE_BOARD_LED(0);
   }
 }
 

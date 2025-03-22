@@ -44,9 +44,9 @@ void BOARD_InitBootClocks(void);
 #define BOARD_BOOTCLOCKRUN_CLK_1M                     1000000UL      /* Clock consumers of CLK_1M output : EWM, RTWDOG */
 #define BOARD_BOOTCLOCKRUN_CLK_24M                    24000000UL     /* Clock consumers of CLK_24M output : GPT1, GPT2 */
 #define BOARD_BOOTCLOCKRUN_CSI_CLK_ROOT               12000000UL     /* Clock consumers of CSI_CLK_ROOT output : CSI */
-#define BOARD_BOOTCLOCKRUN_ENET_125M_CLK              2400000UL      /* Clock consumers of ENET_125M_CLK output : N/A */
-#define BOARD_BOOTCLOCKRUN_ENET_25M_REF_CLK           1200000UL      /* Clock consumers of ENET_25M_REF_CLK output : ENET */
-#define BOARD_BOOTCLOCKRUN_ENET_REF_CLK               0UL            /* Clock consumers of ENET_REF_CLK output : ENET */
+#define BOARD_BOOTCLOCKRUN_ENET_125M_CLK              50000000UL     /* Clock consumers of ENET_125M_CLK output : N/A */
+#define BOARD_BOOTCLOCKRUN_ENET_25M_REF_CLK           0UL            /* Clock consumers of ENET_25M_REF_CLK output : ENET */
+#define BOARD_BOOTCLOCKRUN_ENET_REF_CLK               50000000UL     /* Clock consumers of ENET_REF_CLK output : ENET */
 #define BOARD_BOOTCLOCKRUN_ENET_TX_CLK                0UL            /* Clock consumers of ENET_TX_CLK output : ENET */
 #define BOARD_BOOTCLOCKRUN_FLEXIO1_CLK_ROOT           30000000UL     /* Clock consumers of FLEXIO1_CLK_ROOT output : FLEXIO1 */
 #define BOARD_BOOTCLOCKRUN_FLEXIO2_CLK_ROOT           30000000UL     /* Clock consumers of FLEXIO2_CLK_ROOT output : FLEXIO2 */
@@ -95,6 +95,9 @@ extern const clock_sys_pll_config_t sysPllConfig_BOARD_BootClockRUN;
 /*! @brief Video PLL set for BOARD_BootClockRUN configuration.
  */
 extern const clock_video_pll_config_t videoPllConfig_BOARD_BootClockRUN;
+/*! @brief Enet PLL set for BOARD_BootClockRUN configuration.
+ */
+extern const clock_enet_pll_config_t enetPllConfig_BOARD_BootClockRUN;
 
 /*******************************************************************************
  * API for BOARD_BootClockRUN configuration

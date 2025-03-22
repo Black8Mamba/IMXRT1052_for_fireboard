@@ -39,7 +39,7 @@ void QTMR_IRQ_HANDLER(void)
     if((qtmrIsrFlag % 20 == 0))
     {
 //        	log_i("qtimer:%lld", get_system_ms());
-    	RGB_LED_COLOR_YELLOW
+//    	RGB_LED_COLOR_YELLOW
     }
     else
     {

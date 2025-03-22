@@ -12,6 +12,7 @@
 #include "shell.h"
 #include "fsl_debug_console.h"
 #include "easyflash.h"
+#include "bsp_phy.h"
 Shell shell;
 char shellBuffer[512];
 
@@ -100,3 +101,15 @@ int func(int i, char ch, char *str)
 }
 SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), func, func, test);
 
+int get_link_status(int argc, char *argv[])
+{
+    bool link = false;
+    status_t status =  PHY_GetLinkStatus(ENET, BOARD_ENET0_PHY_ADDRESS, &link);
+    if (kStatus_Success != status)
+    {
+    	PRINTF("\r\nCannot PHY_GetLinkStatus PHY.\r\n");
+    }
+
+    PRINTF("link status:%d\r\n", link);
+}
+SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_MAIN), get_link_status, get_link_status, get_link_status);

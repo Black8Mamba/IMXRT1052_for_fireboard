@@ -56,8 +56,8 @@ outputs:
 - {id: CLK_1M.outFreq, value: 1 MHz}
 - {id: CLK_24M.outFreq, value: 24 MHz}
 - {id: CSI_CLK_ROOT.outFreq, value: 12 MHz}
-- {id: ENET_125M_CLK.outFreq, value: 2.4 MHz}
-- {id: ENET_25M_REF_CLK.outFreq, value: 1.2 MHz}
+- {id: ENET_125M_CLK.outFreq, value: 50 MHz}
+- {id: ENET_REF_CLK.outFreq, value: 50 MHz}
 - {id: FLEXIO1_CLK_ROOT.outFreq, value: 30 MHz}
 - {id: FLEXIO2_CLK_ROOT.outFreq, value: 30 MHz}
 - {id: FLEXSPI_CLK_ROOT.outFreq, value: 160 MHz}
@@ -99,6 +99,7 @@ settings:
 - {id: CCM.TRACE_CLK_SEL.sel, value: CCM_ANALOG.PLL2_MAIN_CLK}
 - {id: CCM.USDHC1_CLK_SEL.sel, value: CCM_ANALOG.PLL2_PFD0_CLK}
 - {id: CCM.USDHC1_PODF.scale, value: '2', locked: true}
+- {id: CCM_ANALOG.ENET_DIV.scale, value: '10', locked: true}
 - {id: CCM_ANALOG.PLL1_BYPASS.sel, value: CCM_ANALOG.PLL1}
 - {id: CCM_ANALOG.PLL1_PREDIV.scale, value: '1', locked: true}
 - {id: CCM_ANALOG.PLL1_VDIV.scale, value: '50', locked: true}
@@ -126,11 +127,15 @@ settings:
 - {id: CCM_ANALOG.PLL5.num, value: '0'}
 - {id: CCM_ANALOG.PLL5_BYPASS.sel, value: CCM_ANALOG.PLL5_POST_DIV}
 - {id: CCM_ANALOG.PLL5_POST_DIV.scale, value: '2'}
+- {id: CCM_ANALOG.PLL6_BYPASS.sel, value: CCM_ANALOG.PLL6}
 - {id: CCM_ANALOG.VIDEO_DIV.scale, value: '4'}
-- {id: CCM_ANALOG_PLL_ENET_POWERDOWN_CFG, value: 'Yes'}
+- {id: CCM_ANALOG_PLL_ENET_ENET_25M_REF_EN_CFG, value: Disabled}
 - {id: CCM_ANALOG_PLL_USB1_POWER_CFG, value: 'Yes'}
 - {id: CCM_ANALOG_PLL_VIDEO_POWERDOWN_CFG, value: 'No'}
+- {id: IOMUXC_GPR.ENET_REF_CLK_SEL.sel, value: CCM_ANALOG.ENET_125M_CLK}
 sources:
+- {id: CCM_ANALOG.CLK1.outFreq, value: 24 MHz, enabled: true}
+- {id: IOMUXC_GPR.ENET_REF_CLK_EXT.outFreq, value: 50 MHz, enabled: true}
 - {id: XTALOSC24M.RTC_OSC.outFreq, value: 32.768 kHz, enabled: true}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 
@@ -160,6 +165,13 @@ const clock_video_pll_config_t videoPllConfig_BOARD_BootClockRUN =
         .postDivider = 8,                         /* Divider after PLL */
         .numerator = 0,                           /* 30 bit numerator of fractional loop divider, Fout = Fin * ( loopDivider + numerator / denominator ) */
         .denominator = 1,                         /* 30 bit denominator of fractional loop divider, Fout = Fin * ( loopDivider + numerator / denominator ) */
+        .src = 0,                                 /* Bypass clock source, 0 - OSC 24M, 1 - CLK1_P and CLK1_N */
+    };
+const clock_enet_pll_config_t enetPllConfig_BOARD_BootClockRUN =
+    {
+        .enableClkOutput = true,                  /* Enable the PLL providing the ENET 125MHz reference clock */
+        .enableClkOutput25M = false,              /* Disable the PLL providing the ENET 25MHz reference clock */
+        .loopDivider = 1,                         /* Set frequency of ethernet reference clock to 50 MHz */
         .src = 0,                                 /* Bypass clock source, 0 - OSC 24M, 1 - CLK1_P and CLK1_N */
     };
 /*******************************************************************************
@@ -424,16 +436,8 @@ void BOARD_BootClockRUN(void)
     }
     /* Disable bypass for Video PLL. */
     CLOCK_SetPllBypass(CCM_ANALOG, kCLOCK_PllVideo, 0);
-    /* DeInit Enet PLL. */
-    CLOCK_DeinitEnetPll();
-    /* Bypass Enet PLL. */
-    CLOCK_SetPllBypass(CCM_ANALOG, kCLOCK_PllEnet, 1);
-    /* Set Enet output divider. */
-    CCM_ANALOG->PLL_ENET = (CCM_ANALOG->PLL_ENET & (~CCM_ANALOG_PLL_ENET_DIV_SELECT_MASK)) | CCM_ANALOG_PLL_ENET_DIV_SELECT(1);
-    /* Enable Enet output. */
-    CCM_ANALOG->PLL_ENET |= CCM_ANALOG_PLL_ENET_ENABLE_MASK;
-    /* Enable Enet25M output. */
-    CCM_ANALOG->PLL_ENET |= CCM_ANALOG_PLL_ENET_ENET_25M_REF_EN_MASK;
+    /* Init Enet PLL. */
+    CLOCK_InitEnetPll(&enetPllConfig_BOARD_BootClockRUN);
     /* DeInit Usb2 PLL. */
     CLOCK_DeinitUsb2Pll();
     /* Bypass Usb2 PLL. */
@@ -478,10 +482,10 @@ void BOARD_BootClockRUN(void)
     IOMUXC_MQSConfig(IOMUXC_GPR,kIOMUXC_MqsPwmOverSampleRate32, 0);
     /* Set ENET Ref clock source. */
 #if defined(IOMUXC_GPR_GPR1_ENET_REF_CLK_DIR_MASK)
-    IOMUXC_GPR->GPR1 &= ~IOMUXC_GPR_GPR1_ENET_REF_CLK_DIR_MASK;
+    IOMUXC_GPR->GPR1 |= IOMUXC_GPR_GPR1_ENET_REF_CLK_DIR_MASK;
 #elif defined(IOMUXC_GPR_GPR1_ENET1_TX_CLK_DIR_MASK)
     /* Backward compatibility for original bitfield name */
-    IOMUXC_GPR->GPR1 &= ~IOMUXC_GPR_GPR1_ENET1_TX_CLK_DIR_MASK;
+    IOMUXC_GPR->GPR1 |= IOMUXC_GPR_GPR1_ENET1_TX_CLK_DIR_MASK;
 #else
 #error "Neither IOMUXC_GPR_GPR1_ENET_REF_CLK_DIR_MASK nor IOMUXC_GPR_GPR1_ENET1_TX_CLK_DIR_MASK is defined."
 #endif /* defined(IOMUXC_GPR_GPR1_ENET_REF_CLK_DIR_MASK) */
