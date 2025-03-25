@@ -120,7 +120,6 @@
 									<listOptionValue builtIn="false" value="TIMER_PORT_TYPE_PIT=1"/>
 									<listOptionValue builtIn="false" value="SD_ENABLED"/>
 									<listOptionValue builtIn="false" value="SDK_OS_BAREMETAL"/>
-									<listOptionValue builtIn="false" value="TIMER_PORT_TYPE_GPT=1"/>
 								</option>
 								<option id="com.crt.advproject.gcc.fpu.1804542746" name="Floating point" superClass="com.crt.advproject.gcc.fpu" useByScannerDiscovery="true" value="com.crt.advproject.gcc.fpu.fpv5sp.hard" valueType="enumerated"/>
 								<option id="com.crt.advproject.gcc.thumb.1828194374" name="Thumb mode" superClass="com.crt.advproject.gcc.thumb" useByScannerDiscovery="false" value="true" valueType="boolean"/>
@@ -132,6 +131,7 @@
 								<option id="gnu.c.compiler.option.preprocessor.undef.symbol.1859812812" name="Undefined symbols (-U)" superClass="gnu.c.compiler.option.preprocessor.undef.symbol" useByScannerDiscovery="false"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.c.compiler.option.include.paths.309271779" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/board}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/lwip/contrib/app}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/utilities}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/component/lists}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/component/serial_manager}&quot;"/>
@@ -163,6 +163,15 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/fatfs/source/fsl_ram_disk}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/dhara/inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/component/timer}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/usb/host}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/usb/host/class}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/usb/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/usb/phy}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/lwip/template}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source/generated}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/lwip/port}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/lwip/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/lwip/src/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/mbedtls/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/mbedtls/library}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/mbedtls/port/ksdk}&quot;"/>
@@ -416,9 +425,10 @@
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="drivers"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="fatfs"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="littlefs"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="lwip"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="nand_flash"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="sdmmc"/>
-						<entry excluding="SFUD-master/docs|EasyFlash-master/easyflash/src/ef_log.c|EasyFlash-master/easyflash/src/ef_iap.c|EasyFlash-master/easyflash/src/ef_env_legacy.c|EasyFlash-master/easyflash/src/ef_env_legacy_wl.c|EasyFlash-master/easyflash/plugins|EasyFlash-master/docs|EasyFlash-master/demo" flags="LOCAL|VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="source"/>
+						<entry excluding="SFUD-master/docs|EasyFlash-master/easyflash/src/ef_log.c|EasyFlash-master/easyflash/src/ef_env_legacy.c|EasyFlash-master/easyflash/src/ef_env_legacy_wl.c|EasyFlash-master/easyflash/src/ef_iap.c|EasyFlash-master/docs|EasyFlash-master/easyflash/plugins|EasyFlash-master/demo" flags="LOCAL|VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="source"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="startup"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="utilities"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="xip"/>
@@ -574,6 +584,15 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/fatfs/source/fsl_ram_disk}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/dhara/inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/component/timer}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/usb/host}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/usb/host/class}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/usb/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/usb/phy}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/lwip/template}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source/generated}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/lwip/port}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/lwip/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/lwip/src/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/mbedtls/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/mbedtls/library}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/mbedtls/port/ksdk}&quot;"/>
@@ -822,9 +841,10 @@
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="drivers"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="fatfs"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="littlefs"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="lwip"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="nand_flash"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="sdmmc"/>
-						<entry excluding="SFUD-master/docs|EasyFlash-master/easyflash/src/ef_log.c|EasyFlash-master/easyflash/src/ef_iap.c|EasyFlash-master/easyflash/src/ef_env_legacy.c|EasyFlash-master/easyflash/src/ef_env_legacy_wl.c|EasyFlash-master/easyflash/plugins|EasyFlash-master/docs|EasyFlash-master/demo" flags="LOCAL|VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="source"/>
+						<entry excluding="SFUD-master/docs|EasyFlash-master/easyflash/src/ef_log.c|EasyFlash-master/easyflash/src/ef_env_legacy.c|EasyFlash-master/easyflash/src/ef_env_legacy_wl.c|EasyFlash-master/easyflash/src/ef_iap.c|EasyFlash-master/docs|EasyFlash-master/easyflash/plugins|EasyFlash-master/demo" flags="LOCAL|VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="source"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="startup"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="utilities"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="xip"/>
@@ -856,7 +876,7 @@
 	<storageModule moduleId="com.nxp.mcuxpresso.core.datamodels">
 		<sdkName>SDK_2.x_MIMXRT1052xxxxB</sdkName>
 		<sdkVersion>2.16.000</sdkVersion>
-		<sdkComponents>project_template.evkbimxrt1050.MIMXRT1052;platform.utilities.assert.MIMXRT1052;component.lists.MIMXRT1052;component.serial_manager_uart.MIMXRT1052;component.lpuart_adapter.MIMXRT1052;platform.drivers.xip_board.evkbimxrt1050.MIMXRT1052;utility.str.MIMXRT1052;platform.drivers.clock.MIMXRT1052;CMSIS_Include_core_cm.MIMXRT1052;component.serial_manager.MIMXRT1052;platform.drivers.xip_device.MIMXRT1052;platform.drivers.igpio.MIMXRT1052;platform.drivers.lpuart.MIMXRT1052;platform.drivers.nic301.MIMXRT1052;platform.drivers.common.MIMXRT1052;device.MIMXRT1052_system.MIMXRT1052;device.MIMXRT1052_CMSIS.MIMXRT1052;device.MIMXRT1052_startup.MIMXRT1052;utility.debug_console.MIMXRT1052;platform.drivers.iomuxc.MIMXRT1052;component.lpuart_dma_adapter.MIMXRT1052;platform.drivers.lpuart_edma.MIMXRT1052;platform.drivers.dmamux.MIMXRT1052;platform.drivers.edma.MIMXRT1052;platform.drivers.gpt.MIMXRT1052;utility.shell.MIMXRT1052;component.button.MIMXRT1052;component.igpio_adapter.MIMXRT1052;component.led.MIMXRT1052;component.log.MIMXRT1052;platform.drivers.lpi2c.MIMXRT1052;component.lpi2c_adapter.MIMXRT1052;platform.drivers.pit.MIMXRT1052;component.reset_adapter.MIMXRT1052;platform.drivers.qtmr.MIMXRT1052;platform.drivers.adc_etc.MIMXRT1052;platform.drivers.adc_12b1msps_sar.MIMXRT1052;platform.drivers.snvs_hp.MIMXRT1052;platform.drivers.flexcan.MIMXRT1052;platform.drivers.semc.MIMXRT1052;driver.nand_flash-controller-semc.MIMXRT1052;driver.nand_flash-common.MIMXRT1052;platform.drivers.usdhc.MIMXRT1052;middleware.sdmmc.common.MIMXRT1052;component.osa_interface.MIMXRT1052;middleware.sdmmc.host.usdhc.cache.MIMXRT1052;middleware.sdmmc.usdhc.template.MIMXRT1052;component.osa_bm.MIMXRT1052;middleware.freertos-kernel.extension.MIMXRT1052;middleware.freertos-kernel.template.MIMXRT1052;middleware.sdmmc.sd.MIMXRT1052;middleware.sdmmc.host.usdhc.MIMXRT1052;middleware.sdmmc.host.usdhc.polling.MIMXRT1052;middleware.sdmmc.osa.bm.MIMXRT1052;component.timer_manager.MIMXRT1052;platform.drivers.cache_armv7_m7.MIMXRT1052;middleware.fatfs.MIMXRT1052;middleware.fatfs.sd.MIMXRT1052;middleware.fatfs.template_nand.MIMXRT1052;middleware.fatfs.template_sd.MIMXRT1052;middleware.fatfs.template_mmc.MIMXRT1052;middleware.sdmmc.mmc.MIMXRT1052;middleware.fatfs.template_ram.MIMXRT1052;middleware.littlefs.MIMXRT1052;middleware.fatfs.mmc.MIMXRT1052;middleware.fatfs.nand.MIMXRT1052;middleware.fatfs.ram.MIMXRT1052;middleware.baremetal.MIMXRT1052;platform.drivers.enet.MIMXRT1052;middleware.dhara.MIMXRT1052;component.gpt_adapter.MIMXRT1052;</sdkComponents>
+		<sdkComponents>project_template.evkbimxrt1050.MIMXRT1052;platform.utilities.assert.MIMXRT1052;component.lists.MIMXRT1052;component.serial_manager_uart.MIMXRT1052;component.lpuart_adapter.MIMXRT1052;platform.drivers.xip_board.evkbimxrt1050.MIMXRT1052;utility.str.MIMXRT1052;platform.drivers.clock.MIMXRT1052;CMSIS_Include_core_cm.MIMXRT1052;component.serial_manager.MIMXRT1052;platform.drivers.xip_device.MIMXRT1052;platform.drivers.igpio.MIMXRT1052;platform.drivers.lpuart.MIMXRT1052;platform.drivers.nic301.MIMXRT1052;platform.drivers.common.MIMXRT1052;device.MIMXRT1052_system.MIMXRT1052;device.MIMXRT1052_CMSIS.MIMXRT1052;device.MIMXRT1052_startup.MIMXRT1052;utility.debug_console.MIMXRT1052;platform.drivers.iomuxc.MIMXRT1052;component.lpuart_dma_adapter.MIMXRT1052;platform.drivers.lpuart_edma.MIMXRT1052;platform.drivers.dmamux.MIMXRT1052;platform.drivers.edma.MIMXRT1052;platform.drivers.gpt.MIMXRT1052;utility.shell.MIMXRT1052;component.button.MIMXRT1052;component.igpio_adapter.MIMXRT1052;component.led.MIMXRT1052;component.log.MIMXRT1052;platform.drivers.lpi2c.MIMXRT1052;component.lpi2c_adapter.MIMXRT1052;platform.drivers.pit.MIMXRT1052;component.reset_adapter.MIMXRT1052;platform.drivers.qtmr.MIMXRT1052;platform.drivers.adc_etc.MIMXRT1052;platform.drivers.adc_12b1msps_sar.MIMXRT1052;platform.drivers.snvs_hp.MIMXRT1052;platform.drivers.flexcan.MIMXRT1052;platform.drivers.semc.MIMXRT1052;driver.nand_flash-controller-semc.MIMXRT1052;driver.nand_flash-common.MIMXRT1052;platform.drivers.usdhc.MIMXRT1052;middleware.sdmmc.common.MIMXRT1052;component.osa_interface.MIMXRT1052;middleware.sdmmc.host.usdhc.cache.MIMXRT1052;middleware.sdmmc.usdhc.template.MIMXRT1052;component.osa_bm.MIMXRT1052;middleware.freertos-kernel.extension.MIMXRT1052;middleware.freertos-kernel.template.MIMXRT1052;middleware.sdmmc.sd.MIMXRT1052;middleware.sdmmc.host.usdhc.MIMXRT1052;middleware.sdmmc.host.usdhc.polling.MIMXRT1052;middleware.sdmmc.osa.bm.MIMXRT1052;component.timer_manager.MIMXRT1052;platform.drivers.cache_armv7_m7.MIMXRT1052;middleware.fatfs.MIMXRT1052;middleware.fatfs.sd.MIMXRT1052;middleware.fatfs.template_nand.MIMXRT1052;middleware.fatfs.template_sd.MIMXRT1052;middleware.fatfs.template_mmc.MIMXRT1052;middleware.sdmmc.mmc.MIMXRT1052;middleware.fatfs.template_ram.MIMXRT1052;middleware.littlefs.MIMXRT1052;middleware.fatfs.mmc.MIMXRT1052;middleware.fatfs.nand.MIMXRT1052;middleware.fatfs.ram.MIMXRT1052;middleware.baremetal.MIMXRT1052;platform.drivers.enet.MIMXRT1052;middleware.dhara.MIMXRT1052;component.gpt_adapter.MIMXRT1052;middleware.usb.host.stack.MIMXRT1052;component.osa.MIMXRT1052;middleware.usb.phy.MIMXRT1052;middleware.lwip.template.MIMXRT1052;middleware.usb.host_cdc_ecm.MIMXRT1052;middleware.usb.host.ehci_config_header.MIMXRT1052;middleware.usb.host.common_header.MIMXRT1052;middleware.usb.host_controller_ehci.MIMXRT1052;middleware.usb.host_cdc.MIMXRT1052;middleware.usb.common_header.MIMXRT1052;middleware.lwip.MIMXRT1052;</sdkComponents>
 		<boardId>evkbimxrt1050</boardId>
 		<package>MIMXRT1052CVL5B</package>
 		<core>cm7</core>

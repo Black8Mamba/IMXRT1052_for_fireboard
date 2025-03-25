@@ -144,7 +144,7 @@ void sys_100ms_task(void)
 void sys_500ms_task(void)
 {
 	static int flag = 1;
-
+	PRINTF("%tick:%lld, ms:%lld\r\n", get_sys_tick(), get_system_ms());
 	flag = !flag;
 	if (flag == 1)
 	{
@@ -355,8 +355,16 @@ int main(void) {
 	int init_little_fs(void);
 	init_little_fs();
 
-	void phy_test(void);
-	phy_test();
+//	void phy_test(void);
+//	phy_test();
+	int lwip_ping_test(void);
+	if (lwip_ping_test())
+	{
+		PRINTF("ping test pass!\r\n");
+	} else
+	{
+		PRINTF("ping test failed!\r\n");
+	}
 	while(1)
 	{
 		if (period_1ms_flag)

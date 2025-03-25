@@ -73,11 +73,12 @@ void SysTick_Init(void)
   * @retval ÎÞ
   * @attention
   */
-
+void time_isr(void);
 void SysTick_Handler(void)
 {
 	sys_tick++;
 	perfc_port_insert_to_system_timer_insert_ovf_handler();
+	time_isr();
 }
 
 #include <cr_section_macros.h>
