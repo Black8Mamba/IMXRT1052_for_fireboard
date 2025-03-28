@@ -1,5 +1,7 @@
 /Debug/
 
+board/dcd.c
+board/dcd.h
 # Prerequisites
 *.d
 
