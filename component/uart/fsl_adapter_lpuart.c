@@ -7,7 +7,7 @@
  */
 
 #include "fsl_lpuart.h"
-
+#include "letter-shell/src/shell.h"
 #include "fsl_adapter_uart.h"
 
 #if (defined(FSL_FEATURE_LPUART_IS_LPFLEXCOMM) && (FSL_FEATURE_LPUART_IS_LPFLEXCOMM > 0U))
@@ -64,6 +64,8 @@
 #ifndef LPUART_RING_BUFFER_SIZE
 #define LPUART_RING_BUFFER_SIZE (128U)
 #endif
+
+extern Shell shell;
 
 #if (defined(HAL_UART_DMA_ENABLE) && (HAL_UART_DMA_ENABLE > 0U))
 /*! @brief uart RX state structure. */
@@ -552,7 +554,9 @@ static void HAL_UartInterruptHandle(uint8_t instance)
             {
                 count--;
 #endif
-                uartHandle->rx.buffer[uartHandle->rx.bufferSofar++] = LPUART_ReadByte(s_LpuartAdapterBase[instance]);
+                char ch = LPUART_ReadByte(s_LpuartAdapterBase[instance]);
+                shellHandler(&shell, ch);
+                uartHandle->rx.buffer[uartHandle->rx.bufferSofar++] = ch;
                 if (uartHandle->rx.bufferSofar >= uartHandle->rx.bufferLength)
                 {
                     LPUART_DisableInterrupts(

@@ -19,10 +19,11 @@
 #include "cm_backtrace.h"
 #include "systick_utils.h"
 #include "perf_counter.h"
+#include "letter-shell/src/shell.h"
 /* TODO: insert other include files here. */
-
+extern void userShellInit(void);
 /* TODO: insert other definitions and declarations here. */
-
+extern Shell shell;
 /*
  * @brief   Application entry point.
  */
@@ -41,6 +42,7 @@ int main(void) {
     SystemCoreClockUpdate();
     BOARD_SystickEnable();
     init_cycle_counter(true);
+    userShellInit();
     PRINTF("Hello World\r\n");
 
     /* Force the counter to be placed into memory. */
