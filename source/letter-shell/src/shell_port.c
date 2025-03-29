@@ -12,6 +12,7 @@
 #include "shell.h"
 #include "fsl_debug_console.h"
 //#include "easyflash.h"
+#include "elog.h"
 //#include "bsp_phy.h"
 Shell shell;
 char shellBuffer[512];
@@ -114,3 +115,79 @@ int get_link_status(int argc, char *argv[])
 	return 0;
 }
 SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_MAIN), get_link_status, get_link_status, get_link_status);
+
+int enable_log(int argc, char *argv[])
+{
+	if (argc != 2)
+	{
+		elog_raw("invalid param, usage: enable_log [1|0]\r\n");
+		return -1;
+	}
+	int enable = atoi(argv[1]);
+	elog_set_output_enabled(enable);
+	elog_raw("log enable:%d\r\n", elog_get_output_enabled());
+	return 0;
+}
+SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_MAIN), enable_log, enable_log, enable_log);
+
+int enable_log_color(int argc, char *argv[])
+{
+	if (argc != 2)
+	{
+		elog_raw("invalid param, usage: enable_log_color [1|0]\r\n");
+		return -1;
+	}
+	int enable = atoi(argv[1]);
+	elog_set_text_color_enabled(enable);
+
+	return 0;
+}
+SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_MAIN), enable_log_color, enable_log_color, enable_log_color);
+
+int set_log_level(int argc, char *argv[])
+{
+	if (argc != 2)
+	{
+		elog_raw("invalid param, usage: set_log_level [0|1|2|3|4|5]\r\n");
+		return -1;
+	}
+
+	int level = atoi(argv[1]);
+	elog_set_filter_lvl(level);
+
+	return 0;
+}
+SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_MAIN), set_log_level, set_log_level, set_log_level);
+
+int set_log_tag(int argc, char *argv[])
+{
+	if (argc <= 1)
+	{
+		elog_raw("invalid param, usage: set_log_tag tag1 tag2 ...\r\n");
+		return -1;
+	}
+
+	for (int i = 1; i < argc; ++i)
+	{
+		elog_set_filter_tag(argv[i]);
+	}
+
+	return 0;
+}
+SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_MAIN), set_log_tag, set_log_tag, set_log_tag);
+
+int set_log_tag_level(int argc, char *argv[])
+{
+	if (argc != 3)
+	{
+		elog_raw("invalid param, usage: set_log_tag_level tag level ...\r\n");
+		return -1;
+	}
+
+	int level = atoi(argv[2]);
+	elog_set_filter_tag_lvl(argv[1], level);
+
+	return 0;
+}
+
+SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_MAIN), set_log_tag_level, set_log_tag_level, set_log_tag_level);

@@ -28,6 +28,8 @@
  
 #include <elog.h>
 #include "fsl_debug_console.h"
+#include "perf_counter.h"
+#include "stdio.h"
 /**
  * EasyLogger port initialize
  *
@@ -88,10 +90,12 @@ void elog_port_output_unlock(void) {
  *
  * @return current time
  */
+
 const char *elog_port_get_time(void) {
-    
+	static char time[64] = {0};
     /* add your code here */
-    return "12:00:00";
+	snprintf(time, sizeof(time), "%lld", get_system_ms());
+    return time;
 }
 
 /**

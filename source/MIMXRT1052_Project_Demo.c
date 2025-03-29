@@ -9,6 +9,9 @@
  * @file    MIMXRT1052_Project_Demo.c
  * @brief   Application entry point.
  */
+#define LOG_TAG    "main"
+#define LOG_LVL    ELOG_LVL_DEBUG
+
 #include <stdio.h>
 #include "board.h"
 #include "peripherals.h"
@@ -53,17 +56,17 @@ int main(void) {
     elog_set_fmt(ELOG_LVL_VERBOSE, ELOG_FMT_ALL & ~ELOG_FMT_FUNC);
     elog_start();
     log_i("Hello World");
-    PRINTF("*****>>welcome i.MX RT1052 develop board<<*****\r\n");
-    PRINTF("CPU:             %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_CpuClk));
-    PRINTF("AHB:             %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_AhbClk));
-    PRINTF("SEMC:            %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_SemcClk));
-    PRINTF("SYSPLL:          %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllClk));
-    PRINTF("SYSPLLPFD0:      %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd0Clk));
-    PRINTF("SYSPLLPFD1:      %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd1Clk));
-    PRINTF("SYSPLLPFD2:      %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd2Clk));
-    PRINTF("SYSPLLPFD3:      %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd3Clk));
-    PRINTF("SYSPLLPFD3:      %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd3Clk));
-    PRINTF("RT1025 SystemCoreClock=%dMhz\r\n", SystemCoreClock/1000000);
+    elog_raw("*****>>welcome i.MX RT1052 develop board<<*****\r\n");
+    elog_raw("CPU:             %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_CpuClk));
+    elog_raw("AHB:             %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_AhbClk));
+    elog_raw("SEMC:            %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_SemcClk));
+    elog_raw("SYSPLL:          %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllClk));
+    elog_raw("SYSPLLPFD0:      %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd0Clk));
+    elog_raw("SYSPLLPFD1:      %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd1Clk));
+    elog_raw("SYSPLLPFD2:      %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd2Clk));
+    elog_raw("SYSPLLPFD3:      %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd3Clk));
+    elog_raw("SYSPLLPFD3:      %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd3Clk));
+    elog_raw("RT1025 SystemCoreClock=%dMhz\r\n", SystemCoreClock/1000000);
     /* Force the counter to be placed into memory. */
     volatile static int i = 0 ;
     /* Enter an infinite loop, just incrementing a counter. */
