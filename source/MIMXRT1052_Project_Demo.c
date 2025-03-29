@@ -25,6 +25,7 @@
 #include "letter-shell/src/shell.h"
 #include "elog.h"
 #include "coremark/coremark.h"
+#include "os_schedule.h"
 /* TODO: insert other include files here. */
 extern void userShellInit(void);
 /* TODO: insert other definitions and declarations here. */
@@ -62,24 +63,17 @@ int main(void) {
     elog_raw("AHB:             %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_AhbClk));
     elog_raw("SEMC:            %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_SemcClk));
     elog_raw("SYSPLL:          %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllClk));
+    elog_raw("perClk:          %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_PerClk));
     elog_raw("SYSPLLPFD0:      %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd0Clk));
     elog_raw("SYSPLLPFD1:      %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd1Clk));
     elog_raw("SYSPLLPFD2:      %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd2Clk));
     elog_raw("SYSPLLPFD3:      %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd3Clk));
     elog_raw("SYSPLLPFD3:      %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd3Clk));
     elog_raw("RT1025 SystemCoreClock=%dMhz\r\n", SystemCoreClock/1000000);
-    coremark_main();
-    /* Force the counter to be placed into memory. */
-    volatile static int i = 0 ;
-    /* Enter an infinite loop, just incrementing a counter. */
+//    coremark_main();
+    OS_TIMER_Init();
     while(1) {
-        i++ ;
-        /* 'Dummy' NOP to allow source level single stepping of
-            tight while() loop */
-        __asm volatile ("nop");
-        delay_ms(1000);
-//        PRINTF("systick:%d\r\n", BOARD_GetTick());
-        log_d("perf tick:%lld, ms:%lld", get_system_ticks(), get_system_ms());
+    	OS_Schedule();
     }
     return 0 ;
 }
