@@ -16,6 +16,7 @@
 #include "clock_config.h"
 #include "MIMXRT1052.h"
 #include "fsl_debug_console.h"
+#include "cm_backtrace.h"
 #include "systick_utils.h"
 #include "perf_counter.h"
 /* TODO: insert other include files here. */
@@ -36,6 +37,7 @@ int main(void) {
     /* Init FSL debug console. */
     BOARD_InitDebugConsole();
 #endif
+    cm_backtrace_init("CmBacktrace for i.MX RT1052 EVK Pro Cortex-M7", "1.0", "1.0");
     SystemCoreClockUpdate();
     BOARD_SystickEnable();
     init_cycle_counter(true);
