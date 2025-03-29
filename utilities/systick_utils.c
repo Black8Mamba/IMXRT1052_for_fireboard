@@ -15,6 +15,7 @@
 
 #include <stdint.h>
 #include "board.h"
+#include "perf_counter.h"
 // SysTick register definitions based on CMSIS definitions.
 #define SYST_CSR SysTick->CTRL // SysTick Control & Status Register
 #define SYST_RVR SysTick->LOAD // SysTick Reload Value Register
@@ -28,6 +29,7 @@ volatile uint32_t g_ovf_counter = 0;
 void SysTick_Handler(void)
 {
     g_ovf_counter += 1;
+    perfc_port_insert_to_system_timer_insert_ovf_handler();
 }
 #endif
 

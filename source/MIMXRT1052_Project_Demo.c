@@ -17,6 +17,7 @@
 #include "MIMXRT1052.h"
 #include "fsl_debug_console.h"
 #include "systick_utils.h"
+#include "perf_counter.h"
 /* TODO: insert other include files here. */
 
 /* TODO: insert other definitions and declarations here. */
@@ -35,7 +36,9 @@ int main(void) {
     /* Init FSL debug console. */
     BOARD_InitDebugConsole();
 #endif
+    SystemCoreClockUpdate();
     BOARD_SystickEnable();
+    init_cycle_counter(true);
     PRINTF("Hello World\r\n");
 
     /* Force the counter to be placed into memory. */
@@ -46,8 +49,9 @@ int main(void) {
         /* 'Dummy' NOP to allow source level single stepping of
             tight while() loop */
         __asm volatile ("nop");
-        BOARD_DELAY_ms(1000);
-        PRINTF("systick:%d\r\n", BOARD_GetTick());
+        delay_ms(1000);
+//        PRINTF("systick:%d\r\n", BOARD_GetTick());
+        PRINTF("perf tick:%lld, ms:%lld\r\n", get_system_ticks(), get_system_ms());
     }
     return 0 ;
 }
