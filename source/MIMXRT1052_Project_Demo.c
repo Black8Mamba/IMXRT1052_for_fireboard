@@ -20,6 +20,7 @@
 #include "systick_utils.h"
 #include "perf_counter.h"
 #include "letter-shell/src/shell.h"
+#include "elog.h"
 /* TODO: insert other include files here. */
 extern void userShellInit(void);
 /* TODO: insert other definitions and declarations here. */
@@ -43,8 +44,26 @@ int main(void) {
     BOARD_SystickEnable();
     init_cycle_counter(true);
     userShellInit();
-    PRINTF("Hello World\r\n");
-
+    elog_init();
+    elog_set_fmt(ELOG_LVL_ASSERT, ELOG_FMT_ALL);
+    elog_set_fmt(ELOG_LVL_ERROR, ELOG_FMT_LVL | ELOG_FMT_TAG | ELOG_FMT_FUNC | ELOG_FMT_FUNC);
+    elog_set_fmt(ELOG_LVL_WARN, ELOG_FMT_LVL | ELOG_FMT_TAG | ELOG_FMT_FUNC | ELOG_FMT_FUNC);
+    elog_set_fmt(ELOG_LVL_INFO, ELOG_FMT_LVL | ELOG_FMT_TAG);
+    elog_set_fmt(ELOG_LVL_DEBUG, ELOG_FMT_ALL & ~ELOG_FMT_DIR & ~ELOG_FMT_P_INFO & ~ELOG_FMT_T_INFO);
+    elog_set_fmt(ELOG_LVL_VERBOSE, ELOG_FMT_ALL & ~ELOG_FMT_FUNC);
+    elog_start();
+    log_i("Hello World");
+    PRINTF("*****>>welcome i.MX RT1052 develop board<<*****\r\n");
+    PRINTF("CPU:             %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_CpuClk));
+    PRINTF("AHB:             %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_AhbClk));
+    PRINTF("SEMC:            %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_SemcClk));
+    PRINTF("SYSPLL:          %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllClk));
+    PRINTF("SYSPLLPFD0:      %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd0Clk));
+    PRINTF("SYSPLLPFD1:      %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd1Clk));
+    PRINTF("SYSPLLPFD2:      %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd2Clk));
+    PRINTF("SYSPLLPFD3:      %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd3Clk));
+    PRINTF("SYSPLLPFD3:      %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd3Clk));
+    PRINTF("RT1025 SystemCoreClock=%dMhz\r\n", SystemCoreClock/1000000);
     /* Force the counter to be placed into memory. */
     volatile static int i = 0 ;
     /* Enter an infinite loop, just incrementing a counter. */
@@ -55,7 +74,7 @@ int main(void) {
         __asm volatile ("nop");
         delay_ms(1000);
 //        PRINTF("systick:%d\r\n", BOARD_GetTick());
-        PRINTF("perf tick:%lld, ms:%lld\r\n", get_system_ticks(), get_system_ms());
+        log_d("perf tick:%lld, ms:%lld", get_system_ticks(), get_system_ms());
     }
     return 0 ;
 }
