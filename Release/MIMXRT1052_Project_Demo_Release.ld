@@ -5,11 +5,11 @@
  * Generated linker script file for MIMXRT1052xxxxB
  * Created from linkscript.ldt by FMCreateLinkLibraries
  * Using Freemarker v2.3.30
- * MCUXpresso IDE v11.9.1 [Build 2170] [2024-04-19] on 2025年3月29日 下午5:38:15
+ * MCUXpresso IDE v11.9.1 [Build 2170] [2024-04-19] on 2025年3月29日 下午10:13:23
  */
 
-INCLUDE "MIMXRT1052_Project_Demo_Debug_library.ld"
-INCLUDE "MIMXRT1052_Project_Demo_Debug_memory.ld"
+INCLUDE "MIMXRT1052_Project_Demo_Release_library.ld"
+INCLUDE "MIMXRT1052_Project_Demo_Release_memory.ld"
 
 ENTRY(ResetISR)
 
@@ -73,6 +73,7 @@ SECTIONS
         /* End of Global Section Table */
 
         *(.after_vectors*)
+
 		*(EXCLUDE_FILE(
 			*core_matrix.o
 			*core_list_join.o
@@ -81,7 +82,6 @@ SECTIONS
 			*core_state.o
 			*core_util.o
 		).text*)
-       /**(.text*)*/
        *(.rodata .rodata.* .constdata .constdata.*)
        . = ALIGN(4);
     } > BOARD_FLASH
@@ -193,18 +193,18 @@ SECTIONS
        PROVIDE(__start_data_SRAM_DTC = .) ;
        *(vtable)
        *(.ramfunc*)
+       KEEP(*(CodeQuickAccess))
+       KEEP(*(DataQuickAccess))
 		_shell_command_start = .;
 		KEEP (*(shellCommand))
 		_shell_command_end = .;
-       KEEP(*(CodeQuickAccess))
-       KEEP(*(DataQuickAccess))
 		*core_matrix.o (.text.*)
 		*core_list_join.o  (.text.*)
 		*core_main.o  (.text.*)
 		*core_portme.o  (.text.*)
 		*core_state.o  (.text.*)
-		*core_util.o  (.text.*)
-		*(RamFunction)
+		*core_util.o  (.text.*)		
+       *(RamFunction)
        *(.data*)
        . = ALIGN(4) ;
        _edata = . ;

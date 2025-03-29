@@ -24,6 +24,7 @@
 #include "perf_counter.h"
 #include "letter-shell/src/shell.h"
 #include "elog.h"
+#include "coremark/coremark.h"
 /* TODO: insert other include files here. */
 extern void userShellInit(void);
 /* TODO: insert other definitions and declarations here. */
@@ -67,6 +68,7 @@ int main(void) {
     elog_raw("SYSPLLPFD3:      %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd3Clk));
     elog_raw("SYSPLLPFD3:      %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd3Clk));
     elog_raw("RT1025 SystemCoreClock=%dMhz\r\n", SystemCoreClock/1000000);
+    coremark_main();
     /* Force the counter to be placed into memory. */
     volatile static int i = 0 ;
     /* Enter an infinite loop, just incrementing a counter. */

@@ -1,4 +1,5 @@
 /Debug/
+/Release/
 
 board/dcd.c
 board/dcd.h
