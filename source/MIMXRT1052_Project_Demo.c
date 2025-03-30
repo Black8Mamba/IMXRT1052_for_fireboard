@@ -19,6 +19,7 @@
 #include "clock_config.h"
 #include "MIMXRT1052.h"
 #include "fsl_debug_console.h"
+#include "fsl_component_log.h"
 #include "cm_backtrace.h"
 #include "systick_utils.h"
 #include "perf_counter.h"
@@ -33,6 +34,13 @@ extern Shell shell;
 /*
  * @brief   Application entry point.
  */
+
+static void uart_backend(uint8_t *buffer, size_t length)
+{
+	DbgConsole_SendDataReliable((uint8_t *)buffer, length);
+}
+
+
 int main(void) {
 
     /* Init board hardware. */
@@ -70,6 +78,10 @@ int main(void) {
     elog_raw("SYSPLLPFD3:      %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd3Clk));
     elog_raw("SYSPLLPFD3:      %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_SysPllPfd3Clk));
     elog_raw("RT1025 SystemCoreClock=%dMhz\r\n", SystemCoreClock/1000000);
+	LOG_Init();
+	LOG_MODULE_DEFINE(main, kLOG_LevelDebug);
+	LOG_BACKEND_DEFINE(log, uart_backend);
+	LOG_BackendRegister(&log);
 //    coremark_main();
     OS_TIMER_Init();
     void led_test(void);

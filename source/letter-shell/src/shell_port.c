@@ -14,6 +14,8 @@
 //#include "easyflash.h"
 #include "elog.h"
 #include "fsl_adapter_rng.h"
+#include "fsl_component_log.h"
+#include "fsl_debug_console.h"
 //#include "bsp_phy.h"
 Shell shell;
 char shellBuffer[512];
@@ -233,3 +235,4 @@ int get_rng(int argc, char *argv[])
 }
 
 SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_MAIN), get_rng, get_rng, get_rng);
+

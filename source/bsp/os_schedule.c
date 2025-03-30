@@ -8,10 +8,13 @@
 
 #include <bsp/os_schedule.h>
 #include "fsl_adapter_timer.h"
+#include "fsl_component_log.h"
 #include "fsl_component_timer_manager.h"
 #include "elog.h"
 #include "perf_counter/perf_counter.h"
 #include "bsp_led.h"
+
+LOG_MODULE_DEFINE(os_schedule, kLOG_LevelDebug);
 
 volatile uint64_t k = 0;
 
@@ -131,6 +134,7 @@ void sys_500ms_task(void)
 void sys_1000ms_task(void)
 {
 	log_v("%s:%d enter!", __func__, __LINE__);
+	LOG_ERR("hello world!");
 }
 
 void OS_Schedule(void)
