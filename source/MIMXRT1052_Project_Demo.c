@@ -72,6 +72,8 @@ int main(void) {
     elog_raw("RT1025 SystemCoreClock=%dMhz\r\n", SystemCoreClock/1000000);
 //    coremark_main();
     OS_TIMER_Init();
+    void led_test(void);
+    led_test();
     while(1) {
     	OS_Schedule();
     }

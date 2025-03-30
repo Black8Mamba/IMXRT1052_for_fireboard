@@ -11,10 +11,11 @@
 #include "fsl_component_timer_manager.h"
 #include "elog.h"
 #include "perf_counter/perf_counter.h"
+#include "bsp_led.h"
 
 volatile uint64_t k = 0;
 
-TIMER_MANAGER_HANDLE_DEFINE(timerHandle);
+TIMER_MANAGER_HANDLE_DEFINE(timerHandle2);
 
 int period_1ms_flag = 0;
 int period_2ms_flag = 0;
@@ -73,13 +74,13 @@ void OS_TIMER_Init(void)
 	timer_status_t  status = TM_Init(&timer_config);
 	ELOG_ASSERT(kStatus_TimerSuccess == status);
 
-	status = TM_Open(timerHandle);
+	status = TM_Open(timerHandle2);
 	ELOG_ASSERT(kStatus_TimerSuccess == status);
 
-	status = TM_InstallCallback(timerHandle, schedule_timer_cb, NULL);
+	status = TM_InstallCallback(timerHandle2, schedule_timer_cb, NULL);
 	ELOG_ASSERT(kStatus_TimerSuccess == status);
 
-    status = TM_Start(timerHandle, (uint8_t)kTimerModeIntervalTimer, 1);
+    status = TM_Start(timerHandle2, (uint8_t)kTimerModeIntervalTimer, 1);
     ELOG_ASSERT(kStatus_TimerSuccess == status);
 }
 
@@ -120,12 +121,11 @@ void sys_100ms_task(void)
 
 void sys_200ms_task(void)
 {
-
 }
 
 void sys_500ms_task(void)
 {
-
+	RGB_LED_COLOR_RED;
 }
 
 void sys_1000ms_task(void)
