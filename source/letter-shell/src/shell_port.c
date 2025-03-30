@@ -13,6 +13,7 @@
 #include "fsl_debug_console.h"
 //#include "easyflash.h"
 #include "elog.h"
+#include "fsl_adapter_rng.h"
 //#include "bsp_phy.h"
 Shell shell;
 char shellBuffer[512];
@@ -191,3 +192,44 @@ int set_log_tag_level(int argc, char *argv[])
 }
 
 SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_MAIN), set_log_tag_level, set_log_tag_level, set_log_tag_level);
+
+int get_rng(int argc, char *argv[])
+{
+	if (argc != 2)
+	{
+		elog_raw("invalid param, usage: get_rng [0|1]\r\n");
+		return -1;
+	}
+
+	int hw = atoi(argv[1]);
+
+	hal_rng_status_t status = HAL_RngInit();
+	if (status != kStatus_HAL_RngSuccess)
+	{
+		log_e("HAL_RngInit failed:%x", status);
+		return -1;
+	}
+
+	uint32_t random = 0;
+
+	if (hw)
+	{
+		status =  HAL_RngHwGetData((void *)&random, sizeof(random));
+	} else
+	{
+		status =  HAL_RngGetData((void *)&random, sizeof(random));
+	}
+
+	if (status != kStatus_HAL_RngSuccess)
+	{
+		log_e("HAL_RngHwGetData failed:%x", status);
+		return -1;
+	}
+
+	log_i("random:%d", random);
+	HAL_RngDeinit();
+
+	return 0;
+}
+
+SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_MAIN), get_rng, get_rng, get_rng);
