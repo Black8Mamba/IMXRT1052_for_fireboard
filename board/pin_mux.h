@@ -124,6 +124,41 @@ void BOARD_InitDEBUG_UARTPins(void);
  */
 void BOARD_InitLedPins(void);
 
+/* WAKEUP (coord L6), SD_PWREN */
+/* Routed pin properties */
+#define BOARD_INITKEYPINS_SD_PWREN_PERIPHERAL                              GPIO5   /*!< Peripheral name */
+#define BOARD_INITKEYPINS_SD_PWREN_SIGNAL                                gpio_io   /*!< Signal name */
+#define BOARD_INITKEYPINS_SD_PWREN_CHANNEL                                    0U   /*!< Signal channel */
+
+/* Symbols to be used with GPIO driver */
+#define BOARD_INITKEYPINS_SD_PWREN_GPIO                                    GPIO5   /*!< GPIO peripheral base pointer */
+#define BOARD_INITKEYPINS_SD_PWREN_GPIO_PIN                                   0U   /*!< GPIO pin number */
+#define BOARD_INITKEYPINS_SD_PWREN_GPIO_PIN_MASK                      (1U << 0U)   /*!< GPIO pin mask */
+#define BOARD_INITKEYPINS_SD_PWREN_PORT                                    GPIO5   /*!< PORT peripheral base pointer */
+#define BOARD_INITKEYPINS_SD_PWREN_PIN                                        0U   /*!< PORT pin number */
+#define BOARD_INITKEYPINS_SD_PWREN_PIN_MASK                           (1U << 0U)   /*!< PORT pin mask */
+
+/* GPIO_AD_B0_05 (coord G14), CAN_STBY/BOOT_MODE[1]/Flash_RST/U12[8] */
+/* Routed pin properties */
+#define BOARD_INITKEYPINS_CAN_STBY_PERIPHERAL                              GPIO1   /*!< Peripheral name */
+#define BOARD_INITKEYPINS_CAN_STBY_SIGNAL                                gpio_io   /*!< Signal name */
+#define BOARD_INITKEYPINS_CAN_STBY_CHANNEL                                    5U   /*!< Signal channel */
+
+/* Symbols to be used with GPIO driver */
+#define BOARD_INITKEYPINS_CAN_STBY_GPIO                                    GPIO1   /*!< GPIO peripheral base pointer */
+#define BOARD_INITKEYPINS_CAN_STBY_GPIO_PIN                                   5U   /*!< GPIO pin number */
+#define BOARD_INITKEYPINS_CAN_STBY_GPIO_PIN_MASK                      (1U << 5U)   /*!< GPIO pin mask */
+#define BOARD_INITKEYPINS_CAN_STBY_PORT                                    GPIO1   /*!< PORT peripheral base pointer */
+#define BOARD_INITKEYPINS_CAN_STBY_PIN                                        5U   /*!< PORT pin number */
+#define BOARD_INITKEYPINS_CAN_STBY_PIN_MASK                           (1U << 5U)   /*!< PORT pin mask */
+
+
+/*!
+ * @brief Configures pin routing and optionally pin electrical features.
+ *
+ */
+void BOARD_InitKeyPins(void);
+
 #if defined(__cplusplus)
 }
 #endif

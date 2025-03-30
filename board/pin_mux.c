@@ -223,6 +223,7 @@ void BOARD_InitBootPins(void) {
     BOARD_InitPins();
     BOARD_InitDEBUG_UARTPins();
     BOARD_InitLedPins();
+    BOARD_InitKeyPins();
 }
 
 /*
@@ -353,6 +354,52 @@ BOARD_InitLedPins:
  *
  * END ****************************************************************************************************************/
 void BOARD_InitLedPins(void) {
+}
+
+/*
+ * TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
+BOARD_InitKeyPins:
+- options: {callFromInitBoot: 'true', coreID: core0, enableClock: 'true'}
+- pin_list:
+  - {pin_num: L6, peripheral: GPIO5, signal: 'gpio_io, 00', pin_signal: WAKEUP, direction: INPUT, pull_up_down_config: Pull_Up_22K_Ohm, pull_keeper_select: Pull,
+    drive_strength: Disabled}
+  - {pin_num: G14, peripheral: GPIO1, signal: 'gpio_io, 05', pin_signal: GPIO_AD_B0_05, direction: INPUT, hysteresis_enable: Enable, pull_up_down_config: Pull_Up_22K_Ohm,
+    drive_strength: Disabled}
+ * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
+ */
+
+/* FUNCTION ************************************************************************************************************
+ *
+ * Function Name : BOARD_InitKeyPins
+ * Description   : Configures pin routing and optionally pin electrical features.
+ *
+ * END ****************************************************************************************************************/
+void BOARD_InitKeyPins(void) {
+  CLOCK_EnableClock(kCLOCK_Iomuxc);           
+  CLOCK_EnableClock(kCLOCK_IomuxcSnvs);       
+
+  /* GPIO configuration of CAN_STBY on GPIO_AD_B0_05 (pin G14) */
+  gpio_pin_config_t CAN_STBY_config = {
+      .direction = kGPIO_DigitalInput,
+      .outputLogic = 0U,
+      .interruptMode = kGPIO_NoIntmode
+  };
+  /* Initialize GPIO functionality on GPIO_AD_B0_05 (pin G14) */
+  GPIO_PinInit(GPIO1, 5U, &CAN_STBY_config);
+
+  /* GPIO configuration of SD_PWREN on WAKEUP (pin L6) */
+  gpio_pin_config_t SD_PWREN_config = {
+      .direction = kGPIO_DigitalInput,
+      .outputLogic = 0U,
+      .interruptMode = kGPIO_NoIntmode
+  };
+  /* Initialize GPIO functionality on WAKEUP (pin L6) */
+  GPIO_PinInit(GPIO5, 0U, &SD_PWREN_config);
+
+  IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B0_05_GPIO1_IO05, 0U); 
+  IOMUXC_SetPinMux(IOMUXC_SNVS_WAKEUP_GPIO5_IO00, 0U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B0_05_GPIO1_IO05, 0x01F080U); 
+  IOMUXC_SetPinConfig(IOMUXC_SNVS_WAKEUP_GPIO5_IO00, 0x01F080U); 
 }
 /***********************************************************************************************************************
  * EOF
