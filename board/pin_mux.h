@@ -159,6 +159,13 @@ void BOARD_InitLedPins(void);
  */
 void BOARD_InitKeyPins(void);
 
+
+/*!
+ * @brief Configures pin routing and optionally pin electrical features.
+ *
+ */
+void BOARD_InitI2cPins(void);
+
 #if defined(__cplusplus)
 }
 #endif
