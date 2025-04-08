@@ -16,6 +16,8 @@
 #include <stdint.h>
 #include "board.h"
 #include "perf_counter.h"
+#include "FreeRTOS.h"
+#include "task.h"
 // SysTick register definitions based on CMSIS definitions.
 #define SYST_CSR SysTick->CTRL // SysTick Control & Status Register
 #define SYST_RVR SysTick->LOAD // SysTick Reload Value Register
@@ -25,11 +27,15 @@ uint32_t g_ovf_stamp;
 volatile uint32_t g_ovf_counter = 0;
 
 #ifndef SDK_OS_FREE_RTOS
-// SDK specific SysTick Interrupt Handler
+void xPortSysTickHandler( void );
 void SysTick_Handler(void)
 {
     g_ovf_counter += 1;
     perfc_port_insert_to_system_timer_insert_ovf_handler();
+    if (xTaskGetSchedulerState()!= taskSCHEDULER_NOT_STARTED)
+    {
+      xPortSysTickHandler();
+    }
 }
 #endif
 

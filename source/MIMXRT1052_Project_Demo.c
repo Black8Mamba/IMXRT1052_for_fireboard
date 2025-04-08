@@ -10,7 +10,6 @@
  * @brief   Application entry point.
  */
 #define LOG_TAG    "main"
-#define LOG_LVL    ELOG_LVL_DEBUG
 
 #include <stdio.h>
 #include "board.h"
@@ -27,6 +26,12 @@
 #include "elog.h"
 #include "coremark/coremark.h"
 #include "os_schedule.h"
+#include "FreeRtos.h"
+#include "task.h"
+#include "fsl_component_log.h"
+#define LOG_LVL    ELOG_LVL_DEBUG
+LOG_MODULE_DEFINE(main, kLOG_LevelDebug);
+
 /* TODO: insert other include files here. */
 extern void userShellInit(void);
 /* TODO: insert other definitions and declarations here. */
@@ -40,6 +45,31 @@ static void uart_backend(uint8_t *buffer, size_t length)
 	DbgConsole_SendDataReliable((uint8_t *)buffer, length);
 }
 
+void vTask1(void *pvParameters)
+{
+	while(1)
+	{
+		elog_raw("freertos run!\r\n");
+		log_v("%s:%d enter!", __func__, __LINE__);
+		LOG_ERR("hello world!");
+		vTaskDelay(1000 / portTICK_PERIOD_MS);
+	}
+}
+
+/**
+  * @brief  if task overflow, it will run here.
+  * @param  [IN]task handle.
+  * @param  [IN]task name string pointer.
+  * @retval None
+  */
+void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName)
+{
+     while(1)
+     {
+         log_e("task %s is stack overflow. \r\n", pcTaskName);
+         vTaskDelay(500);
+     }
+}
 
 int main(void) {
 
@@ -86,6 +116,9 @@ int main(void) {
     OS_TIMER_Init();
     void led_test(void);
     led_test();
+    NVIC_SetPriorityGrouping(((uint32_t)0x3));
+    xTaskCreate(vTask1, "Task1", configMINIMAL_STACK_SIZE, NULL, 1 + 1, NULL);
+    vTaskStartScheduler();
     while(1) {
     	OS_Schedule();
     }
