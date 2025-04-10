@@ -7209,7 +7209,6 @@ static void prvResetNextTaskUnblockTime( void )
 /*-----------------------------------------------------------*/
 
 #if ( ( configUSE_TRACE_FACILITY == 1 ) && ( configUSE_STATS_FORMATTING_FUNCTIONS > 0 ) )
-
     void vTaskListTasks( char * pcWriteBuffer,
                          size_t uxBufferLength )
     {

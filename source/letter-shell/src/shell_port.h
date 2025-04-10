@@ -17,4 +17,5 @@
 extern Shell shell;
 
 void userShellInit(void);
+void shellHandlerRb(uint8_t c);
 #endif

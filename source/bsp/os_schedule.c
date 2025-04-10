@@ -13,6 +13,8 @@
 #include "elog.h"
 #include "perf_counter/perf_counter.h"
 #include "bsp_led.h"
+#include "FreeRtos.h"
+#include "task.h"
 
 LOG_MODULE_DEFINE(os_schedule, kLOG_LevelDebug);
 
@@ -149,4 +151,108 @@ void OS_Schedule(void)
 	if (period_200ms_flag) { period_200ms_flag = 0; sys_200ms_task();}
 	if (period_500ms_flag) { period_500ms_flag = 0; sys_500ms_task();}
 	if (period_1000ms_flag) { period_1000ms_flag = 0; sys_1000ms_task();}
+}
+
+void vTask1ms(void *pvParameters)
+{
+	while(1)
+	{
+		sys_1ms_task();
+		vTaskDelay(1);
+	}
+}
+
+void vTask2ms(void *pvParameters)
+{
+	while(1)
+	{
+		sys_2ms_task();
+		vTaskDelay(2);
+	}
+}
+
+void vTask5ms(void *pvParameters)
+{
+	while(1)
+	{
+		sys_5ms_task();
+		vTaskDelay(5);
+	}
+}
+
+void vTask10ms(void *pvParameters)
+{
+	while(1)
+	{
+		sys_10ms_task();
+		vTaskDelay(10);
+	}
+}
+
+void vTask20ms(void *pvParameters)
+{
+	while(1)
+	{
+		sys_20ms_task();
+		vTaskDelay(20);
+	}
+}
+
+void vTask50ms(void *pvParameters)
+{
+	while(1)
+	{
+		sys_50ms_task();
+		vTaskDelay(50);
+	}
+}
+
+void vTask100ms(void *pvParameters)
+{
+	while(1)
+	{
+		sys_100ms_task();
+		vTaskDelay(100);
+	}
+}
+
+void vTask200ms(void *pvParameters)
+{
+	while(1)
+	{
+		sys_200ms_task();
+		vTaskDelay(200);
+	}
+}
+
+void vTask500ms(void *pvParameters)
+{
+	while(1)
+	{
+		sys_500ms_task();
+		vTaskDelay(500);
+	}
+}
+
+void vTask1000ms(void *pvParameters)
+{
+	while(1)
+	{
+		sys_1000ms_task();
+		vTaskDelay(1000);
+	}
+}
+
+void free_rtos_schedule(void)
+{
+	xTaskCreate(vTask1ms, "Task1ms", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
+	xTaskCreate(vTask2ms, "Task2ms", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
+	xTaskCreate(vTask5ms, "Task5ms", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
+	xTaskCreate(vTask10ms, "Task10ms", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
+	xTaskCreate(vTask20ms, "Task20ms", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
+	xTaskCreate(vTask50ms, "Task50ms", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
+	xTaskCreate(vTask100ms, "Task100ms", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
+	xTaskCreate(vTask200ms, "Task200ms", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
+	xTaskCreate(vTask500ms, "Task500ms", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
+	xTaskCreate(vTask1000ms, "Task1000ms", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
 }

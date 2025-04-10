@@ -12,6 +12,7 @@
 
 void OS_TIMER_Init(void);
 void OS_Schedule(void);
+void free_rtos_schedule(void);
 
 
 #endif /* OS_SCHEDULE_H_ */

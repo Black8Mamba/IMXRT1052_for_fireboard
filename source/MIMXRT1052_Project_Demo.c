@@ -45,17 +45,6 @@ static void uart_backend(uint8_t *buffer, size_t length)
 	DbgConsole_SendDataReliable((uint8_t *)buffer, length);
 }
 
-void vTask1(void *pvParameters)
-{
-	while(1)
-	{
-		elog_raw("freertos run!\r\n");
-		log_v("%s:%d enter!", __func__, __LINE__);
-		LOG_ERR("hello world!");
-		vTaskDelay(1000 / portTICK_PERIOD_MS);
-	}
-}
-
 /**
   * @brief  if task overflow, it will run here.
   * @param  [IN]task handle.
@@ -117,7 +106,7 @@ int main(void) {
     void led_test(void);
     led_test();
     NVIC_SetPriorityGrouping(((uint32_t)0x3));
-    xTaskCreate(vTask1, "Task1", configMINIMAL_STACK_SIZE, NULL, 1 + 1, NULL);
+    free_rtos_schedule();
     vTaskStartScheduler();
     while(1) {
     	OS_Schedule();

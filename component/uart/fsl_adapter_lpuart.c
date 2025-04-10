@@ -555,7 +555,10 @@ static void HAL_UartInterruptHandle(uint8_t instance)
                 count--;
 #endif
                 char ch = LPUART_ReadByte(s_LpuartAdapterBase[instance]);
-                shellHandler(&shell, ch);
+
+//                shellHandler(&shell, ch);
+                void shellHandlerRb(uint8_t c);
+                shellHandlerRb(ch);
                 uartHandle->rx.buffer[uartHandle->rx.bufferSofar++] = ch;
                 if (uartHandle->rx.bufferSofar >= uartHandle->rx.bufferLength)
                 {

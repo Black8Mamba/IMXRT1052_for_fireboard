@@ -16,9 +16,15 @@
 #include "fsl_adapter_rng.h"
 #include "fsl_component_log.h"
 #include "fsl_debug_console.h"
+#include "FreeRtos.h"
+#include "task.h"
+#include "lwrb/lwrb.h"
 //#include "bsp_phy.h"
 Shell shell;
 char shellBuffer[512];
+
+lwrb_t shell_rb;
+static uint8_t uart_buffer[512];
 
 /**
  * @brief 用户shell写
@@ -79,6 +85,19 @@ short userShellRead(char *data, unsigned short len)
 //    return 0;
 //}
 
+void vTaskShell(void *pvParameters)
+{
+	while(1)
+	{
+		char c;
+		if (lwrb_read(&shell_rb, &c, 1) == 1)
+		{
+			shellHandler(&shell, c);
+		}
+		vTaskDelay(1);
+	}
+}
+
 /**
  * @brief 用户shell初始化
  * 
@@ -89,13 +108,15 @@ void userShellInit(void)
     shell.read = userShellRead;
 //    shell.lock = userShellLock;
 //    shell.unlock = userShellUnlock;
+    lwrb_init(&shell_rb, uart_buffer, sizeof(uart_buffer));
     shellInit(&shell, shellBuffer, 512);
-//    if (xTaskCreate(shellTask, "shell", 256, &shell, 5, NULL) != pdPASS)
-//    {
-//        logError("shell task creat failed");
-//    }
+    xTaskCreate(vTaskShell, "TaskShell", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
 }
 
+void shellHandlerRb(uint8_t c)
+{
+	lwrb_write(&shell_rb, &c, 1);
+}
 
 int func(int i, char ch, char *str)
 {
@@ -235,4 +256,16 @@ int get_rng(int argc, char *argv[])
 }
 
 SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_MAIN), get_rng, get_rng, get_rng);
+
+int show_task(int argc, char *argv[])
+{
+	static char pcWriteBuffer[512] = {0};
+	vTaskList(pcWriteBuffer);
+	elog_raw("%s", pcWriteBuffer);
+	vTaskGetRunTimeStats(pcWriteBuffer);
+	elog_raw("%s", pcWriteBuffer);
+	return 0;
+}
+SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_MAIN), show_task, show_task, show_task);
+
 
