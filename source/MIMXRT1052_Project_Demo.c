@@ -30,11 +30,22 @@
 extern void userShellInit(void);
 /* TODO: insert other definitions and declarations here. */
 extern Shell shell;
+
+extern uint32_t __VECTOR_TABLE[];
+
+void relocate_vector_table(void)
+{
+    __disable_irq();
+    memcpy((void *)0x2001F000, (void *)__VECTOR_TABLE, 0x400);
+    SCB->VTOR = 0x2001F000;
+    __enable_irq();
+}
+
 /*
  * @brief   Application entry point.
  */
 int main(void) {
-
+	relocate_vector_table();
     /* Init board hardware. */
     BOARD_ConfigMPU();
     BOARD_InitBootPins();

@@ -71,35 +71,14 @@ SECTIONS
         __bss_section_table_end = .;
         __section_table_end = . ;
         /* End of Global Section Table */
-
         *(.after_vectors*)
-		*(EXCLUDE_FILE(
-			*core_matrix.o
-			*core_list_join.o
-			*core_main.o
-			*core_portme.o
-			*core_state.o
-			*core_util.o
-		).text*)
-       /**(.text*)*/
-       *(.rodata .rodata.* .constdata .constdata.*)
+       *system_MIMXRT1052 (.text.*)
        . = ALIGN(4);
     } > BOARD_FLASH
     /*
      * for exception handling/unwind - some Newlib functions (in common
      * with C++ and STDC++) use this.
      */
-    .ARM.extab : ALIGN(4)
-    {
-        *(.ARM.extab* .gnu.linkonce.armextab.*)
-    } > BOARD_FLASH
-
-    .ARM.exidx : ALIGN(4)
-    {
-        __exidx_start = .;
-        *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-        __exidx_end = .;
-    } > BOARD_FLASH
  
     _etext = .;
         
@@ -135,6 +114,19 @@ SECTIONS
         *(.data.$RAM3.*)
         *(.data.$SRAM_OC.*)
         . = ALIGN(4) ;
+        
+		_my_stext = .;
+		*(EXCLUDE_FILE(*system_MIMXRT1052.o).text.*) *(.glue_7) *(.glue_7t) *(.eh_frame)
+		. = ALIGN(4);
+		_my_etext = .;
+		*(.rodata .rodata.* .constdata .constdata.*)
+        . = ALIGN(4);
+        *(.ARM.extab* .gnu.linkonce.armextab.*)
+        . = ALIGN(4);
+        __exidx_start = .;
+        *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+        __exidx_end = .; 
+        . = ALIGN(4);         
         PROVIDE(__end_data_RAM3 = .) ;
         PROVIDE(__end_data_SRAM_OC = .) ;
      } > SRAM_OC AT>BOARD_FLASH
@@ -198,12 +190,6 @@ SECTIONS
 		_shell_command_end = .;
        KEEP(*(CodeQuickAccess))
        KEEP(*(DataQuickAccess))
-		*core_matrix.o (.text.*)
-		*core_list_join.o  (.text.*)
-		*core_main.o  (.text.*)
-		*core_portme.o  (.text.*)
-		*core_state.o  (.text.*)
-		*core_util.o  (.text.*)
 		*(RamFunction)
        *(.data*)
        . = ALIGN(4) ;
