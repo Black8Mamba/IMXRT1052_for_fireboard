@@ -124,6 +124,78 @@ void BOARD_InitDEBUG_UARTPins(void);
  */
 void BOARD_InitLedPins(void);
 
+/* WAKEUP (coord L6), SD_PWREN */
+/* Routed pin properties */
+#define BOARD_INITKEYPINS_SD_PWREN_PERIPHERAL                              GPIO5   /*!< Peripheral name */
+#define BOARD_INITKEYPINS_SD_PWREN_SIGNAL                                gpio_io   /*!< Signal name */
+#define BOARD_INITKEYPINS_SD_PWREN_CHANNEL                                    0U   /*!< Signal channel */
+
+/* Symbols to be used with GPIO driver */
+#define BOARD_INITKEYPINS_SD_PWREN_GPIO                                    GPIO5   /*!< GPIO peripheral base pointer */
+#define BOARD_INITKEYPINS_SD_PWREN_GPIO_PIN                                   0U   /*!< GPIO pin number */
+#define BOARD_INITKEYPINS_SD_PWREN_GPIO_PIN_MASK                      (1U << 0U)   /*!< GPIO pin mask */
+#define BOARD_INITKEYPINS_SD_PWREN_PORT                                    GPIO5   /*!< PORT peripheral base pointer */
+#define BOARD_INITKEYPINS_SD_PWREN_PIN                                        0U   /*!< PORT pin number */
+#define BOARD_INITKEYPINS_SD_PWREN_PIN_MASK                           (1U << 0U)   /*!< PORT pin mask */
+
+/* GPIO_AD_B0_05 (coord G14), CAN_STBY/BOOT_MODE[1]/Flash_RST/U12[8] */
+/* Routed pin properties */
+#define BOARD_INITKEYPINS_CAN_STBY_PERIPHERAL                              GPIO1   /*!< Peripheral name */
+#define BOARD_INITKEYPINS_CAN_STBY_SIGNAL                                gpio_io   /*!< Signal name */
+#define BOARD_INITKEYPINS_CAN_STBY_CHANNEL                                    5U   /*!< Signal channel */
+
+/* Symbols to be used with GPIO driver */
+#define BOARD_INITKEYPINS_CAN_STBY_GPIO                                    GPIO1   /*!< GPIO peripheral base pointer */
+#define BOARD_INITKEYPINS_CAN_STBY_GPIO_PIN                                   5U   /*!< GPIO pin number */
+#define BOARD_INITKEYPINS_CAN_STBY_GPIO_PIN_MASK                      (1U << 5U)   /*!< GPIO pin mask */
+#define BOARD_INITKEYPINS_CAN_STBY_PORT                                    GPIO1   /*!< PORT peripheral base pointer */
+#define BOARD_INITKEYPINS_CAN_STBY_PIN                                        5U   /*!< PORT pin number */
+#define BOARD_INITKEYPINS_CAN_STBY_PIN_MASK                           (1U << 5U)   /*!< PORT pin mask */
+
+
+/*!
+ * @brief Configures pin routing and optionally pin electrical features.
+ *
+ */
+void BOARD_InitKeyPins(void);
+
+/* GPIO_SD_B1_08 (coord P3), FlexSPI_D0_A */
+/* Routed pin properties */
+#define BOARD_INITQSPI_FlexSPI_D0_A_PERIPHERAL                           FLEXSPI   /*!< Peripheral name */
+#define BOARD_INITQSPI_FlexSPI_D0_A_SIGNAL                       FLEXSPI_A_DATA0   /*!< Signal name */
+
+/* GPIO_SD_B1_09 (coord N4), FlexSPI_D1_A */
+/* Routed pin properties */
+#define BOARD_INITQSPI_FlexSPI_D1_A_PERIPHERAL                           FLEXSPI   /*!< Peripheral name */
+#define BOARD_INITQSPI_FlexSPI_D1_A_SIGNAL                       FLEXSPI_A_DATA1   /*!< Signal name */
+
+/* GPIO_SD_B1_10 (coord P4), FlexSPI_D2_A */
+/* Routed pin properties */
+#define BOARD_INITQSPI_FlexSPI_D2_A_PERIPHERAL                           FLEXSPI   /*!< Peripheral name */
+#define BOARD_INITQSPI_FlexSPI_D2_A_SIGNAL                       FLEXSPI_A_DATA2   /*!< Signal name */
+
+/* GPIO_SD_B1_11 (coord P5), FlexSPI_D3_A */
+/* Routed pin properties */
+#define BOARD_INITQSPI_FlexSPI_D3_A_PERIPHERAL                           FLEXSPI   /*!< Peripheral name */
+#define BOARD_INITQSPI_FlexSPI_D3_A_SIGNAL                       FLEXSPI_A_DATA3   /*!< Signal name */
+
+/* GPIO_SD_B1_07 (coord L4), FlexSPI_CLK */
+/* Routed pin properties */
+#define BOARD_INITQSPI_FlexSPI_CLK_PERIPHERAL                            FLEXSPI   /*!< Peripheral name */
+#define BOARD_INITQSPI_FlexSPI_CLK_SIGNAL                         FLEXSPI_A_SCLK   /*!< Signal name */
+
+/* GPIO_SD_B1_06 (coord L3), FlexSPI_SS0 */
+/* Routed pin properties */
+#define BOARD_INITQSPI_FlexSPI_SS0_PERIPHERAL                            FLEXSPI   /*!< Peripheral name */
+#define BOARD_INITQSPI_FlexSPI_SS0_SIGNAL                        FLEXSPI_A_SS0_B   /*!< Signal name */
+
+
+/*!
+ * @brief Configures pin routing and optionally pin electrical features.
+ *
+ */
+void BOARD_InitQspi(void);
+
 #if defined(__cplusplus)
 }
 #endif

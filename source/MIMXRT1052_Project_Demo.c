@@ -85,6 +85,8 @@ int main(void) {
     OS_TIMER_Init();
     void led_test(void);
     led_test();
+    int FlexSPI_NorFlash_Init(void);
+    FlexSPI_NorFlash_Init();
     while(1) {
     	OS_Schedule();
     }

@@ -223,6 +223,8 @@ void BOARD_InitBootPins(void) {
     BOARD_InitPins();
     BOARD_InitDEBUG_UARTPins();
     BOARD_InitLedPins();
+    BOARD_InitKeyPins();
+    BOARD_InitQspi();
 }
 
 /*
@@ -353,6 +355,137 @@ BOARD_InitLedPins:
  *
  * END ****************************************************************************************************************/
 void BOARD_InitLedPins(void) {
+}
+
+/*
+ * TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
+BOARD_InitKeyPins:
+- options: {callFromInitBoot: 'true', coreID: core0, enableClock: 'true'}
+- pin_list:
+  - {pin_num: L6, peripheral: GPIO5, signal: 'gpio_io, 00', pin_signal: WAKEUP, direction: INPUT, pull_up_down_config: Pull_Up_22K_Ohm, pull_keeper_select: Pull,
+    drive_strength: Disabled}
+  - {pin_num: G14, peripheral: GPIO1, signal: 'gpio_io, 05', pin_signal: GPIO_AD_B0_05, direction: INPUT, hysteresis_enable: Enable, pull_up_down_config: Pull_Up_22K_Ohm,
+    drive_strength: Disabled}
+ * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
+ */
+
+/* FUNCTION ************************************************************************************************************
+ *
+ * Function Name : BOARD_InitKeyPins
+ * Description   : Configures pin routing and optionally pin electrical features.
+ *
+ * END ****************************************************************************************************************/
+void BOARD_InitKeyPins(void) {
+  CLOCK_EnableClock(kCLOCK_Iomuxc);           
+  CLOCK_EnableClock(kCLOCK_IomuxcSnvs);       
+
+  /* GPIO configuration of CAN_STBY on GPIO_AD_B0_05 (pin G14) */
+  gpio_pin_config_t CAN_STBY_config = {
+      .direction = kGPIO_DigitalInput,
+      .outputLogic = 0U,
+      .interruptMode = kGPIO_NoIntmode
+  };
+  /* Initialize GPIO functionality on GPIO_AD_B0_05 (pin G14) */
+  GPIO_PinInit(GPIO1, 5U, &CAN_STBY_config);
+
+  /* GPIO configuration of SD_PWREN on WAKEUP (pin L6) */
+  gpio_pin_config_t SD_PWREN_config = {
+      .direction = kGPIO_DigitalInput,
+      .outputLogic = 0U,
+      .interruptMode = kGPIO_NoIntmode
+  };
+  /* Initialize GPIO functionality on WAKEUP (pin L6) */
+  GPIO_PinInit(GPIO5, 0U, &SD_PWREN_config);
+
+  IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B0_05_GPIO1_IO05, 0U); 
+  IOMUXC_SetPinMux(IOMUXC_SNVS_WAKEUP_GPIO5_IO00, 0U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B0_05_GPIO1_IO05, 0x01F080U); 
+  IOMUXC_SetPinConfig(IOMUXC_SNVS_WAKEUP_GPIO5_IO00, 0x01F080U); 
+}
+
+/*
+ * TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
+BOARD_InitQspi:
+- options: {callFromInitBoot: 'true', coreID: core0, enableClock: 'true'}
+- pin_list:
+  - {pin_num: P3, peripheral: FLEXSPI, signal: FLEXSPI_A_DATA0, pin_signal: GPIO_SD_B1_08, software_input_on: Enable, speed: MHZ_200, slew_rate: Fast}
+  - {pin_num: N4, peripheral: FLEXSPI, signal: FLEXSPI_A_DATA1, pin_signal: GPIO_SD_B1_09, software_input_on: Enable, speed: MHZ_200, slew_rate: Fast}
+  - {pin_num: P4, peripheral: FLEXSPI, signal: FLEXSPI_A_DATA2, pin_signal: GPIO_SD_B1_10, software_input_on: Enable, speed: MHZ_200, slew_rate: Fast}
+  - {pin_num: P5, peripheral: FLEXSPI, signal: FLEXSPI_A_DATA3, pin_signal: GPIO_SD_B1_11, software_input_on: Enable, speed: MHZ_200, slew_rate: Fast}
+  - {pin_num: L4, peripheral: FLEXSPI, signal: FLEXSPI_A_SCLK, pin_signal: GPIO_SD_B1_07, software_input_on: Enable, speed: MHZ_200, slew_rate: Fast}
+  - {pin_num: L3, peripheral: FLEXSPI, signal: FLEXSPI_A_SS0_B, pin_signal: GPIO_SD_B1_06, software_input_on: Enable, speed: MHZ_200, slew_rate: Fast}
+ * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
+ */
+
+/* FUNCTION ************************************************************************************************************
+ *
+ * Function Name : BOARD_InitQspi
+ * Description   : Configures pin routing and optionally pin electrical features.
+ *
+ * END ****************************************************************************************************************/
+void BOARD_InitQspi(void) {
+  CLOCK_EnableClock(kCLOCK_Iomuxc);           
+
+#if FSL_IOMUXC_DRIVER_VERSION >= MAKE_VERSION(2, 0, 3)
+  IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B1_06_FLEXSPI_A_SS0_B, 1U); 
+#else
+  IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B1_06_FLEXSPIA_SS0_B, 1U); 
+#endif
+#if FSL_IOMUXC_DRIVER_VERSION >= MAKE_VERSION(2, 0, 3)
+  IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B1_07_FLEXSPI_A_SCLK, 1U); 
+#else
+  IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B1_07_FLEXSPIA_SCLK, 1U); 
+#endif
+#if FSL_IOMUXC_DRIVER_VERSION >= MAKE_VERSION(2, 0, 3)
+  IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B1_08_FLEXSPI_A_DATA00, 1U); 
+#else
+  IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B1_08_FLEXSPIA_DATA00, 1U); 
+#endif
+#if FSL_IOMUXC_DRIVER_VERSION >= MAKE_VERSION(2, 0, 3)
+  IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B1_09_FLEXSPI_A_DATA1, 1U); 
+#else
+  IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B1_09_FLEXSPIA_DATA01, 1U); 
+#endif
+#if FSL_IOMUXC_DRIVER_VERSION >= MAKE_VERSION(2, 0, 3)
+  IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B1_10_FLEXSPI_A_DATA2, 1U); 
+#else
+  IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B1_10_FLEXSPIA_DATA02, 1U); 
+#endif
+#if FSL_IOMUXC_DRIVER_VERSION >= MAKE_VERSION(2, 0, 3)
+  IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B1_11_FLEXSPI_A_DATA3, 1U); 
+#else
+  IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B1_11_FLEXSPIA_DATA03, 1U); 
+#endif
+#if FSL_IOMUXC_DRIVER_VERSION >= MAKE_VERSION(2, 0, 3)
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B1_06_FLEXSPI_A_SS0_B, 0x10F1U); 
+#else
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B1_06_FLEXSPIA_SS0_B, 0x10F1U); 
+#endif
+#if FSL_IOMUXC_DRIVER_VERSION >= MAKE_VERSION(2, 0, 3)
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B1_07_FLEXSPI_A_SCLK, 0x10F1U); 
+#else
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B1_07_FLEXSPIA_SCLK, 0x10F1U); 
+#endif
+#if FSL_IOMUXC_DRIVER_VERSION >= MAKE_VERSION(2, 0, 3)
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B1_08_FLEXSPI_A_DATA00, 0x10F1U); 
+#else
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B1_08_FLEXSPIA_DATA00, 0x10F1U); 
+#endif
+#if FSL_IOMUXC_DRIVER_VERSION >= MAKE_VERSION(2, 0, 3)
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B1_09_FLEXSPI_A_DATA1, 0x10F1U); 
+#else
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B1_09_FLEXSPIA_DATA01, 0x10F1U); 
+#endif
+#if FSL_IOMUXC_DRIVER_VERSION >= MAKE_VERSION(2, 0, 3)
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B1_10_FLEXSPI_A_DATA2, 0x10F1U); 
+#else
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B1_10_FLEXSPIA_DATA02, 0x10F1U); 
+#endif
+#if FSL_IOMUXC_DRIVER_VERSION >= MAKE_VERSION(2, 0, 3)
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B1_11_FLEXSPI_A_DATA3, 0x10F1U); 
+#else
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B1_11_FLEXSPIA_DATA03, 0x10F1U); 
+#endif
 }
 /***********************************************************************************************************************
  * EOF
