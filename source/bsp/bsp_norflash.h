@@ -101,6 +101,7 @@ status_t FlexSPI_NorFlash_Get_JedecDevice_ID(FLEXSPI_Type *base, uint32_t *vendo
 status_t FlexSPI_NorFlash_Get_Device_ID(FLEXSPI_Type *base, uint8_t *vendorID);
 status_t FlexSPI_NorFlash_Write_Enable(FLEXSPI_Type *base);
 status_t FlexSPI_NorFlash_Erase_Sector(FLEXSPI_Type *base, uint32_t dstAddr);
+status_t FlexSPI_NorFlash_Erase_Block(FLEXSPI_Type *base, uint32_t dstAddr);
 status_t FlexSPI_NorFlash_Wait_Bus_Busy(FLEXSPI_Type *base);
 status_t FlexSPI_NorFlash_Write_Status_Register(FLEXSPI_Type *base, uint8_t *config);
 status_t FlexSPI_NorFlash_Read_Status_Register(FLEXSPI_Type *base, uint8_t *SR_value);

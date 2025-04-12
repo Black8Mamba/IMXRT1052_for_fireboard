@@ -110,6 +110,26 @@ void BOARD_InitPins(void);
 #define BOARD_INITDEBUG_UARTPINS_UART1_RXD_PERIPHERAL                    LPUART1   /*!< Peripheral name */
 #define BOARD_INITDEBUG_UARTPINS_UART1_RXD_SIGNAL                             RX   /*!< Signal name */
 
+/* GPIO_AD_B1_03 (coord M12), SPDIF_IN/J22[8] */
+/* Routed pin properties */
+#define BOARD_INITDEBUG_UARTPINS_SPDIF_IN_PERIPHERAL                     LPUART2   /*!< Peripheral name */
+#define BOARD_INITDEBUG_UARTPINS_SPDIF_IN_SIGNAL                              RX   /*!< Signal name */
+
+/* GPIO_AD_B1_02 (coord L11), SPDIF_OUT/J22[7] */
+/* Routed pin properties */
+#define BOARD_INITDEBUG_UARTPINS_SPDIF_OUT_PERIPHERAL                    LPUART2   /*!< Peripheral name */
+#define BOARD_INITDEBUG_UARTPINS_SPDIF_OUT_SIGNAL                             TX   /*!< Signal name */
+
+/* GPIO_B1_13 (coord D14), WDOG_B */
+/* Routed pin properties */
+#define BOARD_INITDEBUG_UARTPINS_WDOG_B_PERIPHERAL                       LPUART5   /*!< Peripheral name */
+#define BOARD_INITDEBUG_UARTPINS_WDOG_B_SIGNAL                                RX   /*!< Signal name */
+
+/* GPIO_B1_12 (coord D13), SD_CD_SW */
+/* Routed pin properties */
+#define BOARD_INITDEBUG_UARTPINS_SD_CD_SW_PERIPHERAL                     LPUART5   /*!< Peripheral name */
+#define BOARD_INITDEBUG_UARTPINS_SD_CD_SW_SIGNAL                              TX   /*!< Signal name */
+
 
 /*!
  * @brief Configures pin routing and optionally pin electrical features.

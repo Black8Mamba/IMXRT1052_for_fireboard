@@ -306,6 +306,10 @@ BOARD_InitDEBUG_UARTPins:
     pull_keeper_select: Keeper, pull_keeper_enable: Enable, open_drain: Disable, speed: MHZ_100, drive_strength: R0_6, slew_rate: Slow}
   - {pin_num: L14, peripheral: LPUART1, signal: RX, pin_signal: GPIO_AD_B0_13, software_input_on: Disable, hysteresis_enable: Disable, pull_up_down_config: Pull_Down_100K_Ohm,
     pull_keeper_select: Keeper, pull_keeper_enable: Enable, open_drain: Disable, speed: MHZ_100, drive_strength: R0_6, slew_rate: Slow}
+  - {pin_num: M12, peripheral: LPUART2, signal: RX, pin_signal: GPIO_AD_B1_03}
+  - {pin_num: L11, peripheral: LPUART2, signal: TX, pin_signal: GPIO_AD_B1_02}
+  - {pin_num: D14, peripheral: LPUART5, signal: RX, pin_signal: GPIO_B1_13}
+  - {pin_num: D13, peripheral: LPUART5, signal: TX, pin_signal: GPIO_B1_12}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 
@@ -327,6 +331,26 @@ void BOARD_InitDEBUG_UARTPins(void) {
   IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B0_13_LPUART1_RXD, 0U); 
 #else
   IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B0_13_LPUART1_RX, 0U); 
+#endif
+#if FSL_IOMUXC_DRIVER_VERSION >= MAKE_VERSION(2, 0, 3)
+  IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_02_LPUART2_TXD, 0U); 
+#else
+  IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_02_LPUART2_TX, 0U); 
+#endif
+#if FSL_IOMUXC_DRIVER_VERSION >= MAKE_VERSION(2, 0, 3)
+  IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_03_LPUART2_RXD, 0U); 
+#else
+  IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_03_LPUART2_RX, 0U); 
+#endif
+#if FSL_IOMUXC_DRIVER_VERSION >= MAKE_VERSION(2, 0, 3)
+  IOMUXC_SetPinMux(IOMUXC_GPIO_B1_12_LPUART5_TXD, 0U); 
+#else
+  IOMUXC_SetPinMux(IOMUXC_GPIO_B1_12_LPUART5_TX, 0U); 
+#endif
+#if FSL_IOMUXC_DRIVER_VERSION >= MAKE_VERSION(2, 0, 3)
+  IOMUXC_SetPinMux(IOMUXC_GPIO_B1_13_LPUART5_RXD, 0U); 
+#else
+  IOMUXC_SetPinMux(IOMUXC_GPIO_B1_13_LPUART5_RX, 0U); 
 #endif
 #if FSL_IOMUXC_DRIVER_VERSION >= MAKE_VERSION(2, 0, 3)
   IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B0_12_LPUART1_TXD, 0x10B0U); 

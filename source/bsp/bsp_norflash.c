@@ -27,6 +27,7 @@
 #define NOR_CMD_LUT_SEQ_IDX_AHB_PAGEPROGRAM_QUAD_2      14
 #define NOR_CMD_LUT_SEQ_IDX_READ_UUID_ISSI              15
 #define NOR_CMD_LUT_SEQ_IDX_READ_UUID_WB                16
+#define NOR_CMD_LUT_SEQ_IDX_ERASEBLOCK 					17
 
 #define CUSTOM_LUT_LENGTH           90
 
@@ -168,6 +169,9 @@ const uint32_t customLUT[CUSTOM_LUT_LENGTH] = {
         [4 * NOR_CMD_LUT_SEQ_IDX_READ_UUID_WB + 1] 	=
             FLEXSPI_LUT_SEQ(kFLEXSPI_Command_READ_SDR, kFLEXSPI_1PAD, 0x04,
                               kFLEXSPI_Command_STOP, kFLEXSPI_1PAD, 0),
+		[4 * NOR_CMD_LUT_SEQ_IDX_ERASEBLOCK] =
+	            FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR, kFLEXSPI_1PAD, W25Q_BlockErase_4Addr,
+	                            kFLEXSPI_Command_RADDR_SDR, kFLEXSPI_1PAD, FLASH_ADDR_LENGTH),
 };
 
 static void NorFlash_FlexSPI_ModeInit(void)
@@ -415,6 +419,36 @@ status_t FlexSPI_NorFlash_Erase_Sector(FLEXSPI_Type *base, uint32_t dstAddr)
     flashXfer.cmdType = kFLEXSPI_Command;
     flashXfer.SeqNumber = 1;
     flashXfer.seqIndex = NOR_CMD_LUT_SEQ_IDX_ERASESECTOR;
+
+    status = FLEXSPI_TransferBlocking(base, &flashXfer);
+
+    if (status != kStatus_Success)
+    {
+        return status;
+    }
+
+    status = FlexSPI_NorFlash_Wait_Bus_Busy(base);
+
+    return status;
+}
+
+status_t FlexSPI_NorFlash_Erase_Block(FLEXSPI_Type *base, uint32_t dstAddr)
+{
+    status_t status;
+    flexspi_transfer_t flashXfer;
+
+    status = FlexSPI_NorFlash_Write_Enable(base);
+
+    if (status != kStatus_Success)
+    {
+        return status;
+    }
+
+    flashXfer.deviceAddress = dstAddr;
+    flashXfer.port = kFLEXSPI_PortA1;
+    flashXfer.cmdType = kFLEXSPI_Command;
+    flashXfer.SeqNumber = 1;
+    flashXfer.seqIndex = NOR_CMD_LUT_SEQ_IDX_ERASEBLOCK;
 
     status = FLEXSPI_TransferBlocking(base, &flashXfer);
 

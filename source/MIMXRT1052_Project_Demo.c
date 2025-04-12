@@ -26,6 +26,8 @@
 #include "elog.h"
 #include "coremark/coremark.h"
 #include "os_schedule.h"
+#include "boot.h"
+#include "types.h"
 /* TODO: insert other include files here. */
 extern void userShellInit(void);
 /* TODO: insert other definitions and declarations here. */
@@ -40,7 +42,10 @@ void relocate_vector_table(void)
     SCB->VTOR = 0x2001F000;
     __enable_irq();
 }
-
+extern Shell shell;
+void Rs232TransmitByte(blt_int8u data);
+void Rs232TransmitPacket(blt_int8u *data, blt_int8u len);
+blt_bool Rs232ReceiveByte(blt_int8u *data);
 /*
  * @brief   Application entry point.
  */
@@ -84,11 +89,21 @@ int main(void) {
 //    coremark_main();
     OS_TIMER_Init();
     void led_test(void);
-    led_test();
+//    led_test();
     int FlexSPI_NorFlash_Init(void);
     FlexSPI_NorFlash_Init();
+    BootInit();
     while(1) {
+//    	Rs232TransmitPacket("hello world\r\n", 13);
+//    	Rs232TransmitByte('c');
+//    	char c;
+//    	if (Rs232ReceiveByte(&c) == BLT_TRUE)
+//    	{
+//    		log_i("c:%c", c);
+//    	}
+
     	OS_Schedule();
+    	BootTask();
     }
     return 0 ;
 }

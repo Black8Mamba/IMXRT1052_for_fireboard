@@ -125,7 +125,7 @@ void sys_200ms_task(void)
 
 void sys_500ms_task(void)
 {
-	RGB_LED_COLOR_RED;
+//	RGB_LED_COLOR_RED;
 }
 
 void sys_1000ms_task(void)
