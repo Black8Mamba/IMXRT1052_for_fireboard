@@ -116,7 +116,7 @@
  * BOOT_NVM_CHECKSUM_HOOKS_ENABLE.
  */
 /** \brief Enable/disable the NVM hook function for supporting additional memory devices. */
-#define BOOT_NVM_HOOKS_ENABLE           (1)
+#define BOOT_NVM_HOOKS_ENABLE           (0)
 /** \brief Configure the size of the default memory device (typically flash EEPROM). */
 /* TODO ##Boot Configure the size of the flash memory device on the microcontroller.
  * Specify the value in KB. 

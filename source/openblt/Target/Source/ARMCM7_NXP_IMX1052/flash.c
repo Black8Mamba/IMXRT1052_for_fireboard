@@ -56,6 +56,14 @@
 #include "boot.h"                                /* bootloader generic header          */
 #include "fsl_flexspi.h"
 #include "bsp_norflash.h"
+#include "perf_counter.h"
+#define LOG_TAG    "flash"
+#define LOG_LVL    ELOG_LVL_DEBUG
+#include "elog.h"
+
+//arm-none-eabi-objcopy.exe -O ihex --gap-fill=0xFF MIMXRT1052_Project.axf output.hex
+//arm-none-eabi-objcopy.exe -O binary --gap-fill=0xFF MIMXRT1052_Project.axf output.bin
+//arm-none-eabi-objcopy.exe -O srec --gap-fill=0xFF MIMXRT1052_Project.axf output.srec
 
 /****************************************************************************************
 * Macro definitions
@@ -186,10 +194,10 @@ static const tFlashSector flashLayout[] =
    * in chunks of 16 KB and the first 32 KB are reserved for the bootloader. Its flash
    * memory starts at 0x08000000 in the memory map.
    */
-  /* { 0x60000000, 0x10000,  0},           flash sector  0 - reserved for bootloader   */
-  /* { 0x60010000, 0x10000,  1},           flash sector  1 - reserved for bootloader   */
-  /* { 0x60020000, 0x10000,  2},           flash sector  2 - reserved for bootloader   */
-  /* { 0x60030000, 0x10000,  3},           flash sector  3 - reserved for bootloader   */
+  { 0x60000000, 0x10000,  0},           /* flash sector  0 - reserved for bootloader   */
+  { 0x60010000, 0x10000,  1},           /* flash sector  1 - reserved for bootloader   */
+  { 0x60020000, 0x10000,  2},           /* flash sector  2 - reserved for bootloader   */
+  { 0x60030000, 0x10000,  3},           /* flash sector  3 - reserved for bootloader   */
   { 0x60040000, 0x10000,  4},           /* flash sector  4 - 64kb                      */
   { 0x60050000, 0x10000,  5},           /* flash sector  5 - 64kb                      */
   { 0x60060000, 0x10000,  6},           /* flash sector  6 - 64kb                      */
@@ -282,9 +290,12 @@ blt_bool FlashWrite(blt_addr addr, blt_int32u len, blt_int8u *data)
   blt_bool result = BLT_TRUE;
   blt_addr base_addr;
 
+//  log_i("addr:%x, len:%d", addr, len);
+
   /* validate the len parameter */
   if ((len - 1) > (FLASH_END_ADDRESS - addr))
   {
+	  log_e("return 1");
     result = BLT_FALSE;
   }
   
@@ -295,6 +306,7 @@ blt_bool FlashWrite(blt_addr addr, blt_int32u len, blt_int8u *data)
     if ((FlashGetSectorIdx(addr) == FLASH_INVALID_SECTOR_IDX) || \
         (FlashGetSectorIdx(addr+len-1) == FLASH_INVALID_SECTOR_IDX))
     {
+    	log_e("return 2");
       result = BLT_FALSE;
     }
   }
@@ -314,6 +326,9 @@ blt_bool FlashWrite(blt_addr addr, blt_int32u len, blt_int8u *data)
       /* let the block manager handle it */
       result = FlashAddToBlock(&blockInfo, addr, data, len);
     }
+  } else
+  {
+	  log_e("return 3");
   }
 
   /* give the result back to the caller */
@@ -336,9 +351,12 @@ blt_bool FlashErase(blt_addr addr, blt_int32u len)
   blt_int8u first_sector_idx;
   blt_int8u last_sector_idx;
 
+//  log_i("erase addr:%x, len:%d", addr, len);
+
   /* validate the len parameter */
   if ((len - 1) > (FLASH_END_ADDRESS - addr))
   {
+	log_e("return 1");
     result = BLT_FALSE;
   }
   
@@ -352,6 +370,7 @@ blt_bool FlashErase(blt_addr addr, blt_int32u len)
     if ((first_sector_idx == FLASH_INVALID_SECTOR_IDX) ||
         (last_sector_idx == FLASH_INVALID_SECTOR_IDX))
     {
+    	log_e("return 2");
       result = BLT_FALSE;
     }
   }
@@ -361,6 +380,7 @@ blt_bool FlashErase(blt_addr addr, blt_int32u len)
   {
     /* erase the sectors */
     result = FlashEraseSectors(first_sector_idx, last_sector_idx);
+    return BLT_TRUE;
   }
 
   /* give the result back to the caller */
@@ -382,6 +402,7 @@ blt_bool FlashWriteChecksum(void)
   blt_bool   result = BLT_TRUE;
   blt_int32u signature_checksum = 0;
 
+  return BLT_TRUE;
   /* TODO ##Port Calculate and write the signature checksum such that it appears at the
    * address configured with macro BOOT_FLASH_VECTOR_TABLE_CS_OFFSET. Use the 
    * FlashWrite() function for the actual write operation. For a typical microcontroller,
@@ -453,6 +474,7 @@ blt_bool FlashVerifyChecksum(void)
   blt_bool   result = BLT_TRUE;
   blt_int32u signature_checksum = 0;
 
+  return BLT_TRUE;
   /* TODO ##Port Implement code here that basically does the reverse of
    * FlashWriteChecksum(). Just make sure to read the values directory from flash memory
    * and NOT from the bootBlock. 
@@ -497,9 +519,12 @@ blt_bool FlashDone(void)
 {
   blt_bool result = BLT_TRUE;
 
+  log_i("FlashDone");
+  return BLT_TRUE;
   /* check if there is still data waiting to be programmed in the boot block */
   if (bootBlockInfo.base_addr != FLASH_INVALID_ADDRESS)
   {
+	  log_i("FlashWriteBlock:bootBlockInfo");
     if (FlashWriteBlock(&bootBlockInfo) == BLT_FALSE)
     {
       /* update the result value to flag the error */
@@ -513,6 +538,7 @@ blt_bool FlashDone(void)
     /* check if there is still data waiting to be programmed */
     if (blockInfo.base_addr != FLASH_INVALID_ADDRESS)
     {
+    	log_i("FlashWriteBlock:blockInfo");
       if (FlashWriteBlock(&blockInfo) == BLT_FALSE)
       {
         /* update the result value to flag the error */
@@ -559,6 +585,7 @@ static blt_bool FlashInitBlock(tFlashBlockInfo *block, blt_addr address)
   if ((address % FLASH_WRITE_BLOCK_SIZE) != 0)
   {
     /* update the result value to flag the error */
+	  log_e("return 1");
     result = BLT_FALSE;
   }
   
@@ -664,6 +691,7 @@ static blt_bool FlashAddToBlock(tFlashBlockInfo *block, blt_addr address,
   blt_int8u  *dst;
   blt_int8u  *src;
 
+  log_i("address:%x, len:%d\r\n", address, len);
   /* determine the current base address */
   current_base_addr = (address/FLASH_WRITE_BLOCK_SIZE)*FLASH_WRITE_BLOCK_SIZE;
 
@@ -673,6 +701,7 @@ static blt_bool FlashAddToBlock(tFlashBlockInfo *block, blt_addr address,
     /* initialize the blockInfo struct for the current block */
     if (FlashInitBlock(block, current_base_addr) == BLT_FALSE)
     {
+    	log_e("FlashInitBlock failed!");
       result = BLT_FALSE;
     }
   }
@@ -687,6 +716,7 @@ static blt_bool FlashAddToBlock(tFlashBlockInfo *block, blt_addr address,
       block = FlashSwitchBlock(block, current_base_addr);
       if (block == BLT_NULL)
       {
+    	  log_e("block == BLT_NULL!");
         result = BLT_FALSE;
       }
     }
@@ -731,7 +761,7 @@ static blt_bool FlashAddToBlock(tFlashBlockInfo *block, blt_addr address,
   return result;
 } /*** end of FlashAddToBlock ***/
 
-
+static uint8_t buffer[512] = {0};
 /************************************************************************************//**
 ** \brief     Programs FLASH_WRITE_BLOCK_SIZE bytes to flash from the block->data
 **            array.
@@ -746,6 +776,7 @@ static blt_bool FlashWriteBlock(tFlashBlockInfo *block)
   /* check that the address is actually within flash */
   if (FlashGetSectorIdx(block->base_addr) == FLASH_INVALID_SECTOR_IDX)
   {
+	  log_e("%s:%d FlashGetSectorIdx failed!", __func__, __LINE__);
     result = BLT_FALSE;
   }
 
@@ -775,16 +806,36 @@ static blt_bool FlashWriteBlock(tFlashBlockInfo *block)
      * data can be written 32-bits at a time.
      */
 
-	  status_t status = FlexSPI_NorFlash_Page_Program(FLEXSPI, block->base_addr, block->data, 256);
+	  status_t status = FlexSPI_NorFlash_Page_Program(FLEXSPI, block->base_addr-0x60000000, block->data, 256);
 	  if (status != kStatus_Success)
 	  {
+		  log_e("FlexSPI_NorFlash_Page_Program failed, addr:%x", block->base_addr);
 		  result = BLT_FALSE;
 		  return result;
 	  }
 
-	  status = FlexSPI_NorFlash_Page_Program(FLEXSPI, block->base_addr+256, block->data+256, 256);
+
+	  status = FlexSPI_NorFlash_Page_Program(FLEXSPI, block->base_addr+256-0x60000000, block->data+256, 256);
 	  if (status != kStatus_Success)
 	  {
+		  log_e("FlexSPI_NorFlash_Page_Program failed, addr:%x", block->base_addr);
+		  result = BLT_FALSE;
+		  return result;
+	  }
+
+//	  status = FlexSPI_NorFlash_Buffer_Read(FLEXSPI, block->base_addr-0x60000000, buffer, 512);
+//	  if (status != kStatus_Success)
+//	  {
+//		  log_e("FlexSPI_NorFlash_Buffer_Read failed, addr:%x", block->base_addr);
+//		  result = BLT_FALSE;
+//		  return result;
+//	  }
+
+	  CpuMemCopy(buffer, block->base_addr, FLASH_WRITE_BLOCK_SIZE);
+
+	  if (memcmp(block->data, buffer, 512) != 0)
+	  {
+		  log_e("memcpy failed, addr:%x", block->base_addr);
 		  result = BLT_FALSE;
 		  return result;
 	  }
@@ -813,6 +864,7 @@ static blt_bool FlashEraseSectors(blt_int8u first_sector_idx, blt_int8u last_sec
   /* validate the sector numbers */
   if (first_sector_idx > last_sector_idx)
   {
+	  log_e("%s:%d failed!", __func__, __LINE__);
     result = BLT_FALSE;
   }
 
@@ -821,6 +873,7 @@ static blt_bool FlashEraseSectors(blt_int8u first_sector_idx, blt_int8u last_sec
   {
     if (last_sector_idx > (FLASH_TOTAL_SECTORS-1))
     {
+    	log_e("%s:%d failed!", __func__, __LINE__);
       result = BLT_FALSE;
     }
   }
@@ -839,6 +892,7 @@ static blt_bool FlashEraseSectors(blt_int8u first_sector_idx, blt_int8u last_sec
       /* validate the sector information */
       if ( (sectorBaseAddr == FLASH_INVALID_ADDRESS) || (sectorSize == 0) )
       {
+    	  log_e("%s:%d flashLayout failed!", __func__, __LINE__);
         /* invalid sector information. flag error and abort erase operation */
         result = BLT_FALSE;
         break;
@@ -848,9 +902,10 @@ static blt_bool FlashEraseSectors(blt_int8u first_sector_idx, blt_int8u last_sec
        * 'sectorBaseAddr' and has a length of 'sectorSize' bytes. In case an error
        * occured, set result to BLT_FALSE and break the loop.
        */
-      status_t status = FlexSPI_NorFlash_Erase_Block(FLEXSPI, sectorBaseAddr);
+      status_t status = FlexSPI_NorFlash_Erase_Block(FLEXSPI, sectorBaseAddr-0x60000000);
       if(status != kStatus_Success)
       {
+    	  log_e("FlexSPI_NorFlash_Erase_Block failed:%x", status);
         /* could not perform erase operation */
         result = BLT_FALSE;
         /* error detected so don't bother continuing with the loop */
@@ -858,7 +913,6 @@ static blt_bool FlashEraseSectors(blt_int8u first_sector_idx, blt_int8u last_sec
       }
     }
   }
-
   /* give the result back to the caller */
   return result;
 } /*** end of FlashEraseSectors ***/

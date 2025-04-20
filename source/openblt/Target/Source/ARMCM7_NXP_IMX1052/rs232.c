@@ -275,6 +275,7 @@ blt_bool Rs232ReceiveByte(blt_int8u *data)
 	  recv_done = 0;
 	  start_recv = 1;
 	  hal_uart_status_t status = HAL_UartReceiveNonBlocking(&uart5_handle[0], &recv_data, 1);
+//	  hal_uart_status_t status = HAL_UartReceiveBlocking(&uart5_handle[0], &recv_data, 1);
 	  if (status != kStatus_HAL_UartSuccess)
 	  {
 		  log_e(LOG_TAG, "HAL_UartReceiveBlocking failed:%d!", status);

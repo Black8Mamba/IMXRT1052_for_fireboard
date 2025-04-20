@@ -201,7 +201,7 @@ void NvmInitHook(void)
 ****************************************************************************************/
 blt_int8u NvmWriteHook(blt_addr addr, blt_int32u len, blt_int8u *data)
 {
-	log_i("NvmWriteHook, addr:%x, len:%d!", addr, len);
+	log_i("NvmWriteHook, addr:%x, len:%x!", addr, len);
 //  return BLT_NVM_NOT_IN_RANGE;
 	return BLT_NVM_OKAY;
 } /*** end of NvmWriteHook ***/
@@ -222,7 +222,7 @@ blt_int8u NvmWriteHook(blt_addr addr, blt_int32u len, blt_int8u *data)
 ****************************************************************************************/
 blt_int8u NvmEraseHook(blt_addr addr, blt_int32u len)
 {
-	log_i("NvmEraseHook, addr:%x, len:%d!", addr, len);
+	log_i("NvmEraseHook, addr:%x, len:%x!", addr, len);
 //  return BLT_NVM_NOT_IN_RANGE;
 	return BLT_NVM_OKAY;
 } /*** end of NvmEraseHook ***/
@@ -250,7 +250,7 @@ blt_bool NvmDoneHook(void)
 ****************************************************************************************/
 blt_bool NvmVerifyChecksumHook(void)
 {
-	log_i("NvmWriteChecksumHook!");
+	log_i("NvmVerifyChecksumHook!");
   return BLT_FALSE;
 } /*** end of NvmVerifyChecksum ***/
 
@@ -265,6 +265,7 @@ blt_bool NvmVerifyChecksumHook(void)
 ****************************************************************************************/
 blt_bool NvmWriteChecksumHook(void)
 {
+	log_i("NvmWriteChecksumHook!");
   return BLT_TRUE;
 }
 #endif /* BOOT_NVM_CHECKSUM_HOOKS_ENABLE > 0 */
