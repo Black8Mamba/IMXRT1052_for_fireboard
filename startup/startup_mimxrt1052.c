@@ -722,39 +722,39 @@ void ResetISR(void) {
 // Default core exception handlers. Override the ones here by defining your own
 // handler routines in your application code.
 //*****************************************************************************
-WEAK_AV void NMI_Handler(void)
+WEAK void NMI_Handler(void)
 { while(1) {}
 }
 
-WEAK_AV void HardFault_Handler(void)
+WEAK void HardFault_Handler(void)
 { while(1) {}
 }
 
-WEAK_AV void MemManage_Handler(void)
+WEAK void MemManage_Handler(void)
 { while(1) {}
 }
 
-WEAK_AV void BusFault_Handler(void)
+WEAK void BusFault_Handler(void)
 { while(1) {}
 }
 
-WEAK_AV void UsageFault_Handler(void)
+WEAK void UsageFault_Handler(void)
 { while(1) {}
 }
 
-WEAK_AV void SVC_Handler(void)
+WEAK void SVC_Handler(void)
 { while(1) {}
 }
 
-WEAK_AV void DebugMon_Handler(void)
+WEAK void DebugMon_Handler(void)
 { while(1) {}
 }
 
-WEAK_AV void PendSV_Handler(void)
+WEAK void PendSV_Handler(void)
 { while(1) {}
 }
 
-WEAK_AV void SysTick_Handler(void)
+WEAK void SysTick_Handler(void)
 { while(1) {}
 }
 
@@ -762,7 +762,7 @@ WEAK_AV void SysTick_Handler(void)
 // Processor ends up here if an unexpected interrupt occurs or a specific
 // handler is not present in the application code.
 //*****************************************************************************
-WEAK_AV void IntDefaultHandler(void)
+WEAK void IntDefaultHandler(void)
 { while(1) {}
 }
 

@@ -72,8 +72,10 @@ SECTIONS
         __section_table_end = . ;
         /* End of Global Section Table */
         *(.after_vectors*)
-       *system_MIMXRT1052 (.text.*)
        . = ALIGN(4);
+       *(.text.SystemInit*)
+       *(.text.SystemInitHook*)
+       
     } > BOARD_FLASH
     /*
      * for exception handling/unwind - some Newlib functions (in common
@@ -116,7 +118,7 @@ SECTIONS
         . = ALIGN(4) ;
         
 		_my_stext = .;
-		*(EXCLUDE_FILE(*system_MIMXRT1052.o).text.*) *(.glue_7) *(.glue_7t) *(.eh_frame)
+		*(.text* .text.*) *(.glue_7) *(.glue_7t) *(.eh_frame) *(.vfp11_veneer)  *(.v4_bx)
 		. = ALIGN(4);
 		_my_etext = .;
 		*(.rodata .rodata.* .constdata .constdata.*)
