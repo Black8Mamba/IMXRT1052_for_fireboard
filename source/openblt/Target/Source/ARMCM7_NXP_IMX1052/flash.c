@@ -351,7 +351,7 @@ blt_bool FlashErase(blt_addr addr, blt_int32u len)
   blt_int8u first_sector_idx;
   blt_int8u last_sector_idx;
 
-//  log_i("erase addr:%x, len:%d", addr, len);
+  log_i("erase addr:%x, len:%d", addr, len);
 
   /* validate the len parameter */
   if ((len - 1) > (FLASH_END_ADDRESS - addr))
@@ -517,9 +517,13 @@ blt_bool FlashVerifyChecksum(void)
 ****************************************************************************************/
 blt_bool FlashDone(void)
 {
+	void pre_jump_app(void);
   blt_bool result = BLT_TRUE;
 
-  log_i("FlashDone");
+  log_i("FlashDone2");
+  pre_jump_app();
+  jump_to_app();
+
   return BLT_TRUE;
   /* check if there is still data waiting to be programmed in the boot block */
   if (bootBlockInfo.base_addr != FLASH_INVALID_ADDRESS)
@@ -562,7 +566,7 @@ blt_addr FlashGetUserProgBaseAddress(void)
 {
   blt_addr result;
   
-  result = flashLayout[0].sector_start;
+  result = flashLayout[4].sector_start;
   
   /* give the result back to the caller */
   return result;
@@ -814,7 +818,6 @@ static blt_bool FlashWriteBlock(tFlashBlockInfo *block)
 		  return result;
 	  }
 
-
 	  status = FlexSPI_NorFlash_Page_Program(FLEXSPI, block->base_addr+256-0x60000000, block->data+256, 256);
 	  if (status != kStatus_Success)
 	  {
@@ -832,10 +835,20 @@ static blt_bool FlashWriteBlock(tFlashBlockInfo *block)
 //	  }
 
 	  CpuMemCopy(buffer, block->base_addr, FLASH_WRITE_BLOCK_SIZE);
+//	  log_e("memcpy failed, addr:%x", block->base_addr);
+//	  for (int i = 0; i < 64; ++i)
+//	  {
+//		  elog_raw("%02x ", buffer[i]);
+//	  }
+//	  elog_raw("\r\n");
+//	  for (int i = 0; i < 64; ++i)
+//	  {
+//		  elog_raw("%02x ", block->data[i]);
+//	  }
+//	  elog_raw("\r\n");
 
 	  if (memcmp(block->data, buffer, 512) != 0)
 	  {
-		  log_e("memcpy failed, addr:%x", block->base_addr);
 		  result = BLT_FALSE;
 		  return result;
 	  }
@@ -865,7 +878,7 @@ static blt_bool FlashEraseSectors(blt_int8u first_sector_idx, blt_int8u last_sec
   if (first_sector_idx > last_sector_idx)
   {
 	  log_e("%s:%d failed!", __func__, __LINE__);
-    result = BLT_FALSE;
+	  result = BLT_FALSE;
   }
 
   /* only continue if all is okay so far */
@@ -889,6 +902,7 @@ static blt_bool FlashEraseSectors(blt_int8u first_sector_idx, blt_int8u last_sec
       /* get information about the sector */
       sectorBaseAddr = flashLayout[sectorIdx].sector_start;
       sectorSize = flashLayout[sectorIdx].sector_size;
+
       /* validate the sector information */
       if ( (sectorBaseAddr == FLASH_INVALID_ADDRESS) || (sectorSize == 0) )
       {
@@ -902,18 +916,19 @@ static blt_bool FlashEraseSectors(blt_int8u first_sector_idx, blt_int8u last_sec
        * 'sectorBaseAddr' and has a length of 'sectorSize' bytes. In case an error
        * occured, set result to BLT_FALSE and break the loop.
        */
-      status_t status = FlexSPI_NorFlash_Erase_Block(FLEXSPI, sectorBaseAddr-0x60000000);
-      if(status != kStatus_Success)
-      {
-    	  log_e("FlexSPI_NorFlash_Erase_Block failed:%x", status);
-        /* could not perform erase operation */
-        result = BLT_FALSE;
-        /* error detected so don't bother continuing with the loop */
-        break;
-      }
+//      log_i("erase block:%x, size:%x\r\n", sectorBaseAddr-0x60000000, sectorSize);
+//      for (int i = 0; i < 16; ++i)
+//      {
+//    		status_t status = FlexSPI_NorFlash_Erase_Sector(FLEXSPI, sectorBaseAddr-0x60000000+i*0x1000);
+//    		if (status != kStatus_Success)
+//    		{
+//    			log_i("FlexSPI_NorFlash_Erase_Block failed!\r\n");
+//    		}
+//      }
     }
   }
   /* give the result back to the caller */
+  log_i("erase success!\r\n");
   return result;
 } /*** end of FlashEraseSectors ***/
 

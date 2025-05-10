@@ -46,6 +46,32 @@ extern Shell shell;
 void Rs232TransmitByte(blt_int8u data);
 void Rs232TransmitPacket(blt_int8u *data, blt_int8u len);
 blt_bool Rs232ReceiveByte(blt_int8u *data);
+
+
+void pre_jump_app(void)
+{
+	// disable global interrupt
+	__disable_irq();
+
+	// deinit device
+	void TM_Deinit(void);
+	TM_Deinit();
+	DbgConsole_Deinit();
+
+    SysTick->CTRL = 0;
+    SysTick->LOAD = 0;
+    SysTick->VAL = 0;
+
+//    SCB_DisableICache();
+//    SCB_DisableDCache();
+
+	//clear pending irq
+	for(int i = -14; i <= 151; ++i)
+	{
+		NVIC_ClearPendingIRQ((IRQn_Type)i);
+	}
+}
+
 /*
  * @brief   Application entry point.
  */
@@ -92,6 +118,8 @@ int main(void) {
 //    led_test();
     int FlexSPI_NorFlash_Init(void);
     FlexSPI_NorFlash_Init();
+    void flash_test(void);
+    flash_test();
     BootInit();
     while(1) {
     	OS_Schedule();

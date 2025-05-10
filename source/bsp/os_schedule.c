@@ -130,7 +130,7 @@ void sys_500ms_task(void)
 
 void sys_1000ms_task(void)
 {
-	log_i("%s:%d enter!", __func__, __LINE__);
+//	log_i("%s:%d enter!", __func__, __LINE__);
 }
 
 void OS_Schedule(void)

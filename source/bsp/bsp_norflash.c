@@ -600,3 +600,34 @@ int FlexSPI_NorFlash_Init(void)
 
     return 0;
 }
+
+unsigned char buffer[4*1024] = {0};
+void flash_test(void)
+{
+	status_t status = FlexSPI_NorFlash_Erase_Sector(FLEXSPI, 0x40000);
+	if (status != kStatus_Success)
+	{
+		PRINTF("FlexSPI_NorFlash_Erase_Block failed!\r\n");
+	}
+	status = FlexSPI_NorFlash_Buffer_Read(FLEXSPI, 0x40000, buffer, 4*1024);
+	if (status != kStatus_Success)
+	{
+		PRINTF("FlexSPI_NorFlash_Erase_Block failed!\r\n");
+	}
+	for (int i = 0; i < 256; ++i)
+	{
+		PRINTF("%02x ", buffer[i]);
+	}
+	PRINTF("\r\n");
+
+    for (int i = 0; i < 64; ++i)
+    {
+  		status_t status = FlexSPI_NorFlash_Erase_Sector(FLEXSPI, 0x40000+i*0x1000);
+  		if (status != kStatus_Success)
+  		{
+  			PRINTF("FlexSPI_NorFlash_Erase_Block failed!\r\n");
+  		}
+    }
+
+    PRINTF("erase2 success!\r\n");
+}
