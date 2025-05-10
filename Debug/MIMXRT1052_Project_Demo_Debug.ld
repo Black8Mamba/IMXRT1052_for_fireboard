@@ -16,6 +16,7 @@ ENTRY(ResetISR)
 SECTIONS
 {
      /* Image Vector Table and Boot Data for booting from external flash */
+     /*
     .boot_hdr : ALIGN(4)
     {
         FILL(0xff)
@@ -30,6 +31,7 @@ SECTIONS
         __boot_hdr_end__ = ABSOLUTE(.) ;
         . = 0x2000 ;
     } >BOARD_FLASH
+    */
 
     /* MAIN TEXT SECTION */
     .text : ALIGN(4)

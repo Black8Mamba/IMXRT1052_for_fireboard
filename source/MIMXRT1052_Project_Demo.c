@@ -28,12 +28,36 @@
 #include "os_schedule.h"
 #include "boot.h"
 #include "types.h"
+#include "fsl_component_timer_manager.h"
 /* TODO: insert other include files here. */
 extern void userShellInit(void);
 /* TODO: insert other definitions and declarations here. */
 extern Shell shell;
 
 extern uint32_t __VECTOR_TABLE[];
+
+void pre_jump_app(void)
+{
+	// disable global interrupt
+	__disable_irq();
+
+	// deinit device
+	TM_Deinit();
+	DbgConsole_Deinit();
+
+    SysTick->CTRL = 0;
+    SysTick->LOAD = 0;
+    SysTick->VAL = 0;
+
+//    SCB_DisableICache();
+//    SCB_DisableDCache();
+
+	//clear pending irq
+	for(int i = -14; i <= 151; ++i)
+	{
+		NVIC_ClearPendingIRQ((IRQn_Type)i);
+	}
+}
 
 void relocate_vector_table(void)
 {
@@ -60,6 +84,7 @@ int main(void) {
     /* Init FSL debug console. */
     BOARD_InitDebugConsole();
 #endif
+
     cm_backtrace_init("CmBacktrace for i.MX RT1052 EVK Pro Cortex-M7", "1.0", "1.0");
     SystemCoreClockUpdate();
     BOARD_SystickEnable();
@@ -92,7 +117,10 @@ int main(void) {
 //    led_test();
     int FlexSPI_NorFlash_Init(void);
     FlexSPI_NorFlash_Init();
-    BootInit();
+//    BootInit();
+    delay_ms(1000);
+//    pre_jump_app();
+//    jump_to_app();
     while(1) {
 //    	Rs232TransmitPacket("hello world\r\n", 13);
 //    	Rs232TransmitByte('c');
