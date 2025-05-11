@@ -351,7 +351,7 @@ blt_bool FlashErase(blt_addr addr, blt_int32u len)
   blt_int8u first_sector_idx;
   blt_int8u last_sector_idx;
 
-  log_i("erase addr:%x, len:%d", addr, len);
+//  log_i("erase addr:%x, len:%d", addr, len);
 
   /* validate the len parameter */
   if ((len - 1) > (FLASH_END_ADDRESS - addr))
@@ -508,7 +508,6 @@ blt_bool FlashVerifyChecksum(void)
   return result;
 } /*** end of FlashVerifyChecksum ***/
 
-
 /************************************************************************************//**
 ** \brief     Finalizes the flash driver operations. There could still be data in
 **            the currently active block that needs to be flashed.
@@ -517,10 +516,11 @@ blt_bool FlashVerifyChecksum(void)
 ****************************************************************************************/
 blt_bool FlashDone(void)
 {
-	void pre_jump_app(void);
   blt_bool result = BLT_TRUE;
 
-  log_i("FlashDone2");
+  log_i("FlashDone");
+
+  void pre_jump_app(void);
   pre_jump_app();
   jump_to_app();
 
@@ -695,7 +695,7 @@ static blt_bool FlashAddToBlock(tFlashBlockInfo *block, blt_addr address,
   blt_int8u  *dst;
   blt_int8u  *src;
 
-  log_i("address:%x, len:%d\r\n", address, len);
+//  log_i("address:%x, len:%d\r\n", address, len);
   /* determine the current base address */
   current_base_addr = (address/FLASH_WRITE_BLOCK_SIZE)*FLASH_WRITE_BLOCK_SIZE;
 
@@ -810,6 +810,22 @@ static blt_bool FlashWriteBlock(tFlashBlockInfo *block)
      * data can be written 32-bits at a time.
      */
 
+//	  static int done = 0;
+//
+//	  if (done == 0)
+//	  {
+//		    for (int i = 0; i < 64; ++i)
+//		    {
+//		  		status_t status = FlexSPI_NorFlash_Erase_Sector(FLEXSPI, 0x40000+i*0x1000);
+//		  		if (status != kStatus_Success)
+//		  		{
+//		  			PRINTF("FlexSPI_NorFlash_Erase_Block failed!\r\n");
+//		  		}
+//		    }
+//		    log_i("erase successful!\r\n");
+//		    done = 1;
+//	  }
+
 	  status_t status = FlexSPI_NorFlash_Page_Program(FLEXSPI, block->base_addr-0x60000000, block->data, 256);
 	  if (status != kStatus_Success)
 	  {
@@ -818,6 +834,7 @@ static blt_bool FlashWriteBlock(tFlashBlockInfo *block)
 		  return result;
 	  }
 
+	  uint64_t enter = get_system_ms();
 	  status = FlexSPI_NorFlash_Page_Program(FLEXSPI, block->base_addr+256-0x60000000, block->data+256, 256);
 	  if (status != kStatus_Success)
 	  {
@@ -825,6 +842,8 @@ static blt_bool FlashWriteBlock(tFlashBlockInfo *block)
 		  result = BLT_FALSE;
 		  return result;
 	  }
+	  uint64_t exit = get_system_ms();
+	  log_i("diff:%lld\r\n", exit-enter);
 
 //	  status = FlexSPI_NorFlash_Buffer_Read(FLEXSPI, block->base_addr-0x60000000, buffer, 512);
 //	  if (status != kStatus_Success)
@@ -835,17 +854,6 @@ static blt_bool FlashWriteBlock(tFlashBlockInfo *block)
 //	  }
 
 	  CpuMemCopy(buffer, block->base_addr, FLASH_WRITE_BLOCK_SIZE);
-//	  log_e("memcpy failed, addr:%x", block->base_addr);
-//	  for (int i = 0; i < 64; ++i)
-//	  {
-//		  elog_raw("%02x ", buffer[i]);
-//	  }
-//	  elog_raw("\r\n");
-//	  for (int i = 0; i < 64; ++i)
-//	  {
-//		  elog_raw("%02x ", block->data[i]);
-//	  }
-//	  elog_raw("\r\n");
 
 	  if (memcmp(block->data, buffer, 512) != 0)
 	  {
@@ -917,7 +925,8 @@ static blt_bool FlashEraseSectors(blt_int8u first_sector_idx, blt_int8u last_sec
        * occured, set result to BLT_FALSE and break the loop.
        */
 //      log_i("erase block:%x, size:%x\r\n", sectorBaseAddr-0x60000000, sectorSize);
-//      for (int i = 0; i < 16; ++i)
+//      log_i("enter:%lld\r\n", get_system_ms());
+//      for (int i = 0; i < 1; ++i)
 //      {
 //    		status_t status = FlexSPI_NorFlash_Erase_Sector(FLEXSPI, sectorBaseAddr-0x60000000+i*0x1000);
 //    		if (status != kStatus_Success)
@@ -925,10 +934,11 @@ static blt_bool FlashEraseSectors(blt_int8u first_sector_idx, blt_int8u last_sec
 //    			log_i("FlexSPI_NorFlash_Erase_Block failed!\r\n");
 //    		}
 //      }
+//      log_i("exit:%lld\r\n", get_system_ms());
     }
   }
   /* give the result back to the caller */
-  log_i("erase success!\r\n");
+//  log_i("erase success!\r\n");
   return result;
 } /*** end of FlashEraseSectors ***/
 

@@ -251,7 +251,7 @@ blt_bool NvmDoneHook(void)
 blt_bool NvmVerifyChecksumHook(void)
 {
 	log_i("NvmVerifyChecksumHook!");
-  return BLT_FALSE;
+  return BLT_TRUE;
 } /*** end of NvmVerifyChecksum ***/
 
 

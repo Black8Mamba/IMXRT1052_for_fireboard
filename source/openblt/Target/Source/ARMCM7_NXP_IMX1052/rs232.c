@@ -59,7 +59,7 @@ UART_HANDLE_DEFINE(uart5_handle);
  */
 #define RS232_CTO_RX_PACKET_TIMEOUT_MS (200u)
 /** \brief Timeout for transmitting a byte in milliseconds. */
-#define RS232_BYTE_TX_TIMEOUT_MS       (10u)
+#define RS232_BYTE_TX_TIMEOUT_MS       (200u)
 
 static int recv_done = 0;
 static int start_recv = 0;

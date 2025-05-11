@@ -47,6 +47,13 @@ void Rs232TransmitByte(blt_int8u data);
 void Rs232TransmitPacket(blt_int8u *data, blt_int8u len);
 blt_bool Rs232ReceiveByte(blt_int8u *data);
 
+void relocate_vector_table_app(void)
+{
+    __disable_irq();
+    memcpy((void *)0x2001F000, (void *)0x60042000, 0x400);
+    SCB->VTOR = 0x2001F000;
+    __enable_irq();
+}
 
 void pre_jump_app(void)
 {
@@ -62,14 +69,15 @@ void pre_jump_app(void)
     SysTick->LOAD = 0;
     SysTick->VAL = 0;
 
-//    SCB_DisableICache();
-//    SCB_DisableDCache();
-
 	//clear pending irq
 	for(int i = -14; i <= 151; ++i)
 	{
 		NVIC_ClearPendingIRQ((IRQn_Type)i);
 	}
+	relocate_vector_table_app();
+	SCB_DisableICache();
+	SCB_DisableDCache();
+	ARM_MPU_Disable();
 }
 
 /*

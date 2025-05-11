@@ -623,6 +623,7 @@ void flash_test(void)
     for (int i = 0; i < 64; ++i)
     {
   		status_t status = FlexSPI_NorFlash_Erase_Sector(FLEXSPI, 0x40000+i*0x1000);
+//    	status_t status = FlexSPI_NorFlash_Erase_Sector(FLEXSPI, i*0x1000);
   		if (status != kStatus_Success)
   		{
   			PRINTF("FlexSPI_NorFlash_Erase_Block failed!\r\n");
@@ -630,4 +631,34 @@ void flash_test(void)
     }
 
     PRINTF("erase2 success!\r\n");
+
+//    for (int i = 0; i < 1024; ++i)
+//    {
+//    	unsigned char read_data[256] = {0};
+//        status_t status = FlexSPI_NorFlash_Buffer_Read(FLEXSPI,
+//                                               0+i*256,
+//											   read_data,
+//											   256);
+//  		if (status != kStatus_Success)
+//  		{
+//  			PRINTF("FlexSPI_NorFlash_Page_Program failed!\r\n");
+//  			return;
+//  		}
+////  		for (int j = 0; j < 256; ++j)
+////  		{
+////  			PRINTF("%02x ", read_data[j]);
+////  		}
+////  		PRINTF("\r\n");
+//
+//		  status = FlexSPI_NorFlash_Page_Program(FLEXSPI, 0x40000+i*256, read_data, 256);
+//		  if (status != kStatus_Success)
+//		  {
+//	  			PRINTF("FlexSPI_NorFlash_Page_Program failed!\r\n");
+//	  			return;
+//		  }
+//    }
+//    PRINTF("read and write success!\r\n");
+//	void pre_jump_app(void);
+//    pre_jump_app();
+//    jump_to_app();
 }

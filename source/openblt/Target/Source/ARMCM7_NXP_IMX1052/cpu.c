@@ -132,7 +132,7 @@ void CpuStartUserProgram(void)
    * that this should only be done if the microcontroller normally has global interrupts
    * enabled after a reset event. Otherwise, you can skip this part.
    */
-  CpuIrqEnable();
+//  CpuIrqEnable();
 
   /* TODO ##Port Start the user program. This is achieved by reading out the address
    * of the user program's reset handler from its vector table and jumping to it.
@@ -150,9 +150,14 @@ void CpuStartUserProgram(void)
    * the 1st entry in the user program's vector table. this address points to the
    * user program's reset handler.
    */
-  pProgResetHandler = (void(*)(void))(*((blt_addr *)NvmGetUserProgBaseAddress()));
-  /* start the user program by calling its reset interrupt service routine */
-  pProgResetHandler();
+//  pProgResetHandler = (void(*)(void))(*((blt_addr *)NvmGetUserProgBaseAddress()));
+//  /* start the user program by calling its reset interrupt service routine */
+//  pProgResetHandler();
+//  void pre_jump_app(void);
+//  pre_jump_app();
+//  jump_to_app();
+
+
 #if (BOOT_COM_DEFERRED_INIT_ENABLE > 0) && (BOOT_COM_ENABLE > 0)
   /* theoretically, the code never gets here because the user program should now be
    * running and the previous function call should not return. In case it did return
