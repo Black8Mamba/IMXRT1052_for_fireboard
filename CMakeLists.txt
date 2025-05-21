@@ -10,7 +10,9 @@ set(CMAKE_CXX_COMPILER_ID GNU)
 set(TOOLCHAIN_PREFIX arm-none-eabi-)
 
 # Project name
-project(MIMXRT1052_Project_Demo LANGUAGES C ASM)
+project(MIMXRT1052_Project_Demo LANGUAGES C ASM VERSION 1.0)
+
+configure_file(TutorialConfig.h.in TutorialConfig.h)
 
 enable_language(C ASM)
 
@@ -71,7 +73,8 @@ set(CMAKE_ASM_FLAGS "${ASM_FLAGS} ${CPU_FLAGS}")
 #set(CMAKE_CXX_FLAGS "${CXX_FLAGS} -fno-rtti -fno-exceptions -fno-threadsafe-statics")
 
 # Linker script
-set(CMAKE_EXE_LINKER_FLAGS "-T /home/jiyongjie/mimxrt1052_project_demo/MIMXRT1052_Project_Demo_Debug.ld ${CPU_FLAGS}")
+#set(CMAKE_EXE_LINKER_FLAGS "-T /home/jiyongjie/mimxrt1052_project_demo/MIMXRT1052_Project_Demo_Debug.ld ${CPU_FLAGS}")
+set(CMAKE_EXE_LINKER_FLAGS "-T MIMXRT1052_Project_Demo_Debug.ld -L../Debug ${CPU_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --specs=nosys.specs --specs=nano.specs")
 #set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --specs=nano.specs")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Map=${CMAKE_PROJECT_NAME}.map -Wl,--gc-sections")
