@@ -9,7 +9,6 @@ set(CMAKE_CXX_COMPILER_ID GNU)
 
 set(TOOLCHAIN_PREFIX arm-none-eabi-)
 
-# Project name
 project(MIMXRT1052_Project_Demo LANGUAGES C ASM VERSION 1.0)
 
 configure_file(TutorialConfig.h.in TutorialConfig.h)
@@ -61,9 +60,23 @@ set(SDK_FLAGS "-DCPU_MIMXRT1052CVL5B \
 		-DTIMER_PORT_TYPE_GPT=1")
 
 #-lnosys
-set(C_FLAGS "-std=gnu11  -Wall -Wextra -O0 -fno-common -fmerge-constants -g3 -gdwarf-4  -fstack-usage -Wstack-usage=2048 -ffunction-sections -fdata-sections -ffreestanding -fno-builtin")
+set(C_FLAGS "-std=gnu17")
+#set(C_FLAGS "-std=gnu11  -Wall -Wextra -O0 -fno-common -fmerge-constants -g3 -gdwarf-4  -fstack-usage -Wstack-usage=2048 -ffunction-sections -fdata-sections -ffreestanding -fno-builtin")
+set(C_FLAGS "${C_FLAGS} -Wall")
+set(C_FLAGS "${C_FLAGS} -Wextra")
+set(C_FLAGS "${C_FLAGS} -O3")
+set(C_FLAGS "${C_FLAGS} -fno-common")
+set(C_FLAGS "${C_FLAGS} -fmerge-constants")
+set(C_FLAGS "${C_FLAGS} -g3")
+set(C_FLAGS "${C_FLAGS} -gdwarf-4")
+set(C_FLAGS "${C_FLAGS} -fstack-usage")
+set(C_FLAGS "${C_FLAGS} -Wstack-usage=2048")
+set(C_FLAGS "${C_FLAGS} -ffunction-sections")
+set(C_FLAGS "${C_FLAGS} -fdata-sections")
+set(C_FLAGS "${C_FLAGS} -ffreestanding")
+set(C_FLAGS "${C_FLAGS} -fno-builtin")
 
-set(ASM_FLAGS "-x assembler-with-cpp -MMD -MP -Wall -O0 -fno-common -fmerge-constants -g3 -fstack-usage -fdata-sections -ffunction-sections")
+set(ASM_FLAGS "-c -x assembler-with-cpp -D__NEWLIB__ -MMD -MP -Wall -O0 -fno-common -fmerge-constants -g3 -gdwarf-4 -fstack-usage -fdata-sections -ffunction-sections")
 
 #set(CXX_FLAG "")
 
@@ -77,9 +90,14 @@ set(CMAKE_ASM_FLAGS "${ASM_FLAGS} ${CPU_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS "-T MIMXRT1052_Project_Demo_Debug.ld -L../Debug ${CPU_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --specs=nosys.specs --specs=nano.specs")
 #set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --specs=nano.specs")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Map=${CMAKE_PROJECT_NAME}.map -Wl,--gc-sections")
+#set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Map=${CMAKE_PROJECT_NAME}.map -Wl,--gc-sections")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--start-group -lc -lm -Wl,--end-group")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--print-memory-usage")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Xlinker --print-memory-usage")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Xlinker --sort-section=alignment")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Xlinker --cref")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Xlinker --cref")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Xlinker -Map=${CMAKE_PROJECT_NAME}.map")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Xlinker --gc-sections")
 
 file(GLOB_RECURSE SOURCES "board/*.c" 
     "component/crc/*.c"
