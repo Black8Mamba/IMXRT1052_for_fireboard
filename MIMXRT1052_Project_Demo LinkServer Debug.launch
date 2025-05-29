@@ -10,7 +10,7 @@
     <stringAttribute key="com.crt.ctrlcenter.currentWireType" value="SWD"/>
     <booleanAttribute key="com.crt.ctrlcenter.mainBreakIsHardware" value="true"/>
     <stringAttribute key="com.crt.ctrlcenter.serialNumber" value="LinkServerKeilSoftwareFire CMSIS-DAPFS-00000000"/>
-    <mapAttribute key="com.crt.ctrlcenter.symbolsGroupSettings"/>
+    <listAttribute key="com.crt.ctrlcenter.symbolsAndImagesGroupSettings"/>
     <intAttribute key="com.crt.ctrlcenter.version" value="6"/>
     <stringAttribute key="com.nxp.mcuxpresso.flash.base.address" value="0x60000000"/>
     <booleanAttribute key="com.nxp.mcuxpresso.flash.clear.console" value="true"/>
@@ -22,7 +22,7 @@
     <stringAttribute key="com.nxp.mcuxpresso.ide.probe.manufacturer" value="KeilSoftware"/>
     <stringAttribute key="com.nxp.mcuxpresso.ide.probe.name" value="Fire CMSIS-DAP"/>
     <stringAttribute key="com.nxp.mcuxpresso.ide.probe.type" value="LinkServer"/>
-    <stringAttribute key="debug.level" value="2"/>
+    <stringAttribute key="debug.level" value="3"/>
     <stringAttribute key="emu.speed" value=""/>
     <stringAttribute key="flash.driver.reset" value=""/>
     <stringAttribute key="gdbserver.host" value="localhost"/>
@@ -79,7 +79,7 @@
     <intAttribute key="org.eclipse.cdt.launch.ATTR_BUILD_BEFORE_LAUNCH_ATTR" value="2"/>
     <stringAttribute key="org.eclipse.cdt.launch.DEBUGGER_ID" value="gdb"/>
     <stringAttribute key="org.eclipse.cdt.launch.DEBUGGER_START_MODE" value="remote"/>
-    <stringAttribute key="org.eclipse.cdt.launch.PROGRAM_NAME" value="Debug\MIMXRT1052_Project_Demo.axf"/>
+    <stringAttribute key="org.eclipse.cdt.launch.PROGRAM_NAME" value="Debug/MIMXRT1052_Project_Demo.axf"/>
     <stringAttribute key="org.eclipse.cdt.launch.PROJECT_ATTR" value="MIMXRT1052_Project_Demo"/>
     <booleanAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_AUTO_ATTR" value="false"/>
     <stringAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_ID_ATTR" value="com.crt.advproject.config.exe.debug.1910201662"/>
@@ -100,5 +100,5 @@
     <booleanAttribute key="redlink.enable.flashhashing" value="true"/>
     <booleanAttribute key="redlink.enable.rangestepping" value="true"/>
     <stringAttribute key="run" value="cont"/>
-    <booleanAttribute key="vector.catch" value="false"/>
+    <booleanAttribute key="vector.catch" value="true"/>
 </launchConfiguration>
