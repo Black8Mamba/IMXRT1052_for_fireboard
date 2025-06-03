@@ -57,10 +57,12 @@ void elog_port_deinit(void) {
  * @param log output of log
  * @param size log size
  */
+void udp_send_log(const char *log, size_t size);
 void elog_port_output(const char *log, size_t size) {
     
     /* add your code here */
 	DbgConsole_SendDataReliable((uint8_t *)log, size);
+	udp_send_log(log, size);
 }
 
 /**

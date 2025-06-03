@@ -61,9 +61,10 @@ static void delay(void)
 
 extern uint8_t ping_recv_flag;
 
+static struct netif fsl_netif0;
+
 int lwip_ping_test(void)
 {
-    struct netif fsl_netif0;
     ip4_addr_t fsl_netif0_ipaddr, fsl_netif0_netmask, fsl_netif0_gw;
     ethernetif_config_t fsl_enet_config0 = {
         .phyAddress = EXAMPLE_PHY_ADDRESS,
@@ -108,15 +109,18 @@ int lwip_ping_test(void)
            ((u8_t *)&fsl_netif0_gw)[2], ((u8_t *)&fsl_netif0_gw)[3]);
     PRINTF("************************************************\r\n");
 
-    while (1)
-    {
+    return ping_recv_flag;
+}
+
+void ping_task(void)
+{
+//    while (1)
+//    {
         /* Poll the driver, get any outstanding frames */
         ethernetif_input(&fsl_netif0);
 
         sys_check_timeouts(); /* Handle all system timeouts for all core protocols */
-			  if(ping_recv_flag==0)
-					break;
-    }
-
-    return ping_recv_flag;
+//			  if(ping_recv_flag==0)
+//					break;
+//    }
 }

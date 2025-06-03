@@ -278,7 +278,7 @@ void sys_check_core_locking(void);
 #endif
 
 #ifndef CHECKSUM_GEN_UDP
-#define CHECKSUM_GEN_UDP 1
+#define CHECKSUM_GEN_UDP 0
 #endif
 
 #ifndef CHECKSUM_GEN_TCP
@@ -298,7 +298,7 @@ void sys_check_core_locking(void);
 #endif
 
 #ifndef CHECKSUM_CHECK_UDP
-#define CHECKSUM_CHECK_UDP 1
+#define CHECKSUM_CHECK_UDP 0
 #endif
 
 #ifndef CHECKSUM_CHECK_TCP

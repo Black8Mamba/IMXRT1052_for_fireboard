@@ -108,9 +108,11 @@ SDK_ALIGN(uint8_t g_bufferWrite[SDK_SIZEALIGN(BUFFER_SIZE, SDMMC_DATA_BUFFER_ALI
 SDK_ALIGN(uint8_t g_bufferRead[SDK_SIZEALIGN(BUFFER_SIZE, SDMMC_DATA_BUFFER_ALIGN_CACHE)],
           MAX(SDMMC_DATA_BUFFER_ALIGN_CACHE, SDMMCHOST_DMA_BUFFER_ADDR_ALIGN));
 
+
+void ping_task(void);
 void sys_1ms_task(void)
 {
-
+	ping_task();
 }
 
 void sys_2ms_task(void)
@@ -135,7 +137,8 @@ void sys_50ms_task(void)
 
 void sys_100ms_task(void)
 {
-
+//	log_e("%s:%d enter!\r\n", __func__, __LINE__);
+//	log_e("udp log test22222222222!\r\n");
 }
 
 #include <cr_section_macros.h>
@@ -144,8 +147,14 @@ void sys_100ms_task(void)
 void sys_500ms_task(void)
 {
 	static int flag = 1;
-	PRINTF("%tick:%lld, ms:%lld\r\n", get_sys_tick(), get_system_ms());
+//	PRINTF("%tick:%lld, ms:%lld\r\n", get_sys_tick(), get_system_ms());
+	log_i("udp log test!\n");
+	log_e("udp log test22222222222!\n");
 	flag = !flag;
+	void udp_test_send(void);
+	void tcp_send(void);
+//	udp_test_send();
+//	tcp_send();
 	if (flag == 1)
 	{
 //		EfErrCode err = ef_set_and_save_env("testenv", "test2");
@@ -365,6 +374,10 @@ int main(void) {
 	{
 		PRINTF("ping test failed!\r\n");
 	}
+	void udp_test_init(void);
+	void tcp_client_test_init(void);
+	udp_test_init();
+//	tcp_client_test_init();
 	while(1)
 	{
 		if (period_1ms_flag)

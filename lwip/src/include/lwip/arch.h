@@ -212,7 +212,7 @@ typedef int ssize_t;
  * not, a private implementation is provided.
  */
 #ifndef LWIP_NO_CTYPE_H
-#define LWIP_NO_CTYPE_H 0
+#define LWIP_NO_CTYPE_H 1
 #endif
 
 #if LWIP_NO_CTYPE_H
