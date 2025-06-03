@@ -216,6 +216,67 @@ void BOARD_InitKeyPins(void);
  */
 void BOARD_InitQspi(void);
 
+/* GPIO_B1_15 (coord B14), USB_HOST_PWR/BACKLIGHT_CTL */
+/* Routed pin properties */
+#define BOARD_INITETH_BACKLIGHT_CTL_PERIPHERAL                              ENET   /*!< Peripheral name */
+#define BOARD_INITETH_BACKLIGHT_CTL_SIGNAL                             enet_mdio   /*!< Signal name */
+
+/* GPIO_AD_B1_04 (coord L12), CSI_PIXCLK/J35[8]/J23[3] */
+/* Routed pin properties */
+#define BOARD_INITETH_CSI_PIXCLK_PERIPHERAL                                 ENET   /*!< Peripheral name */
+#define BOARD_INITETH_CSI_PIXCLK_SIGNAL                                 enet_mdc   /*!< Signal name */
+
+/* GPIO_B1_10 (coord B13), ENET_TX_CLK */
+/* Routed pin properties */
+#define BOARD_INITETH_ENET_TX_CLK_PERIPHERAL                                ENET   /*!< Peripheral name */
+#define BOARD_INITETH_ENET_TX_CLK_SIGNAL                            enet_ref_clk   /*!< Signal name */
+
+/* GPIO_B1_04 (coord E12), ENET_RXD0 */
+/* Routed pin properties */
+#define BOARD_INITETH_ENET_RXD0_PERIPHERAL                                  ENET   /*!< Peripheral name */
+#define BOARD_INITETH_ENET_RXD0_SIGNAL                              enet_rx_data   /*!< Signal name */
+#define BOARD_INITETH_ENET_RXD0_CHANNEL                                       0U   /*!< Signal channel */
+
+/* GPIO_B1_05 (coord D12), ENET_RXD1 */
+/* Routed pin properties */
+#define BOARD_INITETH_ENET_RXD1_PERIPHERAL                                  ENET   /*!< Peripheral name */
+#define BOARD_INITETH_ENET_RXD1_SIGNAL                              enet_rx_data   /*!< Signal name */
+#define BOARD_INITETH_ENET_RXD1_CHANNEL                                       1U   /*!< Signal channel */
+
+/* GPIO_B1_06 (coord C12), ENET_CRS_DV */
+/* Routed pin properties */
+#define BOARD_INITETH_ENET_CRS_DV_PERIPHERAL                                ENET   /*!< Peripheral name */
+#define BOARD_INITETH_ENET_CRS_DV_SIGNAL                              enet_rx_en   /*!< Signal name */
+
+/* GPIO_B1_11 (coord C13), ENET_RXER */
+/* Routed pin properties */
+#define BOARD_INITETH_ENET_RXER_PERIPHERAL                                  ENET   /*!< Peripheral name */
+#define BOARD_INITETH_ENET_RXER_SIGNAL                                enet_rx_er   /*!< Signal name */
+
+/* GPIO_B1_07 (coord B12), ENET_TXD0 */
+/* Routed pin properties */
+#define BOARD_INITETH_ENET_TXD0_PERIPHERAL                                  ENET   /*!< Peripheral name */
+#define BOARD_INITETH_ENET_TXD0_SIGNAL                              enet_tx_data   /*!< Signal name */
+#define BOARD_INITETH_ENET_TXD0_CHANNEL                                       0U   /*!< Signal channel */
+
+/* GPIO_B1_08 (coord A12), ENET_TXD1 */
+/* Routed pin properties */
+#define BOARD_INITETH_ENET_TXD1_PERIPHERAL                                  ENET   /*!< Peripheral name */
+#define BOARD_INITETH_ENET_TXD1_SIGNAL                              enet_tx_data   /*!< Signal name */
+#define BOARD_INITETH_ENET_TXD1_CHANNEL                                       1U   /*!< Signal channel */
+
+/* GPIO_B1_09 (coord A13), ENET_TXEN */
+/* Routed pin properties */
+#define BOARD_INITETH_ENET_TXEN_PERIPHERAL                                  ENET   /*!< Peripheral name */
+#define BOARD_INITETH_ENET_TXEN_SIGNAL                                enet_tx_en   /*!< Signal name */
+
+
+/*!
+ * @brief Configures pin routing and optionally pin electrical features.
+ *
+ */
+void BOARD_InitEth(void);
+
 #if defined(__cplusplus)
 }
 #endif

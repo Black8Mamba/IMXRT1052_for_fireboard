@@ -57,7 +57,6 @@ outputs:
 - {id: CLK_24M.outFreq, value: 24 MHz}
 - {id: CSI_CLK_ROOT.outFreq, value: 12 MHz}
 - {id: ENET_125M_CLK.outFreq, value: 50 MHz}
-- {id: ENET_25M_REF_CLK.outFreq, value: 25 MHz}
 - {id: ENET_REF_CLK.outFreq, value: 50 MHz}
 - {id: FLEXIO1_CLK_ROOT.outFreq, value: 30 MHz}
 - {id: FLEXIO2_CLK_ROOT.outFreq, value: 30 MHz}
@@ -130,6 +129,7 @@ settings:
 - {id: CCM_ANALOG.PLL5_POST_DIV.scale, value: '2'}
 - {id: CCM_ANALOG.PLL6_BYPASS.sel, value: CCM_ANALOG.PLL6}
 - {id: CCM_ANALOG.VIDEO_DIV.scale, value: '4'}
+- {id: CCM_ANALOG_PLL_ENET_ENET_25M_REF_EN_CFG, value: Disabled}
 - {id: CCM_ANALOG_PLL_USB1_POWER_CFG, value: 'Yes'}
 - {id: CCM_ANALOG_PLL_VIDEO_POWERDOWN_CFG, value: 'No'}
 - {id: IOMUXC_GPR.ENET_REF_CLK_SEL.sel, value: CCM_ANALOG.ENET_125M_CLK}
@@ -169,7 +169,7 @@ const clock_video_pll_config_t videoPllConfig_BOARD_BootClockRUN =
 const clock_enet_pll_config_t enetPllConfig_BOARD_BootClockRUN =
     {
         .enableClkOutput = true,                  /* Enable the PLL providing the ENET 125MHz reference clock */
-        .enableClkOutput25M = true,               /* Enable the PLL providing the ENET 25MHz reference clock */
+        .enableClkOutput25M = false,              /* Disable the PLL providing the ENET 25MHz reference clock */
         .loopDivider = 1,                         /* Set frequency of ethernet reference clock to 50 MHz */
         .src = 0,                                 /* Bypass clock source, 0 - OSC 24M, 1 - CLK1_P and CLK1_N */
     };

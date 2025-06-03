@@ -225,6 +225,7 @@ void BOARD_InitBootPins(void) {
     BOARD_InitLedPins();
     BOARD_InitKeyPins();
     BOARD_InitQspi();
+    BOARD_InitEth();
 }
 
 /*
@@ -510,6 +511,64 @@ void BOARD_InitQspi(void) {
 #else
   IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B1_11_FLEXSPIA_DATA03, 0x10F1U); 
 #endif
+}
+
+/*
+ * TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
+BOARD_InitEth:
+- options: {callFromInitBoot: 'true', coreID: core0, enableClock: 'true'}
+- pin_list:
+  - {pin_num: B14, peripheral: ENET, signal: enet_mdio, pin_signal: GPIO_B1_15, pull_up_down_config: Pull_Up_100K_Ohm, pull_keeper_select: Pull, speed: MHZ_50, drive_strength: R0_5,
+    slew_rate: Fast}
+  - {pin_num: L12, peripheral: ENET, signal: enet_mdc, pin_signal: GPIO_AD_B1_04, pull_up_down_config: Pull_Up_100K_Ohm, pull_keeper_select: Pull, speed: MHZ_200,
+    drive_strength: R0_5, slew_rate: Fast}
+  - {pin_num: B13, peripheral: ENET, signal: enet_ref_clk, pin_signal: GPIO_B1_10, software_input_on: Enable, pull_keeper_enable: Disable, speed: MHZ_50, slew_rate: Fast}
+  - {pin_num: E12, peripheral: ENET, signal: 'enet_rx_data, 0', pin_signal: GPIO_B1_04, pull_up_down_config: Pull_Up_100K_Ohm, pull_keeper_select: Pull, speed: MHZ_200,
+    drive_strength: R0_5, slew_rate: Fast}
+  - {pin_num: D12, peripheral: ENET, signal: 'enet_rx_data, 1', pin_signal: GPIO_B1_05, pull_up_down_config: Pull_Up_100K_Ohm, pull_keeper_select: Pull, speed: MHZ_200,
+    drive_strength: R0_5, slew_rate: Fast}
+  - {pin_num: C12, peripheral: ENET, signal: enet_rx_en, pin_signal: GPIO_B1_06, pull_up_down_config: Pull_Up_100K_Ohm, pull_keeper_select: Pull, speed: MHZ_200,
+    drive_strength: R0_5, slew_rate: Fast}
+  - {pin_num: C13, peripheral: ENET, signal: enet_rx_er, pin_signal: GPIO_B1_11, pull_up_down_config: Pull_Up_100K_Ohm, pull_keeper_select: Pull, speed: MHZ_200,
+    drive_strength: R0_5, slew_rate: Fast}
+  - {pin_num: B12, peripheral: ENET, signal: 'enet_tx_data, 0', pin_signal: GPIO_B1_07, pull_up_down_config: Pull_Up_100K_Ohm, pull_keeper_select: Pull, speed: MHZ_200,
+    drive_strength: R0_5, slew_rate: Fast}
+  - {pin_num: A12, peripheral: ENET, signal: 'enet_tx_data, 1', pin_signal: GPIO_B1_08, pull_up_down_config: Pull_Up_100K_Ohm, pull_keeper_select: Pull, speed: MHZ_200,
+    drive_strength: R0_5, slew_rate: Fast}
+  - {pin_num: A13, peripheral: ENET, signal: enet_tx_en, pin_signal: GPIO_B1_09, pull_up_down_config: Pull_Up_100K_Ohm, pull_keeper_select: Pull, speed: MHZ_200,
+    drive_strength: R0_5, slew_rate: Fast}
+ * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
+ */
+
+/* FUNCTION ************************************************************************************************************
+ *
+ * Function Name : BOARD_InitEth
+ * Description   : Configures pin routing and optionally pin electrical features.
+ *
+ * END ****************************************************************************************************************/
+void BOARD_InitEth(void) {
+  CLOCK_EnableClock(kCLOCK_Iomuxc);           
+
+  IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_04_ENET_MDC, 0U); 
+  IOMUXC_SetPinMux(IOMUXC_GPIO_B1_04_ENET_RX_DATA00, 0U); 
+  IOMUXC_SetPinMux(IOMUXC_GPIO_B1_05_ENET_RX_DATA01, 0U); 
+  IOMUXC_SetPinMux(IOMUXC_GPIO_B1_06_ENET_RX_EN, 0U); 
+  IOMUXC_SetPinMux(IOMUXC_GPIO_B1_07_ENET_TX_DATA00, 0U); 
+  IOMUXC_SetPinMux(IOMUXC_GPIO_B1_08_ENET_TX_DATA01, 0U); 
+  IOMUXC_SetPinMux(IOMUXC_GPIO_B1_09_ENET_TX_EN, 0U); 
+  IOMUXC_SetPinMux(IOMUXC_GPIO_B1_10_ENET_REF_CLK, 1U); 
+  IOMUXC_SetPinMux(IOMUXC_GPIO_B1_11_ENET_RX_ER, 0U); 
+  IOMUXC_SetPinMux(IOMUXC_GPIO_B1_15_ENET_MDIO, 0U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_04_ENET_MDC, 0xB0E9U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_B1_04_ENET_RX_DATA00, 0xB0E9U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_B1_05_ENET_RX_DATA01, 0xB0E9U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_B1_06_ENET_RX_EN, 0xB0E9U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_B1_07_ENET_TX_DATA00, 0xB0E9U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_B1_08_ENET_TX_DATA01, 0xB0E9U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_B1_09_ENET_TX_EN, 0xB0E9U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_B1_10_ENET_REF_CLK, 0x31U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_B1_11_ENET_RX_ER, 0xB0E9U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_B1_15_ENET_MDIO, 0xB029U); 
 }
 /***********************************************************************************************************************
  * EOF
