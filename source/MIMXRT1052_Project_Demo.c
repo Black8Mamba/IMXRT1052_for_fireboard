@@ -129,6 +129,8 @@ int main(void) {
     void flash_test(void);
     flash_test();
     BootInit();
+    void phy_test();
+    phy_test();
     while(1) {
     	OS_Schedule();
     	BootTask();

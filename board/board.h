@@ -68,7 +68,7 @@
 #define BOARD_FLASH_SIZE (0x4000000U)
 
 /*! @brief The ENET PHY address. */
-#define BOARD_ENET0_PHY_ADDRESS (0x02U) /* Phy address of enet port 0. */
+#define BOARD_ENET0_PHY_ADDRESS (0x00U) /* Phy address of enet port 0. */
 
 /*! @brief The ENET PHY used for board. */
 #ifndef BOARD_ENET_PHY_RESET_GPIO
