@@ -84,9 +84,10 @@ void OS_TIMER_Init(void)
     ELOG_ASSERT(kStatus_TimerSuccess == status);
 }
 
+void ping_task(void);
 void sys_1ms_task(void)
 {
-
+	ping_task();
 }
 
 void sys_2ms_task(void)

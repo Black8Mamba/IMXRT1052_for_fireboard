@@ -129,8 +129,16 @@ int main(void) {
     void flash_test(void);
     flash_test();
     BootInit();
-    void phy_test();
-    phy_test();
+//    void phy_test();
+//    phy_test();
+	int lwip_ping_test(void);
+	if (lwip_ping_test())
+	{
+		PRINTF("ping test pass!\r\n");
+	} else
+	{
+		PRINTF("ping test failed!\r\n");
+	}
     while(1) {
     	OS_Schedule();
     	BootTask();
