@@ -6,13 +6,12 @@
  */
 
 
- #include "lwip/tcp.h"
- #include "lwip/ip_addr.h"
+#include "lwip/tcp.h"
+#include "lwip/ip_addr.h"
 #include "lwip/ip4_addr.h"
- #include <string.h>
+#include <string.h>
 
-
-#define DEST_IP_ADDR "192.168.1.5"
+#define DEST_IP_ADDR "192.168.1.171"
 #define DEST_PORT 8888
 
 static struct tcp_pcb *tpcb = NULL;
@@ -45,7 +44,7 @@ void tcp_send(void)
 		return;
 	}
     // Send "hello world" message
-    const char *msg = "hello world";
+    const char *msg = "hello world tcp";
     err_t err = tcp_write(tpcb, msg, strlen(msg), TCP_WRITE_FLAG_COPY);
     if (err != ERR_OK) {
         PRINTF("Failed to send data: %d\n", err);

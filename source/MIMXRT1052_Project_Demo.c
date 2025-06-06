@@ -140,8 +140,9 @@ int main(void) {
 		PRINTF("ping test failed!\r\n");
 	}
 	void udp_test_init(void);
-//	void tcp_client_test_init(void);
+	void tcp_client_test_init(void);
 	udp_test_init();
+	tcp_client_test_init();
     while(1) {
     	OS_Schedule();
     	BootTask();

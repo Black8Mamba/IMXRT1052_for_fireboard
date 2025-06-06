@@ -128,6 +128,7 @@ void sys_500ms_task(void)
 {
 	void udp_test_send(void);
 	udp_test_send();
+	tcp_send();
 //	RGB_LED_COLOR_RED;
 }
 

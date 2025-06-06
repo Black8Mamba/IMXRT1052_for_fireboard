@@ -63,7 +63,7 @@
     struct pbuf *p;
 
     // Create a pbuf to hold the "hello world" message
-    const char *msg = "hello world";
+    const char *msg = "hello world udp";
     p = pbuf_alloc(PBUF_TRANSPORT, strlen(msg), PBUF_RAM);
     if (p == NULL) {
         PRINTF("Failed to allocate pbuf\n");
