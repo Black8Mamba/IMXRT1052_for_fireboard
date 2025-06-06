@@ -17,7 +17,7 @@
 #include "lwip/ip4_addr.h"
  #include <string.h>
 
- #define DEST_IP_ADDR "192.168.1.5"
+ #define DEST_IP_ADDR "192.168.1.171"
  #define DEST_PORT 8888
 
  static struct udp_pcb *upcb = NULL;
@@ -111,7 +111,7 @@ void udp_test_init(void)
     upcb = udp_new();
     if (upcb != NULL)
     {
-        IP4_ADDR(&dest_ip, 192,168,1,5);
+        IP4_ADDR(&dest_ip, 192,168,1,171);
         err_t err = udp_connect(upcb, &dest_ip, DEST_PORT);
         if (err != ERR_OK)
         {
