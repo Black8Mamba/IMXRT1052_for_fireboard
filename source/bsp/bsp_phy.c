@@ -384,13 +384,13 @@ void enet_init(void)
             status = PHY_GetLinkSpeedDuplex(ENET, BOARD_ENET0_PHY_ADDRESS, &speed, &duplex);
             if (kStatus_Success != status)
             {
-            	PRINTF("\r\nCannot PHY_GetLinkSpeedDuplex PHY.\r\n");
+            	PRINTF("Cannot PHY_GetLinkSpeedDuplex PHY.\r\n");
             	return;
             }
             /* Change the MII speed and duplex for actual link status. */
             config.miiSpeed = (enet_mii_speed_t)speed;
             config.miiDuplex = (enet_mii_duplex_t)duplex;
-            PRINTF("speed:%d, duplex:%d\n", config.miiSpeed, config.miiDuplex);
+            PRINTF("speed:%d, duplex:%d\r\n", config.miiSpeed, config.miiDuplex);
             if (speed == kPHY_Speed100M)
             {
             	PRINTF("kPHY_Speed100M\r\n");

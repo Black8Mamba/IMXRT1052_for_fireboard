@@ -162,8 +162,15 @@ typedef unsigned short uip_stats_t;
 
 //#define UIP_APPCALL main_appcall
 
+struct my_udp_context
+{
+	uint8_t buffer[UIP_CONF_BUFFER_SIZE];
+	uint8_t tx_flag;
+	uint16_t len;
+};
+
 typedef int uip_tcp_appstate_t;
-typedef int uip_udp_appstate_t;
+typedef struct my_udp_context uip_udp_appstate_t;
 
 #endif /* __UIP_CONF_H__ */
 

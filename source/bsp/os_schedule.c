@@ -13,6 +13,7 @@
 #include "perf_counter/perf_counter.h"
 #include "bsp_led.h"
 #include "tapdev.h"
+#include "uip.h"
 
 volatile uint64_t k = 0;
 
@@ -129,9 +130,16 @@ void sys_500ms_task(void)
 //	RGB_LED_COLOR_RED;
 }
 
+extern struct uip_udp_conn *udp_conn_send;
 void sys_1000ms_task(void)
 {
-	log_i("%s:%d enter:ms:%lld!", __func__, __LINE__,get_system_ms());
+	if (udp_conn_send->appstate.tx_flag == 0 && uip_len == 0)
+	{
+		memcpy(udp_conn_send->appstate.buffer, "hello world\r\n", strlen("hello world\r\n"));
+		udp_conn_send->appstate.len = strlen("hello world\r\n");
+		udp_conn_send->appstate.tx_flag = 1;
+	}
+//	log_i("%s:%d enter:ms:%lld!", __func__, __LINE__,get_system_ms());
 
 }
 

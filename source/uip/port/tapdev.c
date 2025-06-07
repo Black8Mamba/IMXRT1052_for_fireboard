@@ -46,6 +46,7 @@
 #include "bsp_phy.h"
 #include "uip.h"
 #include "uip_arp.h"
+#include "uip_timer.h"
 
 #define ENET_TIMEOUT        (0xFFFU)
 #define BUF ((struct uip_eth_hdr *)&uip_buf[0])
@@ -53,7 +54,7 @@
 extern struct uip_eth_addr uip_ethaddr;
 extern enet_handle_t net_handle;
 enet_handle_t handle;
-uint8_t mac[] = {0xFF,0xFE,0xFD,0xFC,0xFB,0xFA};
+uint8_t mac[] = {0x01,0x02,0x03,0x04,0x05,0x06};
 /*---------------------------------------------------------------------------*/
 void tapdev_init(void)
 {
@@ -100,7 +101,7 @@ void tapdev_send(void)
 
 void uip_log(char *msg)
 {
-	elog_raw("%s", msg);
+	elog_raw("%s\r\n", msg);
 }
 
 void uip_appcall(void)
@@ -126,24 +127,53 @@ void udp_8888_app(void)
 
 void uip_udp_appcall(void)
 {
-	switch(uip_udp_conn->rport)
-	{
-	case HTONS(8888):
-			log_i("port 8888 receive!");
-			break;
-	default:
-		break;
-	}
+	uip_udp_appstate_t *state = &(uip_udp_conn->appstate);
 
+	if (uip_newdata())
+	{
+		switch(uip_udp_conn->lport)
+		{
+		case HTONS(8888):
+				elog_raw("as string: %.*s\n", uip_datalen(), (char*)uip_appdata);
+				break;
+		default:
+			break;
+		}
+	} else if (uip_poll())
+	{
+		switch(uip_udp_conn->rport)
+		{
+		case HTONS(8888):
+				if (state->tx_flag == 1)
+				{
+					if (uip_len == 0)
+					{
+						uip_send(state->buffer, state->len);
+						state->tx_flag = 0;
+					}
+				}
+
+		break;
+		}
+	}
 }
 
 void uip_polling(void)
 {
+    uint8_t i;
+    static struct timer periodic_timer, arp_timer;
+    static uint8_t timer_ok=0;
+    if(timer_ok==0)//仅初始化一次
+    {
+        timer_ok = 1;
+        timer_set(&periodic_timer,CLOCK_SECOND/50);  //创建1个0.5秒的定时器
+        timer_set(&arp_timer,CLOCK_SECOND*10);           //创建1个10秒的定时器
+    }
+
 	uip_len = tapdev_read();
 	if (uip_len > 0)
 	{
         if(BUF->type == htons(UIP_ETHTYPE_ARP)) {
-        	log_d("arp packet!");
             uip_arp_arpin();
             if(uip_len>0){
                 tapdev_send();
@@ -152,7 +182,6 @@ void uip_polling(void)
 
         if (BUF->type == htons(UIP_ETHTYPE_IP))
         {
-        	log_d("ip packet!");
         	uip_arp_ipin();
         	uip_input();
             if(uip_len > 0){
@@ -160,6 +189,34 @@ void uip_polling(void)
                 tapdev_send();
             }
         }
+	} else if (timer_expired(&periodic_timer))
+	{
+		timer_reset(&periodic_timer);
+        for(i=0;i<UIP_CONNS;i++)
+        {
+            uip_periodic(i);
+             if(uip_len>0)
+            {
+                uip_arp_out();
+                tapdev_send();
+            }
+        }
+
+#if UIP_UDP
+        for(i=0;i<UIP_UDP_CONNS;i++)
+        {
+            uip_udp_periodic(i);    //处理UDP通信事件
+            if(uip_len > 0)
+            {
+                uip_arp_out();
+                tapdev_send();
+            }
+        }
+#endif
+	} else if(timer_expired(&arp_timer))
+	{
+        timer_reset(&arp_timer);
+        uip_arp_timer();
 	}
 }
 

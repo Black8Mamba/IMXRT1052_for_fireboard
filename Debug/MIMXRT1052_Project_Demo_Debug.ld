@@ -97,6 +97,7 @@ SECTIONS
         *(.data.$SRAM_ITC)
         *(.data.$RAM2.*)
         *(.data.$SRAM_ITC.*)
+        *fsl*.o (.text.*)    
         . = ALIGN(4) ;
         PROVIDE(__end_data_RAM2 = .) ;
         PROVIDE(__end_data_SRAM_ITC = .) ;
@@ -118,7 +119,7 @@ SECTIONS
         . = ALIGN(4) ;
         
 		_my_stext = .;
-		*(.text* .text.*) *(.glue_7) *(.glue_7t) *(.eh_frame) *(.vfp11_veneer)  *(.v4_bx)
+		*(.text*) *(EXCLUDE_FILE(*fsl*.o).text.*) *(.glue_7) *(.glue_7t) *(.eh_frame) *(.vfp11_veneer)  *(.v4_bx)
 		. = ALIGN(4);
 		_my_etext = .;
 		*(.rodata .rodata.* .constdata .constdata.*)
