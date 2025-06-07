@@ -314,7 +314,30 @@ void static_delay(void)
     }
 }
 
-void phy_test(void)
+enet_handle_t net_handle;
+#define ENET_RING_NUM 1U
+#define ENET_TXBD_NUM (3)
+#define ENET_RXBD_NUM (5)
+#define ENET_FRAME_MAX_FRAMELEN 1518U /*!< Default maximum Ethernet frame size without VLAN tag. */
+#ifndef ENET_RXBUFF_SIZE
+    #define ENET_RXBUFF_SIZE (ENET_FRAME_MAX_FRAMELEN)
+#endif
+#ifndef ENET_TXBUFF_SIZE
+    #define ENET_TXBUFF_SIZE (ENET_FRAME_MAX_FRAMELEN)
+#endif
+#define FSL_ENET_BUFF_ALIGNMENT ENET_BUFF_ALIGNMENT
+typedef uint8_t rx_buffer_t[SDK_SIZEALIGN(ENET_RXBUFF_SIZE, FSL_ENET_BUFF_ALIGNMENT)];
+typedef uint8_t tx_buffer_t[SDK_SIZEALIGN(ENET_TXBUFF_SIZE, FSL_ENET_BUFF_ALIGNMENT)];
+
+enet_buffer_config_t buffCfg[ENET_RING_NUM];
+
+AT_NONCACHEABLE_SECTION_ALIGN(static enet_rx_bd_struct_t rxBuffDescrip_0[ENET_RXBD_NUM], FSL_ENET_BUFF_ALIGNMENT);
+AT_NONCACHEABLE_SECTION_ALIGN(static enet_tx_bd_struct_t txBuffDescrip_0[ENET_TXBD_NUM], FSL_ENET_BUFF_ALIGNMENT);
+SDK_ALIGN(static rx_buffer_t rxDataBuff_0[ENET_RXBD_NUM], FSL_ENET_BUFF_ALIGNMENT);
+SDK_ALIGN(static tx_buffer_t txDataBuff_0[ENET_TXBD_NUM], FSL_ENET_BUFF_ALIGNMENT);
+uint8_t mac_address[] = {0x1,0x2,0x3,0x4,0x5,0x6};
+
+void enet_init(void)
 {
 	uint32_t sysClock = 0;
 	sysClock = CLOCK_GetFreq(kCLOCK_CoreSysClk);
@@ -327,50 +350,83 @@ void phy_test(void)
     GPIO_WritePinOutput(GPIO1, 9, 0);
     static_delay();
     GPIO_WritePinOutput(GPIO1, 9, 1);
-//    CORE_BOARD_LED(1);
+
+    enet_config_t config;
+    ENET_GetDefaultConfig(&config);
 
 	PRINTF("%s:%d sysClock:%d, %d\r\n", __func__, __LINE__, sysClock, CLOCK_GetFreq(kCLOCK_IpgClk));
 //#define EXAMPLE_CLOCK_FREQ   CLOCK_GetFreq(kCLOCK_IpgClk)
 	status_t status = PHY_Init(ENET, BOARD_ENET0_PHY_ADDRESS, CLOCK_GetFreq(kCLOCK_IpgClk));
     if (kStatus_Success != status)
     {
-    	PRINTF("\r\nCannot initialize PHY.\r\n");
+    	PRINTF("Cannot initialize PHY.\r\n");
     	return;
     }
 
     bool link = false;
-    status =  PHY_GetLinkStatus(ENET, BOARD_ENET0_PHY_ADDRESS, &link);
-    if (kStatus_Success != status)
-    {
-    	PRINTF("\r\nCannot PHY_GetLinkStatus PHY.\r\n");
-    	return;
-    }
-
-    PRINTF("link status:%d\r\n", link);
-
+    uint32_t count = 0;
     phy_speed_t speed;
     phy_duplex_t duplex;
 
-    status = PHY_GetLinkSpeedDuplex(ENET, BOARD_ENET0_PHY_ADDRESS, &speed, &duplex);
-    if (kStatus_Success != status)
+    while ((count < 0xFFFU) && (!link))
     {
-    	PRINTF("\r\nCannot PHY_GetLinkSpeedDuplex PHY.\r\n");
-    	return;
+        status =  PHY_GetLinkStatus(ENET, BOARD_ENET0_PHY_ADDRESS, &link);
+        if (kStatus_Success != status)
+        {
+        	PRINTF("Cannot PHY_GetLinkStatus PHY.\r\n");
+        	return;
+        }
+
+        if (link)
+        {
+        	PRINTF("link up!\r\n");
+            /* Get the actual PHY link speed. */
+            status = PHY_GetLinkSpeedDuplex(ENET, BOARD_ENET0_PHY_ADDRESS, &speed, &duplex);
+            if (kStatus_Success != status)
+            {
+            	PRINTF("\r\nCannot PHY_GetLinkSpeedDuplex PHY.\r\n");
+            	return;
+            }
+            /* Change the MII speed and duplex for actual link status. */
+            config.miiSpeed = (enet_mii_speed_t)speed;
+            config.miiDuplex = (enet_mii_duplex_t)duplex;
+            PRINTF("speed:%d, duplex:%d\n", config.miiSpeed, config.miiDuplex);
+            if (speed == kPHY_Speed100M)
+            {
+            	PRINTF("kPHY_Speed100M\r\n");
+            } else
+            {
+            	PRINTF("kPHY_Speed10M\r\n");
+            }
+
+            if (duplex == kPHY_FullDuplex)
+            {
+            	PRINTF("kPHY_FullDuplex\r\n");
+            } else
+            {
+            	PRINTF("kPHY_HalfDuplex\r\n");
+            }
+        }
+
+        count++;
     }
 
-    if (speed == kPHY_Speed100M)
+    /* prepare the buffer configuration. */
+    buffCfg[0].rxBdNumber = ENET_RXBD_NUM;                      /* Receive buffer descriptor number. */
+    buffCfg[0].txBdNumber = ENET_TXBD_NUM;                      /* Transmit buffer descriptor number. */
+    buffCfg[0].rxBuffSizeAlign = sizeof(rx_buffer_t);           /* Aligned receive data buffer size. */
+    buffCfg[0].txBuffSizeAlign = sizeof(tx_buffer_t);           /* Aligned transmit data buffer size. */
+    buffCfg[0].rxBdStartAddrAlign = &(rxBuffDescrip_0[0]); /* Aligned receive buffer descriptor start address. */
+    buffCfg[0].txBdStartAddrAlign = &(txBuffDescrip_0[0]); /* Aligned transmit buffer descriptor start address. */
+    buffCfg[0].rxBufferAlign = &(rxDataBuff_0[0][0]); /* Receive data buffer start address. */
+    buffCfg[0].txBufferAlign =  &(txDataBuff_0[0][0]); /* Transmit data buffer start address. */
+
+    /* Initialize the ENET module.*/
+    status = ENET_Init(ENET, &net_handle, &config, &buffCfg[0], mac_address, CLOCK_GetFreq(kCLOCK_IpgClk));
+    if (status != kStatus_Success)
     {
-    	PRINTF("kPHY_Speed100M\r\n");
-    } else
-    {
-    	PRINTF("kPHY_Speed10M\r\n");
+    	PRINTF("ENET_Init failed!\r\n");
     }
 
-    if (duplex == kPHY_FullDuplex)
-    {
-    	PRINTF("kPHY_FullDuplex\r\n");
-    } else
-    {
-    	PRINTF("kPHY_HalfDuplex\r\n");
-    }
+    ENET_ActiveRead(ENET);
 }

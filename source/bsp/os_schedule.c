@@ -12,6 +12,7 @@
 #include "elog.h"
 #include "perf_counter/perf_counter.h"
 #include "bsp_led.h"
+#include "tapdev.h"
 
 volatile uint64_t k = 0;
 
@@ -86,7 +87,7 @@ void OS_TIMER_Init(void)
 
 void sys_1ms_task(void)
 {
-
+	uip_polling();
 }
 
 void sys_2ms_task(void)
@@ -130,7 +131,8 @@ void sys_500ms_task(void)
 
 void sys_1000ms_task(void)
 {
-//	log_i("%s:%d enter!", __func__, __LINE__);
+	log_i("%s:%d enter:ms:%lld!", __func__, __LINE__,get_system_ms());
+
 }
 
 void OS_Schedule(void)

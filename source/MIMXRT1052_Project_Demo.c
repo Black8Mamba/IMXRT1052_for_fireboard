@@ -28,6 +28,8 @@
 #include "os_schedule.h"
 #include "boot.h"
 #include "types.h"
+#include "tapdev.h"
+#include "uip.h"
 /* TODO: insert other include files here. */
 extern void userShellInit(void);
 /* TODO: insert other definitions and declarations here. */
@@ -129,8 +131,16 @@ int main(void) {
     void flash_test(void);
     flash_test();
     BootInit();
-    void phy_test();
-    phy_test();
+//    enet_init();
+    tapdev_init();
+    uip_init();
+    uip_ipaddr_t ipaddr;
+    uip_ipaddr(ipaddr, 192, 168, 1, 172);//MCU IP地址
+    uip_sethostaddr(ipaddr);
+    uip_ipaddr(ipaddr, 192, 168, 1, 2);//网关,电脑和MCU经过路由器时使用
+    uip_setdraddr(ipaddr);
+    uip_ipaddr(ipaddr, 255, 255, 252, 0);//子网掩码
+    uip_setnetmask(ipaddr);
     while(1) {
     	OS_Schedule();
     	BootTask();
