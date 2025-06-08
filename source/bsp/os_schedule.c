@@ -133,12 +133,12 @@ void sys_500ms_task(void)
 extern struct uip_udp_conn *udp_conn_send;
 void sys_1000ms_task(void)
 {
-	if (udp_conn_send->appstate.tx_flag == 0 && uip_len == 0)
-	{
-		memcpy(udp_conn_send->appstate.buffer, "hello world\r\n", strlen("hello world\r\n"));
-		udp_conn_send->appstate.len = strlen("hello world\r\n");
-		udp_conn_send->appstate.tx_flag = 1;
-	}
+//	if (udp_conn_send->appstate.tx_flag == 0 && uip_len == 0)
+//	{
+//		memcpy(udp_conn_send->appstate.buffer, "hello world\r\n", strlen("hello world\r\n"));
+//		udp_conn_send->appstate.len = strlen("hello world\r\n");
+//		udp_conn_send->appstate.tx_flag = 1;
+//	}
 //	log_i("%s:%d enter:ms:%lld!", __func__, __LINE__,get_system_ms());
 
 }

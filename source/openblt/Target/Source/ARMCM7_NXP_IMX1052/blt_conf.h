@@ -78,7 +78,7 @@
  *
  */
 /** \brief Enable/disable UART transport layer. */
-#define BOOT_COM_RS232_ENABLE            (1)
+#define BOOT_COM_RS232_ENABLE            (0)
 /** \brief Configure the desired communication speed. */
 #define BOOT_COM_RS232_BAUDRATE          (115200)
 /** \brief Configure number of bytes in the target->host data packet. */
@@ -158,6 +158,25 @@
  * are called by the bootloader to obtain the seed and to verify the key, respectively.
  */
 #define BOOT_XCP_SEED_KEY_ENABLE        (0)
+
+#define BOOT_COM_NET_ENABLE				(1)
+
+#define BOOT_COM_NET_TX_MAX_DATA 		256
+#define BOOT_COM_NET_RX_MAX_DATA		256
+#define BOOT_COM_NET_IPADDR0			192
+#define BOOT_COM_NET_IPADDR1			168
+#define BOOT_COM_NET_IPADDR2			1
+#define BOOT_COM_NET_IPADDR3			172
+#define BOOT_COM_NET_NETMASK0 			255
+#define BOOT_COM_NET_NETMASK1 			255
+#define BOOT_COM_NET_NETMASK2 			255
+#define BOOT_COM_NET_NETMASK3 			0
+#define BOOT_COM_NET_GATEWAY0			192
+#define BOOT_COM_NET_GATEWAY1			168
+#define BOOT_COM_NET_GATEWAY2			1
+#define BOOT_COM_NET_GATEWAY3			2
+#define BOOT_COM_NET_PORT 				6666
+
 
 
 #endif /* BLT_CONF_H */

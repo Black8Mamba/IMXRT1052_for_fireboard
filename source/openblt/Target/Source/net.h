@@ -27,6 +27,8 @@
 ****************************************************************************************/
 #ifndef NET_H
 #define NET_H
+#include "blt_conf.h"
+#include "types.h"
 
 #if (BOOT_COM_NET_ENABLE > 0)
 /****************************************************************************************
@@ -66,7 +68,6 @@ void     NetTransmitPacket(blt_int8u *data, blt_int8u len);
 blt_bool NetReceivePacket(blt_int8u *data, blt_int8u *len);
 
 #else /* BOOT_COM_NET_ENABLE > 0 */
-
 typedef struct net_state
 {
   blt_int8u  unused;

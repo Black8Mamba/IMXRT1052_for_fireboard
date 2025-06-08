@@ -147,8 +147,8 @@ typedef unsigned short uip_stats_t;
 #define UIP_CONF_TCP 			1
 
 #define UIP_UDP_APPCALL			uip_udp_appcall
-
-#define UIP_APPCALL				uip_appcall
+#define UIP_APPCALL 			NetApp
+//#define UIP_APPCALL				uip_appcall
 
 /* Here we include the header file for the application(s) we use in
    our project. */
@@ -169,7 +169,7 @@ struct my_udp_context
 	uint16_t len;
 };
 
-typedef int uip_tcp_appstate_t;
+//typedef int uip_tcp_appstate_t;
 typedef struct my_udp_context uip_udp_appstate_t;
 
 #endif /* __UIP_CONF_H__ */

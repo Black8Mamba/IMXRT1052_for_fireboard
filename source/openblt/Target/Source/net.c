@@ -31,7 +31,7 @@
 ****************************************************************************************/
 #include "boot.h"                                /* bootloader generic header          */
 #if (BOOT_COM_NET_ENABLE > 0)
-#include "netdev.h"
+#include "tapdev.h"
 #include "uip.h"
 #include "uip_arp.h"
 #endif
@@ -109,7 +109,7 @@ void NetInit(void)
   if (netInitializationDeferred == BLT_FALSE)
   {
     /* initialize the network device */
-    netdev_init();
+	  tapdev_init();
     /* initialize the timer variables */
     periodicTimerTimeOut = TimerGet() + NET_UIP_PERIODIC_TIMER_MS;
     ARPTimerTimeOut = TimerGet() + NET_UIP_ARP_TIMER_MS;
@@ -142,7 +142,7 @@ void NetInit(void)
     /* start listening on the configured port for XCP transfers on TCP/IP */
     uip_listen(HTONS(BOOT_COM_NET_PORT));
     /* initialize the MAC and set the MAC address */
-    netdev_init_mac();
+//    netdev_init_mac();
 
 #if (BOOT_COM_NET_DHCP_ENABLE > 0)
     /* initialize the DHCP client application and send the initial request. */
@@ -339,7 +339,7 @@ static void NetServerTask(void)
   blt_int32u packetLen;
 
   /* check for an RX packet and read it. */
-  packetLen = netdev_read();
+  packetLen = tapdev_read();
   if (packetLen > 0)
   {
     /* set uip_len for uIP stack usage */
@@ -357,7 +357,7 @@ static void NetServerTask(void)
       if (uip_len > 0)
       {
         uip_arp_out();
-        netdev_send();
+        tapdev_send();
         uip_len = 0;
       }
     }
@@ -372,7 +372,7 @@ static void NetServerTask(void)
        */
       if (uip_len > 0)
       {
-        netdev_send();
+          tapdev_send();
         uip_len = 0;
       }
     }
@@ -392,12 +392,13 @@ static void NetServerTask(void)
       if (uip_len > 0)
       {
         uip_arp_out();
-        netdev_send();
+        tapdev_send();
         uip_len = 0;
       }
     }
 
-#if UIP_UDP
+//#if UIP_UDP
+#if 0
     for (connection = 0; connection < UIP_UDP_CONNS; connection++)
     {
       uip_udp_periodic(connection);
@@ -408,7 +409,9 @@ static void NetServerTask(void)
       if(uip_len > 0)
       {
         uip_arp_out();
-        netdev_send();
+//        netdev_send();
+        void tapdev_send(void);
+        tapdev_send();
         uip_len = 0;
       }
     }
@@ -433,7 +436,7 @@ static void NetServerTask(void)
     if (uip_len > 0)
     {
       uip_arp_out();
-      netdev_send();
+      tapdev_send();
       uip_len = 0;
     }
   }

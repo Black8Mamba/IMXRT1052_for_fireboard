@@ -38,8 +38,10 @@
 #ifndef __TAPDEV_H__
 #define __TAPDEV_H__
 
+#include <stdint.h>
+
 void tapdev_init(void);
-unsigned int tapdev_read(void);
+uint32_t tapdev_read(void);
 void tapdev_send(void);
 void uip_appcall(void);
 void uip_udp_appcall(void);

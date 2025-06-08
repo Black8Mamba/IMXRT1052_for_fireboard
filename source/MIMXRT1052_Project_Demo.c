@@ -134,29 +134,29 @@ int main(void) {
     flash_test();
     BootInit();
 //    enet_init();
-    tapdev_init();
-    uip_init();
-    uip_ipaddr_t ipaddr;
-    uip_ipaddr(ipaddr, 192, 168, 1, 172);//MCU IP地址
-    uip_sethostaddr(ipaddr);
-    uip_ipaddr(ipaddr, 192, 168, 1, 2);//网关,电脑和MCU经过路由器时使用
-    uip_setdraddr(ipaddr);
-    uip_ipaddr(ipaddr, 255, 255, 252, 0);//子网掩码
-    uip_setnetmask(ipaddr);
-
-    uip_ipaddr_t udp_ipaddr;
-    uip_ipaddr(udp_ipaddr, 0,0,0,0);
-    udp_conn_recv = uip_udp_new(&udp_ipaddr, 0);
-    if (udp_conn_recv != NULL) {
-        uip_udp_bind(udp_conn_recv, HTONS(8888));
-    }
-
-    uip_ipaddr_t udp_ipaddr_send;
-    uip_ipaddr(udp_ipaddr_send, 192,168,1,171);
-    udp_conn_send = uip_udp_new(&udp_ipaddr_send, HTONS(8888));
-    if (udp_conn_send != NULL) {
-        uip_udp_bind(udp_conn_send, HTONS(8888));
-    }
+//    tapdev_init();
+//    uip_init();
+//    uip_ipaddr_t ipaddr;
+//    uip_ipaddr(ipaddr, 192, 168, 1, 172);//MCU IP地址
+//    uip_sethostaddr(ipaddr);
+//    uip_ipaddr(ipaddr, 192, 168, 1, 2);//网关,电脑和MCU经过路由器时使用
+//    uip_setdraddr(ipaddr);
+//    uip_ipaddr(ipaddr, 255, 255, 252, 0);//子网掩码
+//    uip_setnetmask(ipaddr);
+//
+//    uip_ipaddr_t udp_ipaddr;
+//    uip_ipaddr(udp_ipaddr, 0,0,0,0);
+//    udp_conn_recv = uip_udp_new(&udp_ipaddr, 0);
+//    if (udp_conn_recv != NULL) {
+//        uip_udp_bind(udp_conn_recv, HTONS(8888));
+//    }
+//
+//    uip_ipaddr_t udp_ipaddr_send;
+//    uip_ipaddr(udp_ipaddr_send, 192,168,1,171);
+//    udp_conn_send = uip_udp_new(&udp_ipaddr_send, HTONS(8888));
+//    if (udp_conn_send != NULL) {
+//        uip_udp_bind(udp_conn_send, HTONS(8888));
+//    }
 
     while(1) {
     	OS_Schedule();
