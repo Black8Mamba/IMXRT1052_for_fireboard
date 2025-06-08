@@ -77,6 +77,8 @@ void pre_jump_app(void)
 		NVIC_ClearPendingIRQ((IRQn_Type)i);
 	}
 	relocate_vector_table_app();
+	SCB_CleanDCache();
+//	SCB_CleanICache();
 	SCB_DisableICache();
 	SCB_DisableDCache();
 	ARM_MPU_Disable();
@@ -111,7 +113,7 @@ int main(void) {
     elog_set_fmt(ELOG_LVL_DEBUG, ELOG_FMT_ALL & ~ELOG_FMT_DIR & ~ELOG_FMT_P_INFO & ~ELOG_FMT_T_INFO);
     elog_set_fmt(ELOG_LVL_VERBOSE, ELOG_FMT_ALL & ~ELOG_FMT_FUNC);
     elog_start();
-    log_i("Hello World");
+    log_i("Hello World bootloader jiyongjie");
     elog_raw("*****>>welcome i.MX RT1052 develop board<<*****\r\n");
     elog_raw("CPU:             %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_CpuClk));
     elog_raw("AHB:             %ud Hz\r\n", CLOCK_GetFreq(kCLOCK_AhbClk));
@@ -130,8 +132,6 @@ int main(void) {
 //    led_test();
     int FlexSPI_NorFlash_Init(void);
     FlexSPI_NorFlash_Init();
-    void flash_test(void);
-    flash_test();
     BootInit();
 //    enet_init();
 //    tapdev_init();

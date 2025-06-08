@@ -42,7 +42,7 @@
  *         BOOT_BACKDOOR_ENTRY_TIMEOUT_MS to blt_conf.h with your desired backdoor 
  *         open time in milliseconds.
  */
-#define BOOT_BACKDOOR_ENTRY_TIMEOUT_MS  (5000)
+#define BOOT_BACKDOOR_ENTRY_TIMEOUT_MS  (15000)
 #endif
 #endif /* BOOT_BACKDOOR_HOOKS_ENABLE == 0 */
 

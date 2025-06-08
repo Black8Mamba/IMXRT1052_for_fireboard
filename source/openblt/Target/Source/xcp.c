@@ -30,6 +30,7 @@
 * Include files
 ****************************************************************************************/
 #include "boot.h"                                /* bootloader generic header          */
+#include "elog.h"
 
 
 #if (BOOT_COM_ENABLE > 0)
@@ -583,6 +584,9 @@ static void XcpCmdConnect(blt_int8u *data)
 
   /* report max cto data length */
   xcpInfo.ctoData[3] = (blt_int8u)XCP_CTO_PACKET_LEN;
+
+  unsigned short test_data_2 = XCP_CTO_PACKET_LEN;
+  unsigned char test_data = xcpInfo.ctoData[3];
 
   /* report max dto data length */
 #if (XCP_MOTOROLA_FORMAT == 0)

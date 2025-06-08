@@ -189,5 +189,14 @@ int set_log_tag_level(int argc, char *argv[])
 
 	return 0;
 }
-
 SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_MAIN), set_log_tag_level, set_log_tag_level, set_log_tag_level);
+
+int jump_app(int argc, char *argv[])
+{
+	elog_raw("jump_app\r\n");
+	void pre_jump_app(void);
+	pre_jump_app();
+	jump_to_app();
+}
+SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_MAIN), jump_app, jump_app, jump_app);
+

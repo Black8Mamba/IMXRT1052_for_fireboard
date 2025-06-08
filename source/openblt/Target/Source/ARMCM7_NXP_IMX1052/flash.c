@@ -295,7 +295,6 @@ blt_bool FlashWrite(blt_addr addr, blt_int32u len, blt_int8u *data)
   /* validate the len parameter */
   if ((len - 1) > (FLASH_END_ADDRESS - addr))
   {
-	  log_e("return 1");
     result = BLT_FALSE;
   }
   
@@ -306,7 +305,6 @@ blt_bool FlashWrite(blt_addr addr, blt_int32u len, blt_int8u *data)
     if ((FlashGetSectorIdx(addr) == FLASH_INVALID_SECTOR_IDX) || \
         (FlashGetSectorIdx(addr+len-1) == FLASH_INVALID_SECTOR_IDX))
     {
-    	log_e("return 2");
       result = BLT_FALSE;
     }
   }
@@ -328,7 +326,6 @@ blt_bool FlashWrite(blt_addr addr, blt_int32u len, blt_int8u *data)
     }
   } else
   {
-	  log_e("return 3");
   }
 
   /* give the result back to the caller */
@@ -356,7 +353,6 @@ blt_bool FlashErase(blt_addr addr, blt_int32u len)
   /* validate the len parameter */
   if ((len - 1) > (FLASH_END_ADDRESS - addr))
   {
-	log_e("return 1");
     result = BLT_FALSE;
   }
   
@@ -370,7 +366,6 @@ blt_bool FlashErase(blt_addr addr, blt_int32u len)
     if ((first_sector_idx == FLASH_INVALID_SECTOR_IDX) ||
         (last_sector_idx == FLASH_INVALID_SECTOR_IDX))
     {
-    	log_e("return 2");
       result = BLT_FALSE;
     }
   }
@@ -528,7 +523,6 @@ blt_bool FlashDone(void)
   /* check if there is still data waiting to be programmed in the boot block */
   if (bootBlockInfo.base_addr != FLASH_INVALID_ADDRESS)
   {
-	  log_i("FlashWriteBlock:bootBlockInfo");
     if (FlashWriteBlock(&bootBlockInfo) == BLT_FALSE)
     {
       /* update the result value to flag the error */
@@ -542,7 +536,6 @@ blt_bool FlashDone(void)
     /* check if there is still data waiting to be programmed */
     if (blockInfo.base_addr != FLASH_INVALID_ADDRESS)
     {
-    	log_i("FlashWriteBlock:blockInfo");
       if (FlashWriteBlock(&blockInfo) == BLT_FALSE)
       {
         /* update the result value to flag the error */
@@ -589,7 +582,6 @@ static blt_bool FlashInitBlock(tFlashBlockInfo *block, blt_addr address)
   if ((address % FLASH_WRITE_BLOCK_SIZE) != 0)
   {
     /* update the result value to flag the error */
-	  log_e("return 1");
     result = BLT_FALSE;
   }
   
@@ -826,6 +818,7 @@ static blt_bool FlashWriteBlock(tFlashBlockInfo *block)
 //		    done = 1;
 //	  }
 
+//	  log_i("write base_addr:%x", block->base_addr);
 	  status_t status = FlexSPI_NorFlash_Page_Program(FLEXSPI, block->base_addr-0x60000000, block->data, 256);
 	  if (status != kStatus_Success)
 	  {
@@ -834,7 +827,6 @@ static blt_bool FlashWriteBlock(tFlashBlockInfo *block)
 		  return result;
 	  }
 
-	  uint64_t enter = get_system_ms();
 	  status = FlexSPI_NorFlash_Page_Program(FLEXSPI, block->base_addr+256-0x60000000, block->data+256, 256);
 	  if (status != kStatus_Success)
 	  {
@@ -842,8 +834,6 @@ static blt_bool FlashWriteBlock(tFlashBlockInfo *block)
 		  result = BLT_FALSE;
 		  return result;
 	  }
-	  uint64_t exit = get_system_ms();
-	  log_i("diff:%lld\r\n", exit-enter);
 
 //	  status = FlexSPI_NorFlash_Buffer_Read(FLEXSPI, block->base_addr-0x60000000, buffer, 512);
 //	  if (status != kStatus_Success)
@@ -854,6 +844,18 @@ static blt_bool FlashWriteBlock(tFlashBlockInfo *block)
 //	  }
 
 	  CpuMemCopy(buffer, block->base_addr, FLASH_WRITE_BLOCK_SIZE);
+//	  elog_raw("write:");
+//	  for (int j = 0; j < 32; ++j)
+//	  {
+//		  elog_raw("%02x ", block->data[j]);
+//	  }
+//	  elog_raw("\r\n");
+//	  elog_raw("read:");
+//	  for (int j = 0; j < 32; ++j)
+//	  {
+//		  elog_raw("%02x ", buffer[j]);
+//	  }
+//	  elog_raw("\r\n");
 
 	  if (memcmp(block->data, buffer, 512) != 0)
 	  {
@@ -924,17 +926,15 @@ static blt_bool FlashEraseSectors(blt_int8u first_sector_idx, blt_int8u last_sec
        * 'sectorBaseAddr' and has a length of 'sectorSize' bytes. In case an error
        * occured, set result to BLT_FALSE and break the loop.
        */
-//      log_i("erase block:%x, size:%x\r\n", sectorBaseAddr-0x60000000, sectorSize);
-//      log_i("enter:%lld\r\n", get_system_ms());
-//      for (int i = 0; i < 1; ++i)
-//      {
-//    		status_t status = FlexSPI_NorFlash_Erase_Sector(FLEXSPI, sectorBaseAddr-0x60000000+i*0x1000);
-//    		if (status != kStatus_Success)
-//    		{
-//    			log_i("FlexSPI_NorFlash_Erase_Block failed!\r\n");
-//    		}
-//      }
-//      log_i("exit:%lld\r\n", get_system_ms());
+      log_i("erase block:%x, size:%x\r\n", sectorBaseAddr, sectorSize);
+      for (int i = 0; i < sectorSize/0x1000; ++i)
+      {
+    		status_t status = FlexSPI_NorFlash_Erase_Sector(FLEXSPI, sectorBaseAddr-0x60000000+i*0x1000);
+    		if (status != kStatus_Success)
+    		{
+    			log_i("FlexSPI_NorFlash_Erase_Block failed!\r\n");
+    		}
+      }
     }
   }
   /* give the result back to the caller */

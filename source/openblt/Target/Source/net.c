@@ -35,7 +35,9 @@
 #include "uip.h"
 #include "uip_arp.h"
 #endif
-
+#define LOG_TAG    "openblt-net"
+#define LOG_LVL    ELOG_LVL_DEBUG
+#include "elog.h"
 
 #if (BOOT_COM_NET_ENABLE > 0)
 /****************************************************************************************
@@ -270,6 +272,12 @@ void NetApp(void)
     s->dto_len = 0;
     s->dto_tx_req = BLT_FALSE;
     s->dto_tx_pending = BLT_FALSE;
+    log_i("New connection from %d.%d.%d.%d:%d\n",
+        uip_ipaddr1(uip_conn->ripaddr),
+        uip_ipaddr2(uip_conn->ripaddr),
+        uip_ipaddr3(uip_conn->ripaddr),
+        uip_ipaddr4(uip_conn->ripaddr),
+        HTONS(uip_conn->rport));
     return;
   }
 
