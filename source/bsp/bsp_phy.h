@@ -194,6 +194,8 @@ status_t PHY_GetLinkSpeedDuplex(ENET_Type *base, uint32_t phyAddr, phy_speed_t *
 
 void enet_init(void);
 
+void enet_deinit(void);
+
 #if defined(__cplusplus)
 }
 #endif

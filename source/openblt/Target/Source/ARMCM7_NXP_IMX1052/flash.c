@@ -262,6 +262,27 @@ static tFlashBlockInfo blockInfo;
 static tFlashBlockInfo bootBlockInfo;
 
 
+void set_jump_flag(void)
+{
+	status_t status = FlexSPI_NorFlash_Erase_Sector(FLEXSPI, 0xc0000);
+	if (status != kStatus_Success)
+	{
+		log_i("FlexSPI_NorFlash_Erase_Block failed!\r\n");
+	}
+
+	log_i("FlexSPI_NorFlash_Erase_Sector 0x600c0000 success!\r\n");
+
+	uint8_t flag[256] = {0};
+	memset(flag, 0x5A, 256);
+
+	status = FlexSPI_NorFlash_Page_Program(FLEXSPI, 0xc0000, flag, 256);
+	if (status != kStatus_Success)
+	{
+		log_i("FlexSPI_NorFlash_Page_Program failed!\r\n");
+	}
+	log_i("FlexSPI_NorFlash_Page_Program 0x600c0000 success!\r\n");
+}
+
 /************************************************************************************//**
 ** \brief     Initializes the flash driver.
 ** \return    none.
@@ -397,7 +418,6 @@ blt_bool FlashWriteChecksum(void)
   blt_bool   result = BLT_TRUE;
   blt_int32u signature_checksum = 0;
 
-  return BLT_TRUE;
   /* TODO ##Port Calculate and write the signature checksum such that it appears at the
    * address configured with macro BOOT_FLASH_VECTOR_TABLE_CS_OFFSET. Use the 
    * FlashWrite() function for the actual write operation. For a typical microcontroller,
@@ -469,7 +489,6 @@ blt_bool FlashVerifyChecksum(void)
   blt_bool   result = BLT_TRUE;
   blt_int32u signature_checksum = 0;
 
-  return BLT_TRUE;
   /* TODO ##Port Implement code here that basically does the reverse of
    * FlashWriteChecksum(). Just make sure to read the values directory from flash memory
    * and NOT from the bootBlock. 
@@ -515,11 +534,14 @@ blt_bool FlashDone(void)
 
   log_i("FlashDone");
 
-  void pre_jump_app(void);
-  pre_jump_app();
-  jump_to_app();
+//  set_jump_flag();
+//  HAL_ResetMCU();
+  log_i("reset\r\n");;
 
-  return BLT_TRUE;
+//  pre_jump_app();
+//  jump_to_app();
+
+//  return BLT_TRUE;
   /* check if there is still data waiting to be programmed in the boot block */
   if (bootBlockInfo.base_addr != FLASH_INVALID_ADDRESS)
   {
@@ -559,7 +581,7 @@ blt_addr FlashGetUserProgBaseAddress(void)
 {
   blt_addr result;
   
-  result = flashLayout[4].sector_start;
+  result = flashLayout[4].sector_start+0x2000;
   
   /* give the result back to the caller */
   return result;
@@ -926,7 +948,7 @@ static blt_bool FlashEraseSectors(blt_int8u first_sector_idx, blt_int8u last_sec
        * 'sectorBaseAddr' and has a length of 'sectorSize' bytes. In case an error
        * occured, set result to BLT_FALSE and break the loop.
        */
-      log_i("erase block:%x, size:%x\r\n", sectorBaseAddr, sectorSize);
+//      log_i("erase block:%x, size:%x\r\n", sectorBaseAddr, sectorSize);
       for (int i = 0; i < sectorSize/0x1000; ++i)
       {
     		status_t status = FlexSPI_NorFlash_Erase_Sector(FLEXSPI, sectorBaseAddr-0x60000000+i*0x1000);

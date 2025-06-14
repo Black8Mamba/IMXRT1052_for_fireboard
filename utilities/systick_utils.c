@@ -25,11 +25,15 @@ uint32_t g_ovf_stamp;
 volatile uint32_t g_ovf_counter = 0;
 
 #ifndef SDK_OS_FREE_RTOS
+
+extern void schedule_timer_cb(void* param);
+
 // SDK specific SysTick Interrupt Handler
 void SysTick_Handler(void)
 {
     g_ovf_counter += 1;
     perfc_port_insert_to_system_timer_insert_ovf_handler();
+    schedule_timer_cb(NULL);
 }
 #endif
 

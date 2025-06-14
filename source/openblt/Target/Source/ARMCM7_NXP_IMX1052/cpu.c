@@ -153,9 +153,8 @@ void CpuStartUserProgram(void)
 //  pProgResetHandler = (void(*)(void))(*((blt_addr *)NvmGetUserProgBaseAddress()));
 //  /* start the user program by calling its reset interrupt service routine */
 //  pProgResetHandler();
-//  void pre_jump_app(void);
-//  pre_jump_app();
-//  jump_to_app();
+  pre_jump_app();
+  jump_to_app();
 
 
 #if (BOOT_COM_DEFERRED_INIT_ENABLE > 0) && (BOOT_COM_ENABLE > 0)

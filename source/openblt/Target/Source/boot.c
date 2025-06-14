@@ -41,12 +41,15 @@ void BootInit(void)
 {
   /* initialize the CPU */
   CpuInit();
+
   /* initialize the watchdog */
   CopInit();
   /* initialize the millisecond timer */
   TimerInit();
+
   /* initialize the non-volatile memory driver */
   NvmInit();
+
 #if (BOOT_FILE_SYS_ENABLE > 0)
   /* initialize the file system module */
   FileInit();
@@ -54,6 +57,7 @@ void BootInit(void)
 #if (BOOT_COM_ENABLE > 0)
   /* initialize the communication module */
   ComInit();
+
 #endif
 #if (BOOT_INFO_TABLE_ENABLE > 0)
   /* initialize the info table check module */

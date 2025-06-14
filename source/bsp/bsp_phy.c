@@ -337,6 +337,11 @@ SDK_ALIGN(static rx_buffer_t rxDataBuff_0[ENET_RXBD_NUM], FSL_ENET_BUFF_ALIGNMEN
 SDK_ALIGN(static tx_buffer_t txDataBuff_0[ENET_TXBD_NUM], FSL_ENET_BUFF_ALIGNMENT);
 uint8_t mac_address[] = {0x1,0x2,0x3,0x4,0x5,0x6};
 
+void enet_deinit(void)
+{
+	ENET_Deinit(ENET);
+}
+
 void enet_init(void)
 {
 	uint32_t sysClock = 0;

@@ -64,6 +64,7 @@ void schedule_timer_cb(void* param)
 	if (k % 1000 == 0)
 	{
 		period_1000ms_flag = 1;
+		k = 0;
 	}
 }
 

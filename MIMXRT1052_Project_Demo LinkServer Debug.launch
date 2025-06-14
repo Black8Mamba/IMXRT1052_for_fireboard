@@ -11,6 +11,7 @@
     <booleanAttribute key="com.crt.ctrlcenter.mainBreakIsHardware" value="true"/>
     <stringAttribute key="com.crt.ctrlcenter.serialNumber" value="LinkServerKeilSoftwareFire CMSIS-DAPFS-00000000"/>
     <listAttribute key="com.crt.ctrlcenter.symbolsAndImagesGroupSettings"/>
+    <mapAttribute key="com.crt.ctrlcenter.symbolsGroupSettings"/>
     <intAttribute key="com.crt.ctrlcenter.version" value="6"/>
     <stringAttribute key="com.nxp.mcuxpresso.flash.base.address" value="0x60000000"/>
     <booleanAttribute key="com.nxp.mcuxpresso.flash.clear.console" value="true"/>
@@ -36,8 +37,8 @@
     <booleanAttribute key="internal.multi.swd" value="true"/>
     <stringAttribute key="internal.prelaunch.command" value=""/>
     <stringAttribute key="internal.reset.script" value=""/>
-    <stringAttribute key="internal.resethandling" value=""/>
-    <stringAttribute key="internal.semihost" value="On"/>
+    <stringAttribute key="internal.resethandling" value="SYSRESETREQ"/>
+    <stringAttribute key="internal.semihost" value="Off"/>
     <stringAttribute key="internal.wirespeed" value=""/>
     <stringAttribute key="internal.wiretype" value="SWD"/>
     <stringAttribute key="isp.control" value="xxxx"/>

@@ -579,23 +579,23 @@ int FlexSPI_NorFlash_Init(void)
 	FlexSPI_NorFlash_Get_JedecDevice_ID(FLEXSPI, &JedecDeviceID);
 	FlexSPI_NorFlash_Get_Device_ID(FLEXSPI, &WindBondDeviceID);
 
-	PRINTF("JedecDeviceID:%x\r\n", JedecDeviceID);
-	PRINTF("WindBondDeviceID:%x\r\n", WindBondDeviceID);
+//	PRINTF("JedecDeviceID:%x\r\n", JedecDeviceID);
+//	PRINTF("WindBondDeviceID:%x\r\n", WindBondDeviceID);
 
 	if (JedecDeviceID != FLASH_WINBOND_JEDECDEVICE_ID)
 	{
-		PRINTF("read FLASH_WINBOND_JEDECDEVICE_ID failed!\r\n");
+//		PRINTF("read FLASH_WINBOND_JEDECDEVICE_ID failed!\r\n");
 		return -1;
 	}
 
 	if((JedecDeviceID &0xFF0000) == (FLASH_ISSI_JEDECDEVICE_ID &0xFF0000))
 	{
-		PRINTF("Enable Quad Mode!\n");
+//		PRINTF("Enable Quad Mode!\n");
 		FlexSPI_NorFlash_Enable_Quad_Mode(FLEXSPI);
 	}
 
     FlexSPI_FlashUUID_Get_ISSI(uuid);
-    PRINTF("FLASH UUID:");
+//    PRINTF("FLASH UUID:");
     FLASH_DEBUG_ARRAY(uuid,16);
 
     return 0;
