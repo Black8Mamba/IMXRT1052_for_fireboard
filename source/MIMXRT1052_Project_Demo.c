@@ -208,6 +208,11 @@ int main(void) {
 //    if (udp_conn_send != NULL) {
 //        uip_udp_bind(udp_conn_send, HTONS(8888));
 //    }
+
+//    int test_aes(void);
+//    test_aes();
+//    int test_hash(void);
+//    test_hash();
     while(1) {
     	OS_Schedule();
     	BootTask();

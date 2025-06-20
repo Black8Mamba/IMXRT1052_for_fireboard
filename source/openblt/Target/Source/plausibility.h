@@ -516,7 +516,7 @@
 *   F L A S H   D R I V E R   C O N F I G U R A T I O N   C H E C K
 ****************************************************************************************/
 #ifndef BOOT_FLASH_CRYPTO_HOOKS_ENABLE
-#define BOOT_FLASH_CRYPTO_HOOKS_ENABLE  (0)
+#define BOOT_FLASH_CRYPTO_HOOKS_ENABLE  (1)
 #endif
 
 #if (BOOT_FLASH_CRYPTO_HOOKS_ENABLE < 0) || (BOOT_FLASH_CRYPTO_HOOKS_ENABLE > 1)

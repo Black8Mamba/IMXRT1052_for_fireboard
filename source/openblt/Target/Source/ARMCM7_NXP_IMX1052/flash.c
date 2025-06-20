@@ -53,17 +53,22 @@
 /****************************************************************************************
 * Include files
 ****************************************************************************************/
-#include "boot.h"                                /* bootloader generic header          */
+#include "boot.h"                                /* bootloader generic header          */srec_cat bin转s19
 #include "fsl_flexspi.h"
 #include "bsp_norflash.h"
 #include "perf_counter.h"
 #define LOG_TAG    "flash"
 #define LOG_LVL    ELOG_LVL_DEBUG
 #include "elog.h"
+#include "mbedtls/cipher.h"
+#include "mbedtls/platform.h"
 
 //arm-none-eabi-objcopy.exe -O ihex --gap-fill=0xFF MIMXRT1052_Project.axf output.hex
 //arm-none-eabi-objcopy.exe -O binary --gap-fill=0xFF MIMXRT1052_Project.axf output.bin
 //arm-none-eabi-objcopy.exe -O srec --gap-fill=0xFF MIMXRT1052_Project.axf output.srec
+//arm-none-eabi-objcopy -I binary -O srec --change-addresses 0x60040000 MIMXRT1052_Project_Demo.bin MIMXRT1052_Project_Demo_new.s19
+
+static uint32_t recv_size = 0;
 
 /****************************************************************************************
 * Macro definitions
@@ -117,6 +122,21 @@
 #define BOOT_FLASH_CUSTOM_LAYOUT_ENABLE (0u)
 #endif
 
+#if (BOOT_FLASH_CRYPTO_HOOKS_ENABLE > 0)
+static uint8_t aes_256_key[] =
+{
+	0x51,0x7c,0x20,0xec,0x4f,0x7a,0xd4,0x13,
+	0x78,0x86,0x25,0x31,0xee,0x16,0x7c,0x48,
+	0x65,0x10,0x11,0x98,0x06,0xa0,0x16,0xd4,
+	0x89,0xc9,0x2d,0x36,0x33,0x04,0x90,0xca
+};
+
+static uint8_t aes_256_iv[] =
+{
+    0x3d, 0xaf, 0xba, 0x42, 0x9d, 0x9e, 0xb4, 0x30,
+    0xb4, 0x22, 0xda, 0x80, 0x2c, 0x9f, 0xac, 0x41
+};
+#endif
 
 /****************************************************************************************
 * Type definitions
@@ -261,27 +281,13 @@ static tFlashBlockInfo blockInfo;
  */
 static tFlashBlockInfo bootBlockInfo;
 
-
-void set_jump_flag(void)
+#if (BOOT_FLASH_CRYPTO_HOOKS_ENABLE > 0)
+extern blt_bool FlashCryptoDecryptDataHook(blt_addr address, blt_int8u * data,
+                                           blt_int32u size)
 {
-	status_t status = FlexSPI_NorFlash_Erase_Sector(FLEXSPI, 0xc0000);
-	if (status != kStatus_Success)
-	{
-		log_i("FlexSPI_NorFlash_Erase_Block failed!\r\n");
-	}
-
-	log_i("FlexSPI_NorFlash_Erase_Sector 0x600c0000 success!\r\n");
-
-	uint8_t flag[256] = {0};
-	memset(flag, 0x5A, 256);
-
-	status = FlexSPI_NorFlash_Page_Program(FLEXSPI, 0xc0000, flag, 256);
-	if (status != kStatus_Success)
-	{
-		log_i("FlexSPI_NorFlash_Page_Program failed!\r\n");
-	}
-	log_i("FlexSPI_NorFlash_Page_Program 0x600c0000 success!\r\n");
+	return BLT_TRUE;
 }
+#endif
 
 /************************************************************************************//**
 ** \brief     Initializes the flash driver.
@@ -418,6 +424,8 @@ blt_bool FlashWriteChecksum(void)
   blt_bool   result = BLT_TRUE;
   blt_int32u signature_checksum = 0;
 
+  return BLT_TRUE;
+
   /* TODO ##Port Calculate and write the signature checksum such that it appears at the
    * address configured with macro BOOT_FLASH_VECTOR_TABLE_CS_OFFSET. Use the 
    * FlashWrite() function for the actual write operation. For a typical microcontroller,
@@ -522,6 +530,80 @@ blt_bool FlashVerifyChecksum(void)
   return result;
 } /*** end of FlashVerifyChecksum ***/
 
+static uint8_t prog_data[0x1000] = {0};
+
+blt_bool firmware_dec(void)
+{
+	  uint8_t cipher_text[528] = {0};
+	  uint32_t count = recv_size / 528;
+	  uint32_t mod = recv_size % 528;
+	  int erase_count = 0;
+	  int j = 0;
+	  for (int i = 0; i < count; ++i)
+	  {
+		memcpy(cipher_text, 0x60040000+i*528, 528);
+
+		size_t len = 0;
+		size_t dec_len = 0;
+
+	    mbedtls_cipher_context_t ctx;
+	    const mbedtls_cipher_info_t *info;
+
+	    mbedtls_cipher_init(&ctx);
+	    info = mbedtls_cipher_info_from_type(MBEDTLS_CIPHER_AES_256_CBC);
+	    if (info == NULL)
+	    {
+	    	log_e("%s:%d mbedtls_cipher_info_from_type failed!\r\n", __func__, __LINE__);
+	    	return BLT_FALSE;
+	    }
+
+	    if (mbedtls_cipher_setup(&ctx, info) != 0)
+	    {
+	    	return BLT_FALSE;
+	    }
+
+	    // 设置解密密钥
+	    mbedtls_cipher_setkey(&ctx, aes_256_key, sizeof(aes_256_key)*8, MBEDTLS_DECRYPT);
+	    mbedtls_cipher_set_iv(&ctx, aes_256_iv, sizeof(aes_256_iv));
+	    mbedtls_cipher_set_padding_mode(&ctx, MBEDTLS_PADDING_PKCS7);
+
+	    blt_int8u dec_data[FLASH_WRITE_BLOCK_SIZE] = {0};
+	    if (mbedtls_cipher_update(&ctx, cipher_text, 528, dec_data, &len) != 0)
+	    {
+	        mbedtls_cipher_free(&ctx);
+	        return BLT_FALSE;
+	    }
+
+	    dec_len += len;
+	    len = 0;
+	    mbedtls_cipher_free(&ctx);
+	    memcpy(prog_data+j*512, dec_data, 512);
+	    j++;
+	    if (j == 8)
+	    {
+	    	j = 0;
+	    }
+	    memset(dec_data, 0, 512);
+	    if ((i + 1) % 8 == 0 || ((i + 1) % 8 != 0 && (i+1) == count))
+	    {
+  		status_t status = FlexSPI_NorFlash_Erase_Sector(FLEXSPI, 0x40000+erase_count*0x1000);
+  		if (status != kStatus_Success)
+  		{
+  			log_e("FlexSPI_NorFlash_Erase_Block failed!\r\n");
+  			return BLT_FALSE;
+  		}
+  		status =  FlexSPI_NorFlash_Buffer_Program(FLEXSPI, 0x40000+erase_count*0x1000, prog_data, 0x1000);
+  		if (status != kStatus_Success)
+  		{
+  			log_e("FlexSPI_NorFlash_Buffer_Program failed!\r\n");
+  			return BLT_FALSE;
+  		}
+  		erase_count++;
+  		memset(prog_data, 0, 0x1000);
+	    }
+	  }
+}
+
 /************************************************************************************//**
 ** \brief     Finalizes the flash driver operations. There could still be data in
 **            the currently active block that needs to be flashed.
@@ -534,12 +616,14 @@ blt_bool FlashDone(void)
 
   log_i("FlashDone");
 
-//  set_jump_flag();
 //  HAL_ResetMCU();
-  log_i("reset\r\n");;
-
+//  log_i("reset\r\n");;
 //  pre_jump_app();
 //  jump_to_app();
+
+  firmware_dec();
+  pre_jump_app();
+  jump_to_app();
 
 //  return BLT_TRUE;
   /* check if there is still data waiting to be programmed in the boot block */
@@ -708,7 +792,7 @@ static blt_bool FlashAddToBlock(tFlashBlockInfo *block, blt_addr address,
   blt_addr   current_base_addr;
   blt_int8u  *dst;
   blt_int8u  *src;
-
+  recv_size += len;
 //  log_i("address:%x, len:%d\r\n", address, len);
   /* determine the current base address */
   current_base_addr = (address/FLASH_WRITE_BLOCK_SIZE)*FLASH_WRITE_BLOCK_SIZE;
@@ -810,7 +894,7 @@ static blt_bool FlashWriteBlock(tFlashBlockInfo *block)
     if (FlashCryptoDecryptDataHook(block->base_addr, block->data, 
                                    FLASH_WRITE_BLOCK_SIZE) == BLT_FALSE)
     {
-      result = BLT_FALSE;
+    	result = BLT_FALSE;
     }
   }
 #endif
@@ -823,22 +907,6 @@ static blt_bool FlashWriteBlock(tFlashBlockInfo *block)
      * program operation was successful. The example implementation assumes that flash
      * data can be written 32-bits at a time.
      */
-
-//	  static int done = 0;
-//
-//	  if (done == 0)
-//	  {
-//		    for (int i = 0; i < 64; ++i)
-//		    {
-//		  		status_t status = FlexSPI_NorFlash_Erase_Sector(FLEXSPI, 0x40000+i*0x1000);
-//		  		if (status != kStatus_Success)
-//		  		{
-//		  			PRINTF("FlexSPI_NorFlash_Erase_Block failed!\r\n");
-//		  		}
-//		    }
-//		    log_i("erase successful!\r\n");
-//		    done = 1;
-//	  }
 
 //	  log_i("write base_addr:%x", block->base_addr);
 	  status_t status = FlexSPI_NorFlash_Page_Program(FLEXSPI, block->base_addr-0x60000000, block->data, 256);
