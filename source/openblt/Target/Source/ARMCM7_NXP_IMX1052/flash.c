@@ -68,7 +68,7 @@
 //arm-none-eabi-objcopy.exe -O srec --gap-fill=0xFF MIMXRT1052_Project.axf output.srec
 //arm-none-eabi-objcopy -I binary -O srec --change-addresses 0x60040000 MIMXRT1052_Project_Demo.bin MIMXRT1052_Project_Demo_new.s19
 
-static uint32_t recv_size = 0;
+uint32_t recv_size = 0;
 
 /****************************************************************************************
 * Macro definitions
@@ -534,74 +534,94 @@ static uint8_t prog_data[0x1000] = {0};
 
 blt_bool firmware_dec(void)
 {
-	  uint8_t cipher_text[528] = {0};
-	  uint32_t count = recv_size / 528;
-	  uint32_t mod = recv_size % 528;
-	  int erase_count = 0;
-	  int j = 0;
-	  for (int i = 0; i < count; ++i)
-	  {
-		memcpy(cipher_text, 0x60040000+i*528, 528);
+    uint8_t cipher_text[528] = {0};
+    uint32_t count = recv_size / 528;
+    uint32_t mod = recv_size % 528;
+    int erase_count = 0;
+    int j = 0;
+    for (int i = 0; i < count; ++i)
+    {
+        memcpy(cipher_text, 0x60040000+i*528, 528);
+        size_t len = 0;
+        size_t dec_len = 0;
 
-		size_t len = 0;
-		size_t dec_len = 0;
+        mbedtls_cipher_context_t ctx;
+        const mbedtls_cipher_info_t *info;
 
-	    mbedtls_cipher_context_t ctx;
-	    const mbedtls_cipher_info_t *info;
+        mbedtls_cipher_init(&ctx);
+        info = mbedtls_cipher_info_from_type(MBEDTLS_CIPHER_AES_256_CBC);
+        if (info == NULL)
+        {
+            return BLT_FALSE;
+        }
 
-	    mbedtls_cipher_init(&ctx);
-	    info = mbedtls_cipher_info_from_type(MBEDTLS_CIPHER_AES_256_CBC);
-	    if (info == NULL)
-	    {
-	    	log_e("%s:%d mbedtls_cipher_info_from_type failed!\r\n", __func__, __LINE__);
-	    	return BLT_FALSE;
-	    }
+        if (mbedtls_cipher_setup(&ctx, info) != 0)
+        {
+            return BLT_FALSE;
+        }
 
-	    if (mbedtls_cipher_setup(&ctx, info) != 0)
-	    {
-	    	return BLT_FALSE;
-	    }
+        // 设置解密密钥
+        mbedtls_cipher_setkey(&ctx, aes_256_key, sizeof(aes_256_key)*8, MBEDTLS_DECRYPT);
+        mbedtls_cipher_set_iv(&ctx, aes_256_iv, sizeof(aes_256_iv));
+        mbedtls_cipher_set_padding_mode(&ctx, MBEDTLS_PADDING_PKCS7);
 
-	    // 设置解密密钥
-	    mbedtls_cipher_setkey(&ctx, aes_256_key, sizeof(aes_256_key)*8, MBEDTLS_DECRYPT);
-	    mbedtls_cipher_set_iv(&ctx, aes_256_iv, sizeof(aes_256_iv));
-	    mbedtls_cipher_set_padding_mode(&ctx, MBEDTLS_PADDING_PKCS7);
-
-	    blt_int8u dec_data[FLASH_WRITE_BLOCK_SIZE] = {0};
+        blt_int8u dec_data[FLASH_WRITE_BLOCK_SIZE] = {0};
 	    if (mbedtls_cipher_update(&ctx, cipher_text, 528, dec_data, &len) != 0)
 	    {
-	        mbedtls_cipher_free(&ctx);
-	        return BLT_FALSE;
-	    }
+            mbedtls_cipher_free(&ctx);
+            return BLT_FALSE;
+        }
 
-	    dec_len += len;
-	    len = 0;
-	    mbedtls_cipher_free(&ctx);
-	    memcpy(prog_data+j*512, dec_data, 512);
-	    j++;
-	    if (j == 8)
-	    {
-	    	j = 0;
-	    }
-	    memset(dec_data, 0, 512);
-	    if ((i + 1) % 8 == 0 || ((i + 1) % 8 != 0 && (i+1) == count))
-	    {
-  		status_t status = FlexSPI_NorFlash_Erase_Sector(FLEXSPI, 0x40000+erase_count*0x1000);
-  		if (status != kStatus_Success)
-  		{
-  			log_e("FlexSPI_NorFlash_Erase_Block failed!\r\n");
-  			return BLT_FALSE;
-  		}
-  		status =  FlexSPI_NorFlash_Buffer_Program(FLEXSPI, 0x40000+erase_count*0x1000, prog_data, 0x1000);
-  		if (status != kStatus_Success)
-  		{
-  			log_e("FlexSPI_NorFlash_Buffer_Program failed!\r\n");
-  			return BLT_FALSE;
-  		}
-  		erase_count++;
-  		memset(prog_data, 0, 0x1000);
-	    }
+        dec_len += len;
+        mbedtls_cipher_free(&ctx);
+        memcpy(prog_data+j*512, dec_data, 512);
+        j++;
+        if (j == 8)
+        {
+            j = 0;
+        }
+        memset(dec_data, 0, 512);
+        if ((i + 1) % 8 == 0 || ((i + 1) % 8 != 0 && (i+1) == count))
+        {
+            status_t status = FlexSPI_NorFlash_Erase_Sector(FLEXSPI, 0x40000+erase_count*0x1000);
+            if (status != kStatus_Success)
+            {
+                log_e("FlexSPI_NorFlash_Erase_Block failed!\r\n");
+                return BLT_FALSE;
+            }
+            status =  FlexSPI_NorFlash_Buffer_Program(FLEXSPI, 0x40000+erase_count*0x1000, prog_data, 0x1000);
+            if (status != kStatus_Success)
+            {
+                log_e("FlexSPI_NorFlash_Buffer_Program failed!\r\n");
+                return BLT_FALSE;
+            }
+            erase_count++;
+            memset(prog_data, 0, 0x1000);
+        }
+    }
+
+    return BLT_TRUE;
+}
+
+blt_bool program_last_block(void)
+{
+	log_i("blockInfo.addr:%x\r\n", blockInfo.base_addr);
+
+	  status_t status = FlexSPI_NorFlash_Page_Program(FLEXSPI, blockInfo.base_addr-0x60000000, blockInfo.data, 256);
+	  if (status != kStatus_Success)
+	  {
+		  log_e("FlexSPI_NorFlash_Page_Program failed, addr:%x", blockInfo.base_addr);
+		  return BLT_FALSE;
 	  }
+
+	  status = FlexSPI_NorFlash_Page_Program(FLEXSPI, blockInfo.base_addr+256-0x60000000, blockInfo.data+256, 256);
+	  if (status != kStatus_Success)
+	  {
+		  log_e("FlexSPI_NorFlash_Page_Program failed, addr:%x", blockInfo.base_addr);
+		  return BLT_FALSE;
+	  }
+
+	  return BLT_TRUE;
 }
 
 /************************************************************************************//**
@@ -615,6 +635,8 @@ blt_bool FlashDone(void)
   blt_bool result = BLT_TRUE;
 
   log_i("FlashDone");
+
+//  return BLT_TRUE;
 
 //  HAL_ResetMCU();
 //  log_i("reset\r\n");;
@@ -793,7 +815,7 @@ static blt_bool FlashAddToBlock(tFlashBlockInfo *block, blt_addr address,
   blt_int8u  *dst;
   blt_int8u  *src;
   recv_size += len;
-//  log_i("address:%x, len:%d\r\n", address, len);
+
   /* determine the current base address */
   current_base_addr = (address/FLASH_WRITE_BLOCK_SIZE)*FLASH_WRITE_BLOCK_SIZE;
 
@@ -909,6 +931,7 @@ static blt_bool FlashWriteBlock(tFlashBlockInfo *block)
      */
 
 //	  log_i("write base_addr:%x", block->base_addr);
+
 	  status_t status = FlexSPI_NorFlash_Page_Program(FLEXSPI, block->base_addr-0x60000000, block->data, 256);
 	  if (status != kStatus_Success)
 	  {

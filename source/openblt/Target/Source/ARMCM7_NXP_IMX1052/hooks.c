@@ -37,6 +37,7 @@
 #include "elog.h"
 #include "bsp_led.h"
 #include "perf_counter.h"
+#include "mbedtls/md5.h"
 
 static int enter_backdoor = 0;
 /****************************************************************************************
@@ -254,6 +255,73 @@ blt_bool NvmVerifyChecksumHook(void)
   return BLT_TRUE;
 } /*** end of NvmVerifyChecksum ***/
 
+extern unsigned char md5_area_start[];
+extern unsigned char md5_area_end[];
+// 使用举例
+blt_bool clear_md5_area(void) {
+    status_t status = FlexSPI_NorFlash_Erase_Sector(FLEXSPI, md5_area_start-0x60000000, md5_area_end-md5_area_start);
+    if (status != kStatus_Success)
+    {
+        log_e("FlexSPI_NorFlash_Erase_Block failed!\r\n");
+        return BLT_FALSE;
+    }
+    
+    return BLT_TRUE;
+}
+extern uint32_t recv_size;
+#define BLOCK_SIZE 528
+uint8_t block[BLOCK_SIZE];
+blt_bool write_md5sum(void)
+{
+    /* TODO ##Port Implement the MD5 checksum verification logic here.
+     * This function should read the MD5 checksum from the non-volatile memory
+     * and compare it with the expected checksum of the user program.
+     */
+    log_i("verify_md5sum!\r\n");
+    
+    int count = recv_size / BLOCK_SIZE;
+    int ret = 0;
+
+    mbedtls_md5_context ctx;
+    mbedtls_md5_init(&ctx);
+    mbedtls_md5_starts(&ctx);
+
+    uint8_t md5[256] = {0};
+
+    for (int i = 0; i < count; ++i)
+    {
+    	memcpy(block, 0x60040000+i*BLOCK_SIZE, BLOCK_SIZE);
+    	ret = mbedtls_md5_update(&ctx, block, BLOCK_SIZE);
+    	if (ret != 0)
+    	{
+    		log_e("mbedtls_md5_update failed!\r\n");
+    		return BLT_FALSE;
+    	}
+    }
+
+    ret = mbedtls_md5_finish(&ctx, md5);
+    if (ret != 0)
+    {
+		log_e("mbedtls_md5_finish failed!\r\n");
+		return BLT_FALSE;
+    }
+
+    for (int i = 0; i < 16; ++i)
+    {
+    	elog_raw("%02x ", md5[i]);
+    }
+    elog_raw("\r\n");
+
+	  status_t status = FlexSPI_NorFlash_Page_Program(FLEXSPI, md5_area_start-0x60000000, md5, 256);
+	  if (status != kStatus_Success)
+	  {
+		  log_e("FlexSPI_NorFlash_Page_Program failed!\r\n");
+		  return BLT_FALSE;
+	  }
+
+    // Example: Always return true for now
+    return BLT_TRUE;
+} /*** end of verify_md5sum ***/
 
 /************************************************************************************//**
 ** \brief     Writes a checksum of the user program to non-volatile memory. This is
@@ -265,8 +333,14 @@ blt_bool NvmVerifyChecksumHook(void)
 ****************************************************************************************/
 blt_bool NvmWriteChecksumHook(void)
 {
-	log_i("NvmWriteChecksumHook!");
-  return BLT_TRUE;
+    log_i("NvmWriteChecksumHook, addr:%x\r\n", md5_area_start);
+
+    blt_bool program_last_block(void);
+    program_last_block();
+
+    clear_md5_area();
+    write_md5sum();
+    return BLT_TRUE;
 }
 #endif /* BOOT_NVM_CHECKSUM_HOOKS_ENABLE > 0 */
 

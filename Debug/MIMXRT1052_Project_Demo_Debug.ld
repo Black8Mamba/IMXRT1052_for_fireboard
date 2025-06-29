@@ -38,6 +38,10 @@ SECTIONS
         __vectors_start__ = ABSOLUTE(.) ;
         KEEP(*(.isr_vector))
         /* Global Section Table */
+	    . = ALIGN(0x1000);
+	    PROVIDE(md5_area_start = .);
+	    . = . + 0x1000;
+	    PROVIDE(md5_area_end = .);        
         . = ALIGN(4) ;
         __section_table_start = .;
         __data_section_table = .;
